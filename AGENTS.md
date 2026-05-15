@@ -245,6 +245,13 @@ npx wrangler d1 migrations apply esgrima
 npx wrangler secret put ANTHROPIC_API_KEY
 ```
 
+### CI/CD (GitHub Actions)
+
+The repository includes a GitHub Actions workflow (`.github/workflows/deploy.yml`) that **automatically deploys to Cloudflare Workers on every push to `main`**.
+
+**Required repository secret:**
+- `CLOUDFLARE_API_TOKEN` — A Cloudflare API token with **Cloudflare Workers** edit permissions. Create one at [Cloudflare dashboard → My Profile → API Tokens](https://dash.cloudflare.com/profile/api-tokens).
+
 ### Important Cloudflare Notes
 
 - `nodejs_compat` flag is enabled. Do not add Node-only modules without verifying Worker compatibility.
