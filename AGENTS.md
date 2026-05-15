@@ -1,0 +1,335 @@
+# AGENTS.md — Esgrima
+
+> Agent-facing development guide for this TanStack Start project.
+
+## Project Overview
+
+This is a **TanStack Start** (React) application targeting **Cloudflare Workers**.
+
+- **Router**: TanStack React Router (file-based)
+- **Data**: TanStack Query + tRPC (`@trpc/tanstack-react-query`) + Drizzle ORM
+- **DB**: SQLite locally (`better-sqlite3`), **D1** on Cloudflare
+- **Styling**: Tailwind CSS v4
+- **AI**: TanStack AI (multi-provider: Anthropic, OpenAI, Gemini, Ollama)
+- **Forms**: TanStack React Form
+- **State**: TanStack React Store
+- **Tables**: TanStack React Table
+- **SSR/Deployment**: Cloudflare Workers via Wrangler + `@cloudflare/vite-plugin`
+
+---
+
+## Tech Stack & Key Dependencies
+
+| Concern | Package(s) |
+|---------|-----------|
+| Framework | `@tanstack/react-start` |
+| Router | `@tanstack/react-router`, `@tanstack/router-plugin` |
+| Data Fetching | `@tanstack/react-query`, `@tanstack/react-router-ssr-query` |
+| tRPC | `@trpc/server`, `@trpc/client`, `@trpc/tanstack-react-query` |
+| ORM | `drizzle-orm`, `drizzle-kit` |
+| DB Driver (local) | `better-sqlite3` |
+| Styling | `tailwindcss` v4, `@tailwindcss/vite`, `class-variance-authority`, `tailwind-merge` |
+| UI Primitives | `radix-ui` |
+| Icons | `lucide-react` |
+| AI | `@tanstack/ai`, `@tanstack/ai-react`, `@tanstack/ai-anthropic`, `@tanstack/ai-openai`, `@tanstack/ai-gemini`, `@tanstack/ai-ollama` |
+| Forms | `@tanstack/react-form` |
+| Store | `@tanstack/react-store` |
+| Table | `@tanstack/react-table` |
+| Devtools | `@tanstack/react-router-devtools`, `@tanstack/react-query-devtools`, `@tanstack/react-devtools`, `@tanstack/devtools-vite` |
+| Env Validation | `@t3-oss/env-core`, `zod` |
+| Serialization | `superjson` |
+| Lint/Format | `@biomejs/biome` |
+| Testing | `vitest`, `jsdom`, `@testing-library/react` |
+| Deploy | `wrangler`, `@cloudflare/vite-plugin` |
+
+---
+
+## Project Structure
+
+```
+.
+├── src/
+│   ├── routes/               # File-based routing (TanStack Router)
+│   │   ├── __root.tsx        # Root route (shell: <html>, devtools, theme)
+│   │   ├── index.tsx         # Home page
+│   │   ├── about.tsx         # About page
+│   │   └── demo/             # Demo/feature routes
+│   │       ├── api.*.ts      # API/route handlers (e.g. api.ai.chat.ts)
+│   │       ├── drizzle.tsx   # Drizzle demo page
+│   │       ├── tanstack-query.tsx
+│   │       ├── trpc-todo.tsx
+│   │       ├── form.*.tsx    # Form demos
+│   │       └── ...
+│   ├── db/
+│   │   ├── schema.ts         # Drizzle table definitions
+│   │   └── index.ts          # Drizzle client (better-sqlite3)
+│   ├── integrations/
+│   │   ├── tanstack-query/
+│   │   │   ├── root-provider.tsx   # QueryClient + tRPC client setup
+│   │   │   └── devtools.tsx        # Query devtools wrapper
+│   │   └── trpc/
+│   │       ├── init.ts       # tRPC initialization (superjson transformer)
+│   │       ├── router.ts     # tPC router definitions
+│   │       └── react.ts      # tRPC React provider
+│   ├── components/           # React components
+│   ├── hooks/                # Custom hooks
+│   ├── lib/                  # Utilities & helpers
+│   ├── router.tsx            # Router factory (uses routeTree.gen.ts)
+│   ├── env.ts                # Zod-based env validation (@t3-oss/env-core)
+│   └── styles.css            # Global styles / Tailwind entry
+├── drizzle/                  # Generated migrations (Drizzle Kit output)
+├── public/                   # Static assets
+├── vite.config.ts            # Vite config (TanStack Start + Cloudflare + Tailwind)
+├── drizzle.config.ts         # Drizzle Kit config (SQLite)
+├── wrangler.jsonc            # Cloudflare Workers config (D1 bindings)
+├── tsconfig.json             # TypeScript config (ES2022, bundler resolution)
+├── biome.json                # Biome lint/format config
+└── .env.local                # Local environment variables (not committed)
+```
+
+### Path Aliases
+
+- `#/*` → `./src/*` (used throughout the codebase)
+- `@/*` → `./src/*` (also configured, prefer `#/*` to match existing code)
+
+---
+
+## Routing Conventions
+
+TanStack Router uses **file-based routing** via `@tanstack/router-plugin`.
+
+- `src/routes/__root.tsx` — Root layout. Defines the HTML shell, `<HeadContent>`, `<Scripts>`, devtools, and theme init script.
+- `src/routes/index.tsx` — Home (`/`).
+- `src/routes/about.tsx` — `/about`.
+- `src/routes/demo/table.tsx` — `/demo/table`.
+- `src/routes/demo/guitars/index.tsx` — `/demo/guitars`.
+- `src/routes/demo/guitars/$guitarId.tsx` — `/demo/guitars/:guitarId`.
+- `src/routes/demo/api.ai.chat.ts` — API route `/demo/api/ai/chat`.
+
+API routes are co-located with pages and use `.ts` (not `.tsx`) when they return data rather than render React.
+
+The route tree is auto-generated into `src/routeTree.gen.ts`. Do not edit this file manually.
+
+---
+
+## Development Workflow
+
+### Install Dependencies
+
+```bash
+npm install
+```
+
+> This project uses `npm`. `package.json` includes a `pnpm.onlyBuiltDependencies` block for `better-sqlite3` if you use `pnpm`.
+
+### Environment Variables
+
+Local secrets go in `.env.local` (already present, do not commit):
+
+```bash
+# .env.local
+DATABASE_URL="dev.db"
+ANTHROPIC_API_KEY=sk-...
+```
+
+`src/env.ts` validates env vars with Zod. Client vars **must** use the `VITE_` prefix.
+
+### Start Dev Server
+
+```bash
+npm run dev          # Vite dev server on port 3000
+```
+
+### Lint / Format / Check
+
+```bash
+npm run lint         # Biome lint
+npm run format       # Biome format
+npm run check        # Biome check (lint + format + import sorting)
+```
+
+### Run Tests
+
+```bash
+npm test             # Vitest
+```
+
+### Build
+
+```bash
+npm run build        # Vite production build
+```
+
+### Preview Production Build Locally
+
+```bash
+npm run preview      # Vite preview server
+```
+
+---
+
+## Database (Drizzle + SQLite / D1)
+
+### Local Development
+
+Locally the app uses `better-sqlite3` with the file specified by `DATABASE_URL` (default `dev.db`).
+
+```bash
+# Generate a migration from schema changes
+npm run db:generate
+
+# Push schema changes directly (useful in dev, no migration files)
+npm run db:push
+
+# Pull existing DB state into schema
+npm run db:pull
+
+# Open Drizzle Studio (visual DB explorer)
+npm run db:studio
+```
+
+Schema lives in `src/db/schema.ts`. The Drizzle client is created in `src/db/index.ts`.
+
+### Cloudflare D1
+
+In production (Cloudflare Workers), the database is **D1**, bound as `DB` in `wrangler.jsonc`:
+
+```jsonc
+// wrangler.jsonc
+{
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "esgrima",
+      "database_id": "...",
+      "migrations_dir": "drizzle/migrations"
+    }
+  ]
+}
+```
+
+> ⚠️ **Critical**: Local dev uses `better-sqlite3` (file-based SQLite). Cloudflare uses D1. Migrations generated with `drizzle-kit generate` go into `drizzle/migrations/`. Apply them to D1 with Wrangler (`wrangler d1 migrations apply esgrima`). Keep schema compatible with both SQLite and D1.
+
+---
+
+## Cloudflare Deployment
+
+### Configuration
+
+- **`wrangler.jsonc`** — Cloudflare Workers config.
+  - `main`: `@tanstack/react-start/server-entry` (TanStack Start server entry)
+  - `compatibility_date`: `2025-09-02`
+  - `compatibility_flags`: `["nodejs_compat"]` (required for Node.js APIs)
+  - D1 database binding: `DB`
+
+- **`vite.config.ts`** — Cloudflare Vite plugin wires the SSR environment:
+  ```ts
+  import { cloudflare } from "@cloudflare/vite-plugin";
+  // ...
+  plugins: [
+    cloudflare({ viteEnvironment: { name: "ssr" } }),
+    // ...
+  ]
+  ```
+
+### Deploy
+
+```bash
+npm run deploy       # Builds then runs `wrangler deploy`
+```
+
+You can also use Wrangler directly for D1 management, secrets, etc.:
+
+```bash
+npx wrangler d1 migrations apply esgrima
+npx wrangler secret put ANTHROPIC_API_KEY
+```
+
+### Important Cloudflare Notes
+
+- `nodejs_compat` flag is enabled. Do not add Node-only modules without verifying Worker compatibility.
+- `better-sqlite3` is **local-only**. On Workers, use the D1 binding (`env.DB`). If you need to abstract this, create a DB client that switches based on environment.
+- Static assets are handled by TanStack Start / Cloudflare Workers; there is no separate Pages setup.
+
+---
+
+## Data Architecture
+
+### TanStack Query + tRPC
+
+The data layer is built on **TanStack Query** + **tRPC** (via `@trpc/tanstack-react-query`).
+
+1. **QueryClient** and **tRPC client** are created in `src/integrations/tanstack-query/root-provider.tsx`.
+2. `superjson` is used for serialization/deserialization (both tRPC and Query hydration).
+3. The router context (`src/router.tsx`) includes `queryClient` and `trpc` helpers so loaders/mutations can use them.
+4. tRPC routers live in `src/integrations/trpc/router.ts`.
+5. Procedures are defined in `src/integrations/trpc/init.ts` (currently only `publicProcedure`).
+6. The tRPC API endpoint is `src/routes/api.trpc.$.tsx`.
+
+### Adding a New tRPC Route
+
+1. Define the router logic in `src/integrations/trpc/router.ts` (or a new sub-router file).
+2. Use `publicProcedure` (or add authenticated procedures in `init.ts`).
+3. Zod is used for input validation.
+4. The router is typed, so frontend consumers get full autocompletion via `TRPCRouter`.
+
+### Adding a New API Route (non-tRPC)
+
+For simple data endpoints (e.g., AI streaming), you can add a file under `src/routes/` named like `api.resource.action.ts` and export a handler. See existing examples:
+- `src/routes/demo/api.ai.chat.ts`
+- `src/routes/demo/api.ai.image.ts`
+- `src/routes/demo/api.ai.transcription.ts`
+- `src/routes/demo/api.ai.tts.ts`
+- `src/routes/demo/api.ai.structured.ts`
+
+---
+
+## AI Integration (TanStack AI)
+
+The project uses `@tanstack/ai` with multiple provider packages:
+
+- `@tanstack/ai-anthropic`
+- `@tanstack/ai-openai`
+- `@tanstack/ai-gemini`
+- `@tanstack/ai-ollama`
+
+API keys are provided via environment variables (e.g., `ANTHROPIC_API_KEY`).
+
+AI demo pages and API routes live in `src/routes/demo/ai-*.tsx` and `src/routes/demo/api.ai.*.ts`.
+
+---
+
+## Devtools Setup
+
+Multiple TanStack devtools are mounted in `src/routes/__root.tsx` inside `TanStackDevtools`:
+
+- **TanStack Router Devtools** — route inspector
+- **TanStack Query Devtools** — query cache inspector
+- **Store Devtools** — state store inspector
+
+These are wrapped in `TanStackDevtools` from `@tanstack/react-devtools` with a plugin array. They only render in development.
+
+---
+
+## Theme / Styling
+
+- Tailwind CSS v4 is configured via `@tailwindcss/vite` in `vite.config.ts`.
+- Global styles are imported in `src/routes/__root.tsx` via `../styles.css?url`.
+- Theme (light/dark/auto) is resolved by an inline script in `__root.tsx` that reads `localStorage.theme` before React hydrates.
+- `radix-ui` primitives are used for accessible UI components (`src/components/ui/*`).
+- `class-variance-authority` + `tailwind-merge` + `clsx` power component variants.
+
+---
+
+## Conventions & Rules for Agents
+
+1. **File-based routing**: Add new pages by creating files under `src/routes/`. Follow the existing naming pattern (e.g., `demo/feature.tsx`).
+2. **API routes**: Use `.ts` for non-React data endpoints. Co-locate them with related pages when it makes sense.
+3. **tRPC preferred**: Use tRPC for typed client-server communication. Only use raw API routes when streaming or external API proxying is needed.
+4. **Path alias**: Use `#/db/schema`, `#/integrations/trpc/router`, etc. Do not use relative paths when crossing top-level `src/` boundaries.
+5. **DB compatibility**: Keep Drizzle schema SQLite-compatible. Remember D1 is the production target.
+6. **Env vars**: Add new env vars to `src/env.ts` with Zod validation. Client vars must start with `VITE_`.
+7. **Strict TypeScript**: `noUnusedLocals`, `noUnusedParameters`, and `verbatimModuleSyntax` are enabled. Remove unused imports/variables.
+8. **Formatting**: Run `npm run check` before finishing changes.
+9. **No manual routeTree edits**: `routeTree.gen.ts` is auto-generated by the router plugin.
+10. **Cloudflare awareness**: Do not introduce Node-only APIs without the `nodejs_compat` flag or Worker-safe alternatives. Be mindful of D1 vs SQLite differences.
