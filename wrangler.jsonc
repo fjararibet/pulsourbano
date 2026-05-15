@@ -6,4 +6,12 @@
 		"nodejs_compat"
 	],
 	"main": "@tanstack/react-start/server-entry",
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "esgrima",
+			"database_id": "5ab7bd1a-2922-4e5b-9b83-93ca1b7def10",
+			"migrations_dir": "drizzle/migrations"
+		}
+	],
 }
