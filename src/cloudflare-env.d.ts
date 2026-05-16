@@ -1,9 +1,12 @@
 declare module "cloudflare:workers" {
-	export const env: {
-		DB: {
-			prepare(sql: string): {
-				all<T = unknown>(): Promise<{ results: T[] }>;
-			};
+	interface D1Database {
+		prepare(sql: string): {
+			all<T = unknown>(): Promise<{ results: T[] }>;
 		};
+	}
+
+	export const env: {
+		EOD2012: D1Database;
+		ADDITIONAL_EXAMPLE_DB: D1Database;
 	};
 }
