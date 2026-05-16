@@ -1,10 +1,6 @@
 import type { Map as MapLibreMap } from "maplibre-gl";
-import { useEffect, useRef } from "react";
-import {
-	BASE_STYLE,
-	INITIAL_ZOOM,
-	SANTIAGO_CENTER,
-} from "./config";
+import { useCallback, useEffect, useRef } from "react";
+import { BASE_STYLE, INITIAL_ZOOM, SANTIAGO_CENTER } from "./config";
 import { setupBusRouteHover, setupHoverLayer } from "./hover";
 import {
 	addBusLayers,
@@ -16,11 +12,12 @@ import type {
 	FrequencyMap,
 	HoverInfo,
 	LayerVisibility,
+	TravelTimeMap,
 } from "./types";
 import {
 	formatStationName,
-	getFeatureString,
 	getFeatureNumber,
+	getFeatureString,
 	loadGeoJSON,
 	loadJSON,
 } from "./utils";
@@ -37,6 +34,18 @@ export function useSantiagoMap(
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const mapRef = useRef<MapLibreMap | null>(null);
 	const visibleLayersRef = useRef(visibleLayers);
+	const setPinnedInfoRef = useRef<((info: HoverInfo | null) => void) | null>(
+		null,
+	);
+
+	const setPinnedInfo = useCallback((info: HoverInfo | null) => {
+		if (setPinnedInfoRef.current) setPinnedInfoRef.current(info);
+	}, []);
+
+	const clearPinned = useCallback(() => {
+		setPinnedInfoRef.current?.(null);
+		setHoverInfo(null);
+	}, [setHoverInfo]);
 
 	// Mantener un ref con la última visibilidad para usarla dentro del effect
 	// de montaje sin reinicializar el mapa cada vez que cambian las capas.
@@ -71,9 +80,7 @@ export function useSantiagoMap(
 			mapRef.current = map;
 
 			// Exponer el mapa al window en dev para debug desde la consola.
-			let debugWindow:
-				| (typeof window & { __simMap?: MapLibreMap })
-				| undefined;
+			let debugWindow: (typeof window & { __simMap?: MapLibreMap }) | undefined;
 			if (import.meta.env.DEV) {
 				debugWindow = window as typeof window & { __simMap?: MapLibreMap };
 				debugWindow.__simMap = map;
@@ -106,12 +113,14 @@ export function useSantiagoMap(
 
 			map.on("load", async () => {
 				resize();
-				const [metro, buses, cycleways, frequencies] = await Promise.all([
-					loadGeoJSON("/data/metro.geojson"),
-					loadGeoJSON("/data/buses.geojson"),
-					loadGeoJSON("/data/ciclovias.geojson"),
-					loadJSON<FrequencyMap>("/data/frequencies.json"),
-				]);
+				const [metro, buses, cycleways, frequencies, travelTimes] =
+					await Promise.all([
+						loadGeoJSON("/data/metro.geojson"),
+						loadGeoJSON("/data/buses.geojson"),
+						loadGeoJSON("/data/ciclovias.geojson"),
+						loadJSON<FrequencyMap>("/data/frequencies.json"),
+						loadJSON<TravelTimeMap>("/data/travel-times.json"),
+					]);
 
 				if (buses) addBusLayers(map, buses);
 				if (cycleways) addCyclewayLayers(map, cycleways);
@@ -143,9 +152,7 @@ export function useSantiagoMap(
 						"metro-stations",
 						setHoverInfo,
 						(feature) => {
-							const name = formatStationName(
-								getFeatureString(feature, "name"),
-							);
+							const name = formatStationName(getFeatureString(feature, "name"));
 							return {
 								kind: "Estación",
 								title: name || "Estación de Metro",
@@ -155,7 +162,15 @@ export function useSantiagoMap(
 							};
 						},
 					),
-					setupBusRouteHover(map, popup, setHoverInfo, frequencies),
+					setupBusRouteHover(
+						map,
+						popup,
+						setHoverInfo,
+						setPinnedInfo,
+						clearPinned,
+						frequencies,
+						travelTimes,
+					),
 					setupHoverLayer(map, popup, "bus-stops", setHoverInfo, (feature) => {
 						const name = formatStationName(getFeatureString(feature, "name"));
 						return {
@@ -195,7 +210,7 @@ export function useSantiagoMap(
 			cleanup?.();
 			mapRef.current = null;
 		};
-	}, [setHoverInfo]);
+	}, [setHoverInfo, setPinnedInfo, clearPinned]);
 
 	const resetView = () => {
 		mapRef.current?.easeTo({
@@ -207,5 +222,5 @@ export function useSantiagoMap(
 		});
 	};
 
-	return { containerRef, resetView };
+	return { containerRef, resetView, setPinnedInfo, clearPinned };
 }

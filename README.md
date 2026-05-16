@@ -27,7 +27,9 @@ DTPM y la red de ciclovías de OCUC, y deja archivos en `public/data/`:
 - `metro.geojson` — líneas y estaciones de Metro.
 - `buses.geojson` — recorridos y paraderos RED.
 - `ciclovias.geojson` — red ciclista AMS.
-- `frequencies.json` — frecuencia media por servicio.
+- `frequencies.json` — frecuencia media por servicio/sentido en día hábil.
+- `travel-times.json` — tiempo de viaje promedio por servicio/sentido en día hábil
+  (calculado desde `stop_times.txt`).
 
 El zip de GTFS (~50 MB) se cachea en `.cache/` para no redescargarlo
 cada vez.

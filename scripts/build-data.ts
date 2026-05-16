@@ -14,7 +14,8 @@
  *   - metro.geojson        — líneas y estaciones de Metro
  *   - buses.geojson        — recorridos y paraderos RED
  *   - ciclovias.geojson    — red de ciclovías AMS
- *   - frequencies.json     — frecuencias por servicio/franja (para shocks de frecuencia)
+ *   - frequencies.json     — frecuencia media por servicio/sentido
+ *   - travel-times.json    — tiempo de viaje promedio por servicio/sentido
  *
  * Nota: si las URLs cambian, ajustar las constantes abajo. El script es idempotente
  * y cachea el zip GTFS en .cache/ para no redescargar 50MB cada vez.
@@ -86,9 +87,58 @@ interface Frequency {
 	headway_secs: string;
 }
 
+interface StopTime {
+	trip_id: string;
+	arrival_time: string;
+	departure_time: string;
+	stop_id: string;
+	stop_sequence: string;
+}
+
 // ────────────────────────────────────────────────────────────────────────────
 // Helpers
 // ────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Convierte un string GTFS "HH:MM:SS" a segundos desde el inicio del día de
+ * servicio. GTFS permite HH ≥ 24 para viajes que cruzan la medianoche, así
+ * que no validamos contra 23h59m59s.
+ */
+function parseGtfsTime(time: string): number {
+	if (!time) return Number.NaN;
+	const parts = time.split(":");
+	if (parts.length !== 3) return Number.NaN;
+	const h = Number(parts[0]);
+	const m = Number(parts[1]);
+	const s = Number(parts[2]);
+	if (!Number.isFinite(h) || !Number.isFinite(m) || !Number.isFinite(s)) {
+		return Number.NaN;
+	}
+	return h * 3600 + m * 60 + s;
+}
+
+/** Distancia en km entre dos puntos `[lon, lat]` usando haversine. */
+function haversineKm(a: [number, number], b: [number, number]): number {
+	const R = 6371; // radio medio de la Tierra en km
+	const toRad = (deg: number) => (deg * Math.PI) / 180;
+	const lat1 = toRad(a[1]);
+	const lat2 = toRad(b[1]);
+	const dLat = toRad(b[1] - a[1]);
+	const dLon = toRad(b[0] - a[0]);
+	const x =
+		Math.sin(dLat / 2) ** 2 +
+		Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
+	return R * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
+}
+
+/** Largo total en km de una polilínea ordenada de coords `[lon, lat]`. */
+function shapeKm(coords: [number, number][]): number {
+	let km = 0;
+	for (let i = 1; i < coords.length; i++) {
+		km += haversineKm(coords[i - 1], coords[i]);
+	}
+	return km;
+}
 
 function ensureDir(p: string) {
 	if (!existsSync(p)) mkdirSync(p, { recursive: true });
@@ -303,20 +353,130 @@ async function buildGtfs() {
 		else busStops.push(feat);
 	}
 
-	// Frecuencias: indexar por route via trip → headway promedio por route_id
-	const tripRoute = new Map(trips.map((t) => [t.trip_id, t.route_id]));
+	const tripById = new Map(trips.map((t) => [t.trip_id, t]));
+	const WEEKDAY_SERVICES = new Set(["L", "LJ", "V"]);
+	const getTripMetricKey = (trip: Trip) => {
+		if (routeType.get(trip.route_id) !== "3") return trip.route_id;
+		const destination = trip.trip_headsign?.trim() ?? "";
+		return `${trip.route_id}|${trip.direction_id ?? ""}|${destination}`;
+	};
+
+	// Frecuencias: headway promedio por servicio/sentido en día hábil.
 	const freqByRoute = new Map<string, number[]>();
 	for (const f of frequencies) {
-		const rid = tripRoute.get(f.trip_id);
-		if (!rid) continue;
-		const arr = freqByRoute.get(rid) ?? [];
-		arr.push(Number(f.headway_secs));
-		freqByRoute.set(rid, arr);
+		const trip = tripById.get(f.trip_id);
+		if (!trip || !WEEKDAY_SERVICES.has(trip.service_id)) continue;
+		const headway = Number(f.headway_secs);
+		if (!Number.isFinite(headway) || headway <= 0) continue;
+		const metricKey = getTripMetricKey(trip);
+		const arr = freqByRoute.get(metricKey) ?? [];
+		arr.push(headway);
+		freqByRoute.set(metricKey, arr);
 	}
 	const freqOut: Record<string, { mean_headway_s: number; samples: number }> = {};
-	for (const [rid, arr] of freqByRoute.entries()) {
+	for (const [metricKey, arr] of freqByRoute.entries()) {
 		const mean = arr.reduce((a, b) => a + b, 0) / arr.length;
-		freqOut[rid] = { mean_headway_s: Math.round(mean), samples: arr.length };
+		freqOut[metricKey] = { mean_headway_s: Math.round(mean), samples: arr.length };
+	}
+
+	// ──────────────────────────────────────────────────────────────────────
+	// Tiempo de viaje por servicio/sentido (día hábil)
+	//
+	// stop_times.txt es el archivo gigante (~50 MB, ~1M filas). Por cada trip
+	// queremos la primera salida y la última llegada para obtener la duración
+	// total del recorrido. Además guardamos largo y velocidad comercial como
+	// respaldo, pero la UI muestra el tiempo promedio del viaje completo.
+	//
+	// Filtramos a "día hábil" combinando los service_ids L, LJ y V — Metro
+	// L1/L2/L4/L5 usan LJ+V por separado en vez de L, así que sin este set
+	// extendido se nos quedan fuera 4 de las 7 líneas. Los servicios S
+	// (sábado), D (domingo) y F (festivo) sí se excluyen.
+	// ──────────────────────────────────────────────────────────────────────
+	console.log("⏱  procesando stop_times.txt (puede tardar unos segundos)…");
+	const stopTimes = readCsvFromZip<StopTime>(zip, "stop_times.txt");
+
+	type TripWindow = {
+		firstDep: number;
+		lastArr: number;
+		minSeq: number;
+		maxSeq: number;
+	};
+	const tripWindows = new Map<string, TripWindow>();
+	for (const st of stopTimes) {
+		const seq = Number(st.stop_sequence);
+		const arr = parseGtfsTime(st.arrival_time);
+		const dep = parseGtfsTime(st.departure_time);
+		if (
+			!Number.isFinite(seq) ||
+			!Number.isFinite(arr) ||
+			!Number.isFinite(dep)
+		) {
+			continue;
+		}
+		const cur = tripWindows.get(st.trip_id);
+		if (!cur) {
+			tripWindows.set(st.trip_id, {
+				firstDep: dep,
+				lastArr: arr,
+				minSeq: seq,
+				maxSeq: seq,
+			});
+			continue;
+		}
+		if (seq < cur.minSeq) {
+			cur.minSeq = seq;
+			cur.firstDep = dep;
+		}
+		if (seq > cur.maxSeq) {
+			cur.maxSeq = seq;
+			cur.lastArr = arr;
+		}
+	}
+
+	const travelTimeAcc = new Map<
+		string,
+		{ totalKm: number; totalHours: number; samples: number }
+	>();
+	for (const t of trips) {
+		if (!WEEKDAY_SERVICES.has(t.service_id)) continue;
+		const window = tripWindows.get(t.trip_id);
+		if (!window) continue;
+		const durationSec = window.lastArr - window.firstDep;
+		if (!Number.isFinite(durationSec) || durationSec <= 0) continue;
+		const coords = t.shape_id ? shapeIndex.get(t.shape_id) : undefined;
+		if (!coords || coords.length < 2) continue;
+		const km = shapeKm(coords);
+		if (km <= 0) continue;
+		const hours = durationSec / 3600;
+		const metricKey = getTripMetricKey(t);
+		const acc = travelTimeAcc.get(metricKey) ?? {
+			totalKm: 0,
+			totalHours: 0,
+			samples: 0,
+		};
+		acc.totalKm += km;
+		acc.totalHours += hours;
+		acc.samples += 1;
+		travelTimeAcc.set(metricKey, acc);
+	}
+
+	const travelTimesOut: Record<
+		string,
+		{
+			mean_minutes: number;
+			mean_km: number;
+			avg_kmh: number;
+			samples: number;
+		}
+	> = {};
+	for (const [metricKey, acc] of travelTimeAcc.entries()) {
+		const avgKmh = acc.totalKm / acc.totalHours;
+		travelTimesOut[metricKey] = {
+			mean_minutes: Math.round((acc.totalHours / acc.samples) * 60),
+			mean_km: Math.round((acc.totalKm / acc.samples) * 10) / 10,
+			avg_kmh: Math.round(avgKmh * 10) / 10,
+			samples: acc.samples,
+		};
 	}
 
 	// Emitir
@@ -345,6 +505,10 @@ async function buildGtfs() {
 		),
 	);
 	writeFileSync(join(OUT_DIR, "frequencies.json"), JSON.stringify(freqOut, null, 2));
+	writeFileSync(
+		join(OUT_DIR, "travel-times.json"),
+		JSON.stringify(travelTimesOut, null, 2),
+	);
 
 	console.log(
 		`✓ metro.geojson (${metroFeatures.length} líneas, ${metroStops.length} estaciones)`,
@@ -357,6 +521,9 @@ async function buildGtfs() {
 		`✓ buses.geojson (${busFeatures.length} recorridos, ${busStopCount} paraderos RED, ${otherStopCount} otros puntos)`,
 	);
 	console.log(`✓ frequencies.json (${Object.keys(freqOut).length} servicios)`);
+	console.log(
+		`✓ travel-times.json (${Object.keys(travelTimesOut).length} servicios — día hábil ${[...WEEKDAY_SERVICES].join("/")})`,
+	);
 }
 
 async function buildCiclovias() {

@@ -1,5 +1,5 @@
 import "maplibre-gl/dist/maplibre-gl.css";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { DEFAULT_VISIBLE_LAYERS, LAYER_TOGGLES } from "./config";
 import { MapLegend } from "./Legend";
 import type { HoverInfo, LayerVisibility } from "./types";
@@ -14,7 +14,7 @@ export function SantiagoMapPage() {
 		DEFAULT_VISIBLE_LAYERS,
 	);
 	const [hoverInfo, setHoverInfo] = useState<HoverInfo>(null);
-	const { containerRef, resetView } = useSantiagoMap(
+	const { containerRef, resetView, setPinnedInfo } = useSantiagoMap(
 		visibleLayers,
 		setHoverInfo,
 	);
@@ -23,6 +23,26 @@ export function SantiagoMapPage() {
 
 	const toggleLayer = (id: keyof LayerVisibility) =>
 		setVisibleLayers((current) => ({ ...current, [id]: !current[id] }));
+
+	const clearPinned = useCallback(() => {
+		setPinnedInfo(null);
+		setHoverInfo(null);
+	}, [setPinnedInfo]);
+
+	useEffect(() => {
+		const handleKeyDown = (e: KeyboardEvent) => {
+			if (e.key === "Escape") clearPinned();
+		};
+		document.addEventListener("keydown", handleKeyDown);
+		return () => document.removeEventListener("keydown", handleKeyDown);
+	}, [clearPinned]);
+
+	const showInfo = hoverInfo;
+	const pinnedNote = showInfo?.pinned
+		? "Fijado"
+		: showInfo
+			? "Click para fijar"
+			: null;
 
 	return (
 		<main className="relative h-[100svh] w-full overflow-hidden bg-[#edf4e8] text-[#102f37]">
@@ -92,22 +112,53 @@ export function SantiagoMapPage() {
 					</div>
 
 					<div className="mt-4 rounded-2xl border border-[#d9e7e4] bg-white/72 p-3">
-						{hoverInfo ? (
+						{showInfo ? (
 							<div className="flex gap-3">
 								<span
 									className="mt-1 h-3 w-3 shrink-0 rounded-full"
-									style={{ backgroundColor: hoverInfo.accent }}
+									style={{ backgroundColor: showInfo.accent }}
 								/>
 								<div>
-									<p className="m-0 text-[10px] font-black uppercase tracking-[0.2em] text-[#5b777c]">
-										{hoverInfo.kind}
-									</p>
-									<p className="m-0 mt-0.5 text-sm font-black text-[#102f37]">
-										{hoverInfo.title}
-									</p>
-									<p className="m-0 mt-1 text-xs leading-4 text-[#5b777c]">
-										{hoverInfo.description}
-									</p>
+									<div className="flex items-start justify-between gap-2">
+										<div>
+											<p className="m-0 text-[10px] font-black uppercase tracking-[0.2em] text-[#5b777c]">
+												{showInfo.kind}
+											</p>
+											<p className="m-0 mt-0.5 text-sm font-black text-[#102f37]">
+												{showInfo.title}
+											</p>
+											<p className="m-0 mt-1 text-xs leading-4 text-[#5b777c]">
+												{showInfo.description}
+											</p>
+										</div>
+										{showInfo.pinned && (
+											<button
+												type="button"
+												onClick={clearPinned}
+												className="ml-2 shrink-0 rounded-full border border-[#c2d5d8] bg-white/80 p-1.5 text-[10px] font-bold text-[#24525b] shadow-sm transition hover:-translate-y-0.5 hover:border-[#5bb6a6] hover:bg-white"
+												aria-label="Cerrar detalle"
+											>
+												✕
+											</button>
+										)}
+									</div>
+									{showInfo.details?.length ? (
+										<div className="mt-2 grid gap-1.5">
+											{showInfo.details.map((detail) => (
+												<p
+													key={detail}
+													className="m-0 rounded-xl bg-[#f5faf7] px-2.5 py-1.5 text-xs font-semibold leading-4 text-[#315a61]"
+												>
+													{detail}
+												</p>
+											))}
+										</div>
+									) : null}
+									{pinnedNote ? (
+										<p className="m-0 mt-2 text-[11px] font-semibold leading-4 text-[#789197]">
+											{pinnedNote}
+										</p>
+									) : null}
 								</div>
 							</div>
 						) : (

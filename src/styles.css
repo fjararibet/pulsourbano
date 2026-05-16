@@ -86,3 +86,12 @@ button {
 	line-height: 1.35;
 	color: #42656b;
 }
+
+.popup-pin-hint {
+	margin-top: 7px !important;
+	font-size: 10px !important;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	color: #789197;
+	text-align: center;
+}
