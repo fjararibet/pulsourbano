@@ -159,7 +159,7 @@ npm run preview      # Vite preview server
 
 ### Local Development
 
-Both local and production runtimes use **D1 via Wrangler**. There is no local file-backed SQLite; the app talks only to the D1 binding (miniflare-backed locally, Cloudflare D1 in production). No SQLite driver (`better-sqlite3`, `@libsql/client`) is installed — `drizzle-kit` is only used to generate migration SQL from the schema.
+Both local and production runtimes use **D1 via Wrangler**. There is no local file-backed SQLite; the app talks only to the D1 binding (miniflare-backed locally, Cloudflare D1 in production). For local development, interact with D1 directly through `npx wrangler` commands rather than a local SQLite client — `drizzle-kit` is only used to generate migration SQL from the schema.
 
 ```bash
 # Generate a migration from schema changes (writes to ./drizzle)
