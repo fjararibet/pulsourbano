@@ -3,8 +3,8 @@ import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query
 import type { ReactNode } from "react";
 import TanstackQueryProvider, {
 	getContext,
-} from "./integrations/tanstack-query/root-provider";
-import { routeTree } from "./routeTree.gen";
+} from "./integrations/tanstack-query/root-provider.tsx";
+import { routeTree } from "./routeTree.gen.ts";
 
 export function getRouter() {
 	const context = getContext();
@@ -16,13 +16,11 @@ export function getRouter() {
 		defaultPreload: "intent",
 		defaultPreloadStaleTime: 0,
 
-		Wrap: (props: { children: ReactNode }) => {
-			return (
-				<TanstackQueryProvider context={context}>
-					{props.children}
-				</TanstackQueryProvider>
-			);
-		},
+		Wrap: (props: { children: ReactNode }) => (
+			<TanstackQueryProvider context={context}>
+				{props.children}
+			</TanstackQueryProvider>
+		),
 	});
 
 	setupRouterSsrQueryIntegration({ router, queryClient: context.queryClient });

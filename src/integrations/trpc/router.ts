@@ -1,6 +1,6 @@
 import type { TRPCRouterRecord } from "@trpc/server";
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "./init";
+import { createTrpcRouter, publicProcedure } from "./init.ts";
 
 const todos = [
 	{ id: 1, name: "Get groceries" },
@@ -19,7 +19,7 @@ const todosRouter = {
 		}),
 } satisfies TRPCRouterRecord;
 
-export const trpcRouter = createTRPCRouter({
+export const trpcRouter = createTrpcRouter({
 	todos: todosRouter,
 });
 export type TRPCRouter = typeof trpcRouter;

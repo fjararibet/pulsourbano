@@ -5,5 +5,5 @@ const t = initTRPC.create({
 	transformer: superjson,
 });
 
-export const createTRPCRouter = t.router;
+export const createTrpcRouter = t.router;
 export const publicProcedure = t.procedure;

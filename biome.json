@@ -24,7 +24,18 @@
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": true
+			"recommended": true,
+			"style": {
+				"noDefaultExport": "off",
+				"noMagicNumbers": "off",
+				"useComponentExportOnlyModules": "off"
+			},
+			"performance": {
+				"noNamespaceImport": "off"
+			},
+			"correctness": {
+				"noNodejsModules": "off"
+			}
 		}
 	},
 	"javascript": {

@@ -3,7 +3,7 @@ import {
 	HeadContent,
 	Scripts,
 } from "@tanstack/react-router";
-import Header from "../components/Header";
+import Header from "../components/Header.tsx";
 import appCss from "../styles.css?url";
 
 type MyRouterContext = object;
@@ -34,7 +34,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
-		<html lang="en" suppressHydrationWarning>
+		<html lang="en" suppressHydrationWarning={true}>
 			<head>
 				<HeadContent />
 			</head>
