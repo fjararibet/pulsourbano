@@ -1,0 +1,134 @@
+- main [ref=e2]:
+  - generic [ref=e4]:
+    - region "Map" [ref=e5]
+    - generic:
+      - generic [ref=e6]:
+        - button "Zoom in" [ref=e7] [cursor=pointer]
+        - button "Zoom out" [ref=e9] [cursor=pointer]
+        - button "Reset bearing to north" [ref=e11]
+      - group [ref=e13]:
+        - generic "Toggle attribution" [ref=e14] [cursor=pointer]
+        - generic [ref=e15]:
+          - text: ©
+          - link "OSM" [ref=e16] [cursor=pointer]:
+            - /url: https://www.openstreetmap.org/copyright
+          - text: ©
+          - link "CARTO" [ref=e17] [cursor=pointer]:
+            - /url: https://carto.com/attributions
+  - generic [ref=e18]:
+    - generic [ref=e19]:
+      - generic [ref=e20]:
+        - paragraph [ref=e21]: Mapa de movilidad
+        - heading "SimSantiago" [level=1] [ref=e22]
+      - button "Reset vista" [ref=e23]
+    - paragraph [ref=e24]: Prende o apaga capas para leer la red. Pasa el cursor sobre estaciones, líneas y ciclovías para ver detalles sin llenar el mapa de texto.
+    - generic [ref=e25]:
+      - button "Comunas RM Límites comunales OFF" [ref=e26]:
+        - generic [ref=e28]:
+          - generic [ref=e29]: Comunas RM
+          - generic [ref=e30]: Límites comunales
+        - generic [ref=e31]: "OFF"
+      - button "Metro Líneas por color oficial ON" [pressed] [ref=e32]:
+        - generic [ref=e34]:
+          - generic [ref=e35]: Metro
+          - generic [ref=e36]: Líneas por color oficial
+        - generic [ref=e37]: "ON"
+      - button "Estaciones Nombre al pasar el cursor ON" [pressed] [ref=e38]:
+        - generic [ref=e40]:
+          - generic [ref=e41]: Estaciones
+          - generic [ref=e42]: Nombre al pasar el cursor
+        - generic [ref=e43]: "ON"
+      - button "Micros RED Recorridos en baja opacidad ON" [pressed] [ref=e44]:
+        - generic [ref=e46]:
+          - generic [ref=e47]: Micros RED
+          - generic [ref=e48]: Recorridos en baja opacidad
+        - generic [ref=e49]: "ON"
+      - button "Paraderos RED Aparecen al acercar zoom OFF" [ref=e50]:
+        - generic [ref=e52]:
+          - generic [ref=e53]: Paraderos RED
+          - generic [ref=e54]: Aparecen al acercar zoom
+        - generic [ref=e55]: "OFF"
+      - button "Ciclovías Red ciclista segmentada ON" [pressed] [ref=e56]:
+        - generic [ref=e58]:
+          - generic [ref=e59]: Ciclovías
+          - generic [ref=e60]: Red ciclista segmentada
+        - generic [ref=e61]: "ON"
+    - generic [ref=e62]:
+      - generic [ref=e63]:
+        - generic [ref=e64]:
+          - paragraph [ref=e65]: Simulación rápida
+          - heading "CO2 por cambio modal" [level=2] [ref=e66]
+        - generic [ref=e67]: Cierre
+      - generic [ref=e68]:
+        - generic [ref=e69]:
+          - text: Tipo de escenario
+          - combobox "Tipo de escenario" [ref=e70]:
+            - option "Cierre de Metro" [selected]
+            - option "Apertura de Metro"
+        - generic [ref=e71]:
+          - generic [ref=e72]:
+            - generic [ref=e74]: Viajes afectados/día
+            - spinbutton "Viajes afectados/día" [ref=e75]: "20000"
+          - generic [ref=e76]:
+            - generic [ref=e77]:
+              - generic [ref=e78]: Pasa a auto
+              - generic [ref=e79]: "%"
+            - spinbutton "Pasa a auto %" [ref=e80]: "25"
+          - generic [ref=e81]:
+            - generic [ref=e82]:
+              - generic [ref=e83]: Distancia auto
+              - generic [ref=e84]: km
+            - spinbutton "Distancia auto km" [ref=e85]: "8"
+          - generic [ref=e86]:
+            - generic [ref=e88]: Ocupación auto
+            - spinbutton "Ocupación auto" [ref=e89]: "1.3"
+          - generic [ref=e90]:
+            - generic [ref=e91]:
+              - generic [ref=e92]: Factor CO2
+              - generic [ref=e93]: kg/km
+            - spinbutton "Factor CO2 kg/km" [ref=e94]: "0.2"
+          - generic [ref=e95]:
+            - generic [ref=e97]: Días/año
+            - spinbutton "Días/año" [ref=e98]: "250"
+      - generic [ref=e99]:
+        - generic [ref=e100]:
+          - paragraph [ref=e101]: Viajes-auto/día
+          - paragraph [ref=e102]: "+3.846"
+        - generic [ref=e103]:
+          - paragraph [ref=e104]: Veh-km/día
+          - paragraph [ref=e105]: "+30.769"
+        - generic [ref=e106]:
+          - paragraph [ref=e107]: Kg CO2/día extra
+          - paragraph [ref=e108]: "+6.154"
+        - generic [ref=e109]:
+          - paragraph [ref=e110]: Ton CO2/año extra
+          - paragraph [ref=e111]: +1.538,5
+      - generic [ref=e112]:
+        - generic [ref=e113]:
+          - paragraph [ref=e114]: Rangos de sensibilidad
+          - paragraph [ref=e115]: 10 · 25 · 40%
+        - generic [ref=e116]:
+          - generic [ref=e117]:
+            - generic [ref=e118]: Bajo
+            - generic [ref=e119]: +2.462 kg/día · +615,4 ton/año
+          - generic [ref=e120]:
+            - generic [ref=e121]: Medio
+            - generic [ref=e122]: +6.154 kg/día · +1.538,5 ton/año
+          - generic [ref=e123]:
+            - generic [ref=e124]: Alto
+            - generic [ref=e125]: +9.846 kg/día · +2.461,5 ton/año
+      - paragraph [ref=e126]: "Estimación exploratoria sin EOD: viajes afectados x cambio modal / ocupación x distancia x factor CO2. Los valores son supuestos editables."
+    - paragraph [ref=e128]: 4 de 6 capas activas. Explora pasando el cursor sobre la red.
+  - complementary:
+    - generic:
+      - generic: Comunas RM
+    - generic:
+      - generic: Metro
+    - generic:
+      - generic: Micros RED
+    - generic:
+      - generic: Paraderos RED
+    - generic:
+      - generic: Ciclovías
+    - generic:
+      - generic: Estaciones

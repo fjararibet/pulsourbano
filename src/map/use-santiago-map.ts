@@ -12,6 +12,8 @@ import {
 	type LonLat,
 	type StationImpact,
 } from "#/simulation/station-impact";
+import { getFrequencies } from "../simulation/server-frequencies";
+import { getTravelTimes } from "../simulation/server-travel-times";
 import { BASE_STYLE, INITIAL_ZOOM, SANTIAGO_CENTER } from "./config";
 import {
 	createPopupHtml,
@@ -33,19 +35,11 @@ import {
 	startSimulationImpactAnimation,
 } from "./layers";
 import { getBusesGeoJSON } from "./server-buses";
-import type {
-	FrequencyMap,
-	HoverInfo,
-	LayerVisibility,
-	TravelTimeMap,
-} from "./types";
-import {
-	formatStationName,
-	getFeatureNumber,
-	getFeatureString,
-	loadGeoJSON,
-	loadJSON,
-} from "./utils";
+import { getCiclobiasGeoJSON } from "./server-ciclobias";
+import { getComunasGeoJSON } from "./server-comunas";
+import { getMetroGeoJSON } from "./server-metro";
+import type { HoverInfo, LayerVisibility } from "./types";
+import { formatStationName, getFeatureNumber, getFeatureString } from "./utils";
 
 /**
  * Inicializa MapLibre, carga los GeoJSON de Metro/Buses/Ciclovías, monta las
@@ -155,12 +149,12 @@ export function useSantiagoMap(
 				resize();
 				const [comunas, metro, buses, cycleways, frequencies, travelTimes] =
 					await Promise.all([
-						loadGeoJSON("/data/comunas_rm.geojson"),
-						loadGeoJSON("/data/metro.geojson"),
+						getComunasGeoJSON().catch(() => null),
+						getMetroGeoJSON().catch(() => null),
 						getBusesGeoJSON().catch(() => null),
-						loadGeoJSON("/data/ciclovias.geojson"),
-						loadJSON<FrequencyMap>("/data/frequencies.geojson"),
-						loadJSON<TravelTimeMap>("/data/travel-times.geojson"),
+						getCiclobiasGeoJSON().catch(() => null),
+						getFrequencies().catch(() => null),
+						getTravelTimes().catch(() => null),
 					]);
 
 				if (comunas) addComunaLayers(map, comunas);

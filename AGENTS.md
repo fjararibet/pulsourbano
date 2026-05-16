@@ -201,11 +201,18 @@ Migrations generated with `drizzle-kit generate` go into `drizzle/`. Apply them 
 
 ### Production Migrations
 
-**Only FELIPE JARA is authorised to apply migrations in production.** Do not run `npm run db:apply:remote` or `wrangler d1 migrations apply --remote` unless you are FELIPE JARA. If you need a schema change deployed, generate the migration locally, commit it, and ask FELIPE JARA to apply it.
+To apply migrations in production (remote D1), use:
+
+```bash
+npm run db:dtpmgeo:apply:remote   # For DTPMGEO database
+npm run db:apply:remote           # For other databases
+```
+
+**Important:** Always generate the migration locally first with `npm run db:dtpmgeo:generate`, commit it, and verify it before applying to production.
 
 ### Database Isolation
 
-To keep data isolated (e.g., for a separate feature branch, tenant, or environment), **create a new D1 database** rather than sharing an existing one. Ask **FELIPE JARA** — the owner of the D1 instances — to provision one for you. Once created, add its binding to `wrangler.jsonc` and update `src/cloudflare-env.d.ts` accordingly.
+To keep data isolated (e.g., for a separate feature branch, tenant, or environment), **create a new D1 database** rather than sharing an existing one. Ask the owner of the D1 instances to provision one for you. Once created, add its binding to `wrangler.jsonc` and update `src/cloudflare-env.d.ts` accordingly.
 
 ---
 
