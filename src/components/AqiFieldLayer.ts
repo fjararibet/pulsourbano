@@ -1,5 +1,5 @@
 import type { Map as MapLibreMap } from "maplibre-gl";
-import { fieldStations } from "#/lib/aqi-field";
+import { fieldConfig, fieldStations } from "#/lib/aqi-field";
 
 const VERTEX_SHADER = `
 attribute vec2 a_pos;
@@ -19,6 +19,12 @@ uniform vec2 u_viewport;
 
 uniform vec2 u_stations[6];
 uniform float u_aqis[6];
+
+uniform float u_use_bounds;
+uniform float u_bounds_south;
+uniform float u_bounds_north;
+uniform float u_bounds_west;
+uniform float u_bounds_east;
 
 // ── Simplex noise (Ashima Arts) ──
 vec3 mod289_3(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
@@ -76,6 +82,12 @@ vec3 aqiToColor(float aqi) {
 void main() {
     float lat = u_lat_min + (gl_FragCoord.y / u_viewport.y) * (u_lat_max - u_lat_min);
     float lng = u_lng_min + (gl_FragCoord.x / u_viewport.x) * (u_lng_max - u_lng_min);
+
+    if (u_use_bounds > 0.5) {
+        if (lat < u_bounds_south || lat > u_bounds_north || lng < u_bounds_west || lng > u_bounds_east) {
+            discard;
+        }
+    }
 
     vec2 pos = vec2(lat, lng);
     float aqi = 25.0;
@@ -187,6 +199,10 @@ export function createAqiFieldLayer() {
 				return true;
 			}
 
+			if (!fieldConfig.enabled) {
+				return true;
+			}
+
 			renderCount++;
 			if (renderCount <= 3) {
 				console.log(`[AQI] render called (#${renderCount})`);
@@ -204,6 +220,11 @@ export function createAqiFieldLayer() {
 			const uViewport = gl.getUniformLocation(program, "u_viewport");
 			const uStations = gl.getUniformLocation(program, "u_stations");
 			const uAqis = gl.getUniformLocation(program, "u_aqis");
+			const uUseBounds = gl.getUniformLocation(program, "u_use_bounds");
+			const uBoundsSouth = gl.getUniformLocation(program, "u_bounds_south");
+			const uBoundsNorth = gl.getUniformLocation(program, "u_bounds_north");
+			const uBoundsWest = gl.getUniformLocation(program, "u_bounds_west");
+			const uBoundsEast = gl.getUniformLocation(program, "u_bounds_east");
 
 			if (
 				!uLatMin ||
@@ -212,7 +233,12 @@ export function createAqiFieldLayer() {
 				!uLngMax ||
 				!uViewport ||
 				!uStations ||
-				!uAqis
+				!uAqis ||
+				!uUseBounds ||
+				!uBoundsSouth ||
+				!uBoundsNorth ||
+				!uBoundsWest ||
+				!uBoundsEast
 			) {
 				console.warn("[AQI] render skipped — missing uniform locations");
 				return true;
@@ -253,6 +279,14 @@ export function createAqiFieldLayer() {
 			}
 			gl.uniform2fv(uStations, stationArr);
 			gl.uniform1fv(uAqis, aqiArr);
+
+			gl.uniform1f(uUseBounds, fieldConfig.bounds ? 1.0 : 0.0);
+			if (fieldConfig.bounds) {
+				gl.uniform1f(uBoundsSouth, fieldConfig.bounds.south);
+				gl.uniform1f(uBoundsNorth, fieldConfig.bounds.north);
+				gl.uniform1f(uBoundsWest, fieldConfig.bounds.west);
+				gl.uniform1f(uBoundsEast, fieldConfig.bounds.east);
+			}
 
 			// Draw full-screen triangle
 			gl.drawArrays(gl.TRIANGLES, 0, 3);

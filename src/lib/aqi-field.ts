@@ -26,6 +26,16 @@ export const FIELD_PARAMS = {
 	opacity: 0.35,
 };
 
+export const fieldConfig = {
+	enabled: true as boolean,
+	bounds: null as {
+		south: number;
+		north: number;
+		west: number;
+		east: number;
+	} | null,
+};
+
 export function computeAqiAt(lat: number, lng: number): number {
 	let aqi = FIELD_PARAMS.baseAqi;
 
