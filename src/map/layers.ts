@@ -502,7 +502,7 @@ export function addBusLayers(
 		filter: [
 			"all",
 			["==", ["geometry-type"], "Point"],
-			["==", ["get", "stop_kind"], "bus_stop"],
+			["==", ["get", "stop_kind"], "stop"],
 		],
 		minzoom: 13,
 		paint: {
