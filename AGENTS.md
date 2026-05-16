@@ -159,7 +159,7 @@ npm run preview      # Vite preview server
 
 ### Local Development
 
-Both local and production runtimes use **D1 via Wrangler**. There is no local file-backed SQLite; the app talks only to the D1 binding (miniflare-backed locally, Cloudflare D1 in production). For local development, interact with D1 directly through `npx wrangler` commands rather than a local SQLite client — `drizzle-kit` is only used to generate migration SQL from the schema.
+Both local and production runtimes use **D1 via Wrangler**. There is no local file-backed SQLite; the app talks only to the D1 binding (miniflare-backed locally, Cloudflare D1 in production). For local development, interact with D1 directly through `npx wrangler` commands rather than a local SQLite client.
 
 ```bash
 # Generate a migration from schema changes (writes to ./drizzle)
@@ -167,40 +167,45 @@ npm run db:generate
 
 # Apply migrations to the local D1 (miniflare)
 npm run db:apply:local
-
-# Apply migrations to the remote D1 (Cloudflare)
-npm run db:apply:remote
 ```
 
 Ad-hoc queries against the local D1 go through wrangler:
 
 ```bash
-npx wrangler d1 execute esgrima --local --command "SELECT COUNT(*) FROM viaje"
-npx wrangler d1 execute esgrima --local --file=path/to/script.sql
-npx wrangler d1 export esgrima --local --output=snapshot.sql   # dump for backup / replay
+npx wrangler d1 execute EOD2012 --local --command "SELECT COUNT(*) FROM viaje"
+npx wrangler d1 execute EOD2012 --local --file=path/to/script.sql
+npx wrangler d1 export EOD2012 --local --output=snapshot.sql   # dump for backup / replay
 ```
 
-Schema lives in `src/db/schema.ts` and `src/db/eod-schema.ts`. The runtime uses the D1 binding directly (`DB`), passed per-request; there is no singleton Drizzle client file.
+Schema lives in `src/db/schema.ts` and `src/db/eod-schema.ts`. The runtime uses the D1 binding directly (`EOD2012`), passed per-request; there is no singleton Drizzle client file.
 
 ### Cloudflare D1
 
-In production (Cloudflare Workers), the database is **D1**, bound as `DB` in `wrangler.jsonc`:
+In production (Cloudflare Workers), the database is **D1**, bound as `EOD2012` in `wrangler.jsonc`:
 
 ```jsonc
 // wrangler.jsonc
 {
   "d1_databases": [
     {
-      "binding": "DB",
-      "database_name": "esgrima",
+      "binding": "EOD2012",
+      "database_name": "EOD2012",
       "database_id": "...",
-      "migrations_dir": "drizzle/migrations"
+      "migrations_dir": "drizzle"
     }
   ]
 }
 ```
 
-Migrations generated with `drizzle-kit generate` go into `drizzle/migrations/`. Apply them to D1 with Wrangler (`wrangler d1 migrations apply esgrima`).
+Migrations generated with `drizzle-kit generate` go into `drizzle/`. Apply them to D1 with Wrangler (`wrangler d1 migrations apply EOD2012`).
+
+### Production Migrations
+
+**Only FELIPE JARA is authorised to apply migrations in production.** Do not run `npm run db:apply:remote` or `wrangler d1 migrations apply --remote` unless you are FELIPE JARA. If you need a schema change deployed, generate the migration locally, commit it, and ask FELIPE JARA to apply it.
+
+### Database Isolation
+
+To keep data isolated (e.g., for a separate feature branch, tenant, or environment), **create a new D1 database** rather than sharing an existing one. Ask **FELIPE JARA** — the owner of the D1 instances — to provision one for you. Once created, add its binding to `wrangler.jsonc` and update `src/cloudflare-env.d.ts` accordingly.
 
 ---
 
@@ -212,7 +217,7 @@ Migrations generated with `drizzle-kit generate` go into `drizzle/migrations/`. 
   - `main`: `@tanstack/react-start/server-entry` (TanStack Start server entry)
   - `compatibility_date`: `2025-09-02`
   - `compatibility_flags`: `["nodejs_compat"]` (required for Node.js APIs)
-  - D1 database binding: `DB`
+  - D1 database binding: `EOD2012`
 
 - **`vite.config.ts`** — Cloudflare Vite plugin wires the SSR environment:
   ```ts
@@ -233,7 +238,7 @@ npm run deploy       # Builds then runs `wrangler deploy`
 You can also use Wrangler directly for D1 management, secrets, etc.:
 
 ```bash
-npx wrangler d1 migrations apply esgrima
+npx wrangler d1 migrations apply EOD2012
 npx wrangler secret put SOME_SECRET
 ```
 

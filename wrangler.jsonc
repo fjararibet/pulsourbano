@@ -8,10 +8,16 @@
 	"main": "@tanstack/react-start/server-entry",
 	"d1_databases": [
 		{
-			"binding": "DB",
-			"database_name": "esgrima",
+			"binding": "EOD2012",
+			"database_name": "EOD2012",
 			"database_id": "5ab7bd1a-2922-4e5b-9b83-93ca1b7def10",
-			"migrations_dir": "drizzle/migrations"
+			"migrations_dir": "drizzle"
+		},
+		{
+			"binding": "ADDITIONAL_EXAMPLE_DB",
+			"database_name": "additional-example-db",
+			"database_id": "30260338-714c-40b2-b645-2603a57f38d1",
+			"migrations_dir": "drizzle"
 		}
 	],
 }

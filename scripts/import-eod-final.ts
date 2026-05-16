@@ -3,10 +3,10 @@
  * stdout. The dump is meant to be piped into wrangler:
  *
  *   npx tsx scripts/import-eod-final.ts > csv_export/dump.sql
- *   npx wrangler d1 execute esgrima --local --file=csv_export/dump.sql
+ *   npx wrangler d1 execute EOD2012 --local --file=csv_export/dump.sql
  *
  * The destination tables must already exist (apply the drizzle migration
- * first: `wrangler d1 execute esgrima --local --file=drizzle/0000_legal_nick_fury.sql`).
+ * first: `wrangler d1 execute EOD2012 --local --file=drizzle/0000_legal_nick_fury.sql`).
  */
 import { readFileSync, createWriteStream } from "node:fs";
 import { resolve } from "node:path";
