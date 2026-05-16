@@ -3,7 +3,8 @@ import {
 	HeadContent,
 	Scripts,
 } from "@tanstack/react-router";
-import Header from "../components/Header.tsx";
+import Header from "../components/Header";
+
 import appCss from "../styles.css?url";
 
 type MyRouterContext = object;
@@ -19,7 +20,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 				content: "width=device-width, initial-scale=1",
 			},
 			{
-				title: "esgrima",
+				title: "Esgrima",
 			},
 		],
 		links: [
