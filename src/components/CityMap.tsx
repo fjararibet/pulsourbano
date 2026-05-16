@@ -1,12 +1,7 @@
 import { useEffect, useState } from "react";
-import {
-	Map as MapLibreMap,
-	NavigationControl,
-	FullscreenControl,
-	GeolocateControl,
-	ScaleControl,
-} from "react-map-gl/maplibre";
+import { Map as MapLibreMap } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
+import { fetchCustomStyle } from "#/lib/map-style";
 
 const SANTIAGO = {
 	center: { longitude: -70.6693, latitude: -33.4489 },
@@ -17,12 +12,14 @@ const SANTIAGO = {
 
 export default function CityMap() {
 	const [isClient, setIsClient] = useState(false);
+	const [mapStyle, setMapStyle] = useState<any>(null);
 
 	useEffect(() => {
 		setIsClient(true);
+		fetchCustomStyle().then(setMapStyle);
 	}, []);
 
-	if (!isClient) {
+	if (!isClient || !mapStyle) {
 		return (
 			<div className="flex h-full w-full items-center justify-center bg-gray-100">
 				<p className="text-lg text-gray-600">Cargando mapa...</p>
@@ -39,17 +36,12 @@ export default function CityMap() {
 					zoom: SANTIAGO.defaultZoom,
 				}}
 				style={{ width: "100%", height: "100%" }}
-				mapStyle="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
+				mapStyle={mapStyle}
 				maxBounds={SANTIAGO.bounds}
 				minZoom={SANTIAGO.minZoom}
 				dragRotate={false}
 				touchPitch={false}
-			>
-				<NavigationControl position="top-right" />
-				<FullscreenControl position="top-right" />
-				<GeolocateControl position="top-right" />
-				<ScaleControl position="bottom-left" />
-			</MapLibreMap>
+			/>
 		</div>
 	);
 }
