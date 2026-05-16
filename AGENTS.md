@@ -108,6 +108,17 @@ prek run --all-files   # Run all hooks across the whole repo
 prek run biome-check    # Run a specific hook
 ```
 
+### Git Workflow
+
+The `main` branch enforces **strict linear history**. Merge commits are not allowed.
+
+During active development, branches are merged directly into `main` via pull requests. Always rebase your feature branch on the latest `main` before merging to keep history clean and linear.
+
+```bash
+git fetch origin
+git rebase origin/main
+```
+
 ### Environment Variables
 
 Environment variables are validated via `@t3-oss/env-core` in `src/env.ts`. Server vars are validated at runtime, client vars (prefixed with `VITE_`) are validated at build time.
