@@ -1,7 +1,7 @@
-import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "./init";
-import { mockStations } from "#/lib/air-quality-mock";
 import type { TRPCRouterRecord } from "@trpc/server";
+import { z } from "zod";
+import { mockStations } from "#/lib/air-quality-mock";
+import { createTRPCRouter, publicProcedure } from "./init";
 
 const airQualityRouter = {
 	list: publicProcedure.query(() => mockStations),

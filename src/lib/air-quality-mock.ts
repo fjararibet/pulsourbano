@@ -84,13 +84,16 @@ export function generateHeatmapPoints(): {
 }[] {
 	const points: { longitude: number; latitude: number; pm25: number }[] = [];
 
-	// Base grid across the metro area
-	for (let lat = -33.65; lat <= -33.25; lat += 0.015) {
-		for (let lng = -70.85; lng <= -70.45; lng += 0.015) {
+	const latMin = -33.65;
+	const latMax = -33.25;
+	const lngMin = -70.85;
+	const lngMax = -70.45;
+	const step = 0.005;
+
+	for (let lat = latMin; lat <= latMax; lat += step) {
+		for (let lng = lngMin; lng <= lngMax; lng += step) {
 			// Distance from city center (approx -33.45, -70.65)
-			const distCenter = Math.sqrt(
-				Math.pow(lat + 33.45, 2) + Math.pow(lng + 70.65, 2),
-			);
+			const distCenter = Math.sqrt((lat + 33.45) ** 2 + (lng + 70.65) ** 2);
 
 			// Industrial/western areas (Pudahuel, Quinta Normal) tend to be worse
 			const westBias = lng < -70.7 ? 1.4 : 1.0;

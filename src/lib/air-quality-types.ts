@@ -21,14 +21,16 @@ export type AqiLevel =
 	| "moderate"
 	| "unhealthy-sensitive"
 	| "unhealthy"
-	| "very-unhealthy";
+	| "very-unhealthy"
+	| "hazardous";
 
 export function getAqiLevel(aqi: number): AqiLevel {
 	if (aqi <= 50) return "good";
 	if (aqi <= 100) return "moderate";
 	if (aqi <= 150) return "unhealthy-sensitive";
 	if (aqi <= 200) return "unhealthy";
-	return "very-unhealthy";
+	if (aqi <= 300) return "very-unhealthy";
+	return "hazardous";
 }
 
 export function getAqiColor(aqi: number): string {
@@ -44,6 +46,8 @@ export function getAqiColor(aqi: number): string {
 			return "#EF4444";
 		case "very-unhealthy":
 			return "#7C3AED";
+		case "hazardous":
+			return "#7C0023";
 	}
 }
 
@@ -60,5 +64,7 @@ export function getAqiLabel(aqi: number): string {
 			return "Dañino";
 		case "very-unhealthy":
 			return "Muy dañino";
+		case "hazardous":
+			return "Peligroso";
 	}
 }
