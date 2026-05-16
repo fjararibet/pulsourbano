@@ -5,6 +5,9 @@ import type { LayerVisibility } from "./types";
 export const SANTIAGO_CENTER: [number, number] = [-70.6483, -33.4569];
 export const INITIAL_ZOOM = 11;
 
+/** Zoom al hacer click en una comuna. */
+export const COMUNA_ZOOM = 13;
+
 /** Color base de la red de buses RED. */
 export const BUS_COLOR = "#d75235";
 

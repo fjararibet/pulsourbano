@@ -101,6 +101,9 @@ export function bringComunaHoverToFront(map: MapLibreMap) {
 	for (const layerId of COMUNA_HOVER_LAYER_IDS) {
 		if (map.getLayer(layerId)) map.moveLayer(layerId);
 	}
+	if (map.getLayer(COMUNA_INTERACTION_LAYER_ID)) {
+		map.moveLayer(COMUNA_INTERACTION_LAYER_ID);
+	}
 }
 
 /** Capas del Metro: halo blanco, línea coloreada y estaciones. */

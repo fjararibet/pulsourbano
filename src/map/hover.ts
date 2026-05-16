@@ -5,6 +5,7 @@ import type {
 	Map as MapLibreMap,
 	Popup,
 } from "maplibre-gl";
+import maplibregl from "maplibre-gl";
 import {
 	BUS_COLOR,
 	COMUNA_COLOR,
@@ -120,6 +121,7 @@ export function setupComunaHover(
 	popup: Popup,
 	setHoverInfo: (info: HoverInfo) => void,
 	pinController: HoverPinController,
+	comunaZoom: number,
 ) {
 	let activeCode: number | null = null;
 
@@ -161,6 +163,15 @@ export function setupComunaHover(
 	const onClick = (event: MapLayerMouseEvent) => {
 		const feature = event.features?.[0];
 		if (!feature) return;
+		const coords = (feature.geometry as GeoJSON.Polygon).coordinates[0] as [
+			number,
+			number,
+		][];
+		const bounds = coords.reduce(
+			(b, [lng, lat]) => b.extend([lng, lat]),
+			new maplibregl.LngLatBounds(coords[0], coords[0]),
+		);
+		map.fitBounds(bounds, { padding: 48, maxZoom: comunaZoom, duration: 500 });
 		const info = formatComunaHover(feature, true);
 		setComunaFilter(feature);
 		pinController.pin(info, clearComunaEffects);

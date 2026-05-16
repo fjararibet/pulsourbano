@@ -12,7 +12,12 @@ import {
 	type LonLat,
 	type StationImpact,
 } from "#/simulation/station-impact";
-import { BASE_STYLE, INITIAL_ZOOM, SANTIAGO_CENTER } from "./config";
+import {
+	BASE_STYLE,
+	COMUNA_ZOOM,
+	INITIAL_ZOOM,
+	SANTIAGO_CENTER,
+} from "./config";
 import {
 	createPopupHtml,
 	type HoverPinController,
@@ -189,7 +194,13 @@ export function useSantiagoMap(
 
 				if (comunas) {
 					hoverCleanup.push(
-						setupComunaHover(map, popup, setHoverInfo, pinController),
+						setupComunaHover(
+							map,
+							popup,
+							setHoverInfo,
+							pinController,
+							COMUNA_ZOOM,
+						),
 					);
 				}
 
@@ -332,7 +343,14 @@ export function useSantiagoMap(
 		};
 	}, [setHoverInfo]);
 
-	return { containerRef, clearPinned };
+	const resetView = () => {
+		mapRef.current?.setCenter(SANTIAGO_CENTER);
+		mapRef.current?.setZoom(INITIAL_ZOOM);
+		mapRef.current?.setBearing(0);
+		mapRef.current?.setPitch(0);
+	};
+
+	return { containerRef, clearPinned, resetView };
 }
 
 const integerFormatter = new Intl.NumberFormat("es-CL", {
