@@ -8,10 +8,11 @@ import {
 } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 
-const SANTIAGO_VIEW_STATE = {
-	longitude: -70.6693,
-	latitude: -33.4489,
-	zoom: 12,
+const SANTIAGO = {
+	center: { longitude: -70.6693, latitude: -33.4489 },
+	bounds: [-70.85, -33.65, -70.45, -33.25] as [number, number, number, number],
+	minZoom: 10,
+	defaultZoom: 12,
 };
 
 export default function CityMap() {
@@ -32,9 +33,17 @@ export default function CityMap() {
 	return (
 		<div className="h-full w-full">
 			<MapLibreMap
-				initialViewState={SANTIAGO_VIEW_STATE}
+				initialViewState={{
+					longitude: SANTIAGO.center.longitude,
+					latitude: SANTIAGO.center.latitude,
+					zoom: SANTIAGO.defaultZoom,
+				}}
 				style={{ width: "100%", height: "100%" }}
 				mapStyle="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
+				maxBounds={SANTIAGO.bounds}
+				minZoom={SANTIAGO.minZoom}
+				dragRotate={false}
+				touchPitch={false}
 			>
 				<NavigationControl position="top-right" />
 				<FullscreenControl position="top-right" />
