@@ -19,6 +19,9 @@
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.26.0",
+    "@deck.gl/aggregation-layers": "^9.3.2",
+    "@deck.gl/core": "^9.3.2",
+    "@deck.gl/react": "^9.3.2",
     "@faker-js/faker": "^10.3.0",
     "@t3-oss/env-core": "^0.13.10",
     "@tailwindcss/vite": "^4.1.18",

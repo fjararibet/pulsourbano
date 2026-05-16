@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Map as MapLibreMap } from "react-map-gl/maplibre";
+import type { MapRef } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { fetchCustomStyle } from "#/lib/map-style";
+import HeatmapOverlay from "./HeatmapOverlay";
 
 const SANTIAGO = {
 	center: { longitude: -70.6693, latitude: -33.4489 },
@@ -10,14 +12,30 @@ const SANTIAGO = {
 	defaultZoom: 12,
 };
 
-export default function CityMap() {
+interface CityMapProps {
+	onMapRef?: (ref: MapRef | null) => void;
+}
+
+export default function CityMap({ onMapRef }: CityMapProps) {
 	const [isClient, setIsClient] = useState(false);
 	const [mapStyle, setMapStyle] = useState<any>(null);
+	const [viewState, setViewState] = useState({
+		longitude: SANTIAGO.center.longitude,
+		latitude: SANTIAGO.center.latitude,
+		zoom: SANTIAGO.defaultZoom,
+	});
+	const mapRef = useRef<MapRef | null>(null);
 
 	useEffect(() => {
 		setIsClient(true);
 		fetchCustomStyle().then(setMapStyle);
 	}, []);
+
+	useEffect(() => {
+		if (mapRef.current) {
+			onMapRef?.(mapRef.current);
+		}
+	}, [onMapRef]);
 
 	if (!isClient || !mapStyle) {
 		return (
@@ -28,8 +46,9 @@ export default function CityMap() {
 	}
 
 	return (
-		<div className="h-full w-full">
+		<div className="relative h-full w-full">
 			<MapLibreMap
+				ref={mapRef}
 				initialViewState={{
 					longitude: SANTIAGO.center.longitude,
 					latitude: SANTIAGO.center.latitude,
@@ -41,6 +60,18 @@ export default function CityMap() {
 				minZoom={SANTIAGO.minZoom}
 				dragRotate={false}
 				touchPitch={false}
+				onMove={(evt) => {
+					setViewState({
+						longitude: evt.viewState.longitude,
+						latitude: evt.viewState.latitude,
+						zoom: evt.viewState.zoom,
+					});
+				}}
+			/>
+			<HeatmapOverlay
+				longitude={viewState.longitude}
+				latitude={viewState.latitude}
+				zoom={viewState.zoom}
 			/>
 		</div>
 	);
