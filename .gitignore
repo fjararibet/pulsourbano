@@ -11,3 +11,14 @@ dist-ssr
 .vinxi
 __unconfig*
 todos.json
+
+# SimSantiago pipeline cache (GTFS zip)
+.cache/
+
+# Playwright (debug runs)
+.playwright-mcp/
+test-results/
+
+# Local SQLite (si llegas a usar D1 local)
+*.db
+*.sqlite

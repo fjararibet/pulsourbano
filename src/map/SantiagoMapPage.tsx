@@ -1,0 +1,126 @@
+import "maplibre-gl/dist/maplibre-gl.css";
+import { useState } from "react";
+import { DEFAULT_VISIBLE_LAYERS, LAYER_TOGGLES } from "./config";
+import { MapLegend } from "./Legend";
+import type { HoverInfo, LayerVisibility } from "./types";
+import { useSantiagoMap } from "./use-santiago-map";
+
+/**
+ * Página principal: contenedor del mapa + panel lateral con toggles de capas,
+ * info al hover y leyenda. Toda la lógica de MapLibre vive en `useSantiagoMap`.
+ */
+export function SantiagoMapPage() {
+	const [visibleLayers, setVisibleLayers] = useState<LayerVisibility>(
+		DEFAULT_VISIBLE_LAYERS,
+	);
+	const [hoverInfo, setHoverInfo] = useState<HoverInfo>(null);
+	const { containerRef, resetView } = useSantiagoMap(
+		visibleLayers,
+		setHoverInfo,
+	);
+
+	const activeLayerCount = Object.values(visibleLayers).filter(Boolean).length;
+
+	const toggleLayer = (id: keyof LayerVisibility) =>
+		setVisibleLayers((current) => ({ ...current, [id]: !current[id] }));
+
+	return (
+		<main className="relative h-[100svh] w-full overflow-hidden bg-[#edf4e8] text-[#102f37]">
+			<div className="absolute inset-0 z-0">
+				<div ref={containerRef} className="h-full w-full" />
+			</div>
+
+			<section className="pointer-events-none absolute left-3 top-3 z-10 w-[min(360px,calc(100vw-24px))] sm:left-5 sm:top-5">
+				<div className="pointer-events-auto rounded-[28px] border border-white/70 bg-white/82 p-4 shadow-[0_24px_70px_rgba(16,47,55,0.18)] backdrop-blur-xl sm:p-5">
+					<header className="mb-4 flex items-start justify-between gap-3">
+						<div>
+							<p className="m-0 text-[10px] font-black uppercase tracking-[0.22em] text-[#168a76]">
+								Mapa de movilidad
+							</p>
+							<h1 className="m-0 mt-1 text-2xl font-black tracking-[-0.04em] text-[#102f37]">
+								SimSantiago
+							</h1>
+						</div>
+						<button
+							type="button"
+							onClick={resetView}
+							className="rounded-full border border-[#b9d7d1] bg-white/80 px-3 py-1.5 text-xs font-bold text-[#24525b] shadow-sm transition hover:-translate-y-0.5 hover:border-[#5bb6a6] hover:bg-white"
+						>
+							Reset vista
+						</button>
+					</header>
+
+					<p className="mb-4 text-sm leading-5 text-[#42656b]">
+						Prende o apaga capas para leer la red. Pasa el cursor sobre
+						estaciones, líneas y ciclovías para ver detalles sin llenar el mapa
+						de texto.
+					</p>
+
+					<div className="grid gap-2">
+						{LAYER_TOGGLES.map((layer) => {
+							const active = visibleLayers[layer.id];
+							return (
+								<button
+									key={layer.id}
+									type="button"
+									aria-pressed={active}
+									onClick={() => toggleLayer(layer.id)}
+									className={
+										active
+											? "flex items-center gap-3 rounded-2xl border border-[#b7dcd4] bg-[#effaf5] px-3 py-2.5 text-left shadow-sm transition hover:-translate-y-0.5"
+											: "flex items-center gap-3 rounded-2xl border border-[#d9e7e4] bg-white/58 px-3 py-2.5 text-left opacity-60 transition hover:-translate-y-0.5 hover:opacity-90"
+									}
+								>
+									<span
+										className="h-4 w-4 shrink-0 rounded-full border-2 border-white shadow-[0_0_0_1px_rgba(16,47,55,0.14)]"
+										style={{ backgroundColor: layer.color }}
+									/>
+									<span className="min-w-0">
+										<span className="block text-sm font-black text-[#102f37]">
+											{layer.label}
+										</span>
+										<span className="block truncate text-xs text-[#5b777c]">
+											{layer.description}
+										</span>
+									</span>
+									<span className="ml-auto text-xs font-black uppercase tracking-[0.14em] text-[#2a7f72]">
+										{active ? "ON" : "OFF"}
+									</span>
+								</button>
+							);
+						})}
+					</div>
+
+					<div className="mt-4 rounded-2xl border border-[#d9e7e4] bg-white/72 p-3">
+						{hoverInfo ? (
+							<div className="flex gap-3">
+								<span
+									className="mt-1 h-3 w-3 shrink-0 rounded-full"
+									style={{ backgroundColor: hoverInfo.accent }}
+								/>
+								<div>
+									<p className="m-0 text-[10px] font-black uppercase tracking-[0.2em] text-[#5b777c]">
+										{hoverInfo.kind}
+									</p>
+									<p className="m-0 mt-0.5 text-sm font-black text-[#102f37]">
+										{hoverInfo.title}
+									</p>
+									<p className="m-0 mt-1 text-xs leading-4 text-[#5b777c]">
+										{hoverInfo.description}
+									</p>
+								</div>
+							</div>
+						) : (
+							<p className="m-0 text-xs leading-4 text-[#5b777c]">
+								{activeLayerCount} de {LAYER_TOGGLES.length} capas activas.
+								Explora pasando el cursor sobre la red.
+							</p>
+						)}
+					</div>
+				</div>
+			</section>
+
+			<MapLegend />
+		</main>
+	);
+}

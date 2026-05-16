@@ -1,0 +1,10 @@
+{
+	"recommendations": [
+		"biomejs.biome",
+		"bradlc.vscode-tailwindcss",
+		"vitest.explorer",
+		"yoavbls.pretty-ts-errors",
+		"qwtel.sqlite-viewer",
+		"cloudflare.cloudflare-workers-bindings-extension"
+	]
+}
