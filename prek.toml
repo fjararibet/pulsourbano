@@ -1,0 +1,33 @@
+minimum_prek_version = "0.1.0"
+
+[[repos]]
+repo = "builtin"
+hooks = [
+  { id = "trailing-whitespace" },
+  { id = "end-of-file-fixer" },
+  { id = "check-yaml" },
+  { id = "check-toml" },
+  { id = "check-json5" },
+  { id = "check-merge-conflict" },
+  { id = "detect-private-key" },
+]
+
+[[repos]]
+repo = "local"
+hooks = [
+  {
+    id = "biome-check",
+    name = "biome check",
+    language = "system",
+    entry = "npx biome check --files-ignore-unknown=true --no-errors-on-unmatched",
+    types = ["file"],
+  },
+  {
+    id = "tsc",
+    name = "TypeScript check",
+    language = "system",
+    entry = "npx tsc --noEmit",
+    types = ["file"],
+    pass_filenames = false,
+  },
+]

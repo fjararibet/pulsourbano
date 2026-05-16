@@ -81,6 +81,33 @@ The route tree is auto-generated into `src/routeTree.gen.ts`. Do not edit this f
 npm install
 ```
 
+### Git Hooks (prek)
+
+This project uses [**prek**](https://prek.j178.dev) (a Rust reimplementation of pre-commit) to run Git hooks for linting, formatting, and type checking.
+
+**Install prek:**
+
+```bash
+# Choose one:
+uv tool install prek
+brew install prek
+mise use prek
+cargo binstall prek
+```
+
+**Install the Git hook shims:**
+
+```bash
+prek install --prepare-hooks
+```
+
+This sets up the `pre-commit` hook so checks run automatically on every commit. To run hooks manually:
+
+```bash
+prek run --all-files   # Run all hooks across the whole repo
+prek run biome-check    # Run a specific hook
+```
+
 ### Environment Variables
 
 Environment variables are validated via `@t3-oss/env-core` in `src/env.ts`. Server vars are validated at runtime, client vars (prefixed with `VITE_`) are validated at build time.
