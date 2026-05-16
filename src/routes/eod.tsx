@@ -9,7 +9,7 @@ type Row = {
 };
 
 const getViajesOD = createServerFn({ method: "GET" }).handler(async () => {
-	const { results } = await env.EOD2012.prepare(
+	const { results } = await env.DB.prepare(
 		`SELECT co.comuna AS comuna_origen,
 		        cd.comuna AS comuna_destino,
 		        COUNT(*)  AS n_viajes

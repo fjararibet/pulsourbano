@@ -15,8 +15,8 @@
     "check": "biome check",
     "deploy": "npm run build && wrangler deploy",
     "db:generate": "drizzle-kit generate",
-    "db:apply:local": "wrangler d1 migrations apply EOD2012 --local",
-    "db:apply:remote": "wrangler d1 migrations apply EOD2012 --remote"
+    "db:apply:local": "wrangler d1 migrations apply esgrima --local",
+    "db:apply:remote": "wrangler d1 migrations apply esgrima --remote"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.26.0",
