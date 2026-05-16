@@ -32,6 +32,7 @@ import {
 	setSimulationImpactData,
 	startSimulationImpactAnimation,
 } from "./layers";
+import { getBusesGeoJSON } from "./server-buses";
 import type {
 	FrequencyMap,
 	HoverInfo,
@@ -156,7 +157,7 @@ export function useSantiagoMap(
 					await Promise.all([
 						loadGeoJSON("/data/comunas_rm.geojson"),
 						loadGeoJSON("/data/metro.geojson"),
-						loadGeoJSON("/data/buses.geojson"),
+						getBusesGeoJSON().catch(() => null),
 						loadGeoJSON("/data/ciclovias.geojson"),
 						loadJSON<FrequencyMap>("/data/frequencies.geojson"),
 						loadJSON<TravelTimeMap>("/data/travel-times.geojson"),

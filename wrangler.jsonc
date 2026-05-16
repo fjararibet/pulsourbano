@@ -19,6 +19,7 @@
 			"binding": "DTPMGEO",
 			"database_name": "DTPMGEO",
 			"database_id": "1ff21348-ce36-4ad9-9c8f-d92ece8918a8",
+			"migrations_dir": "drizzle-dtpmgeo",
 			"remote": true
 		},
 		{

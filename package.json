@@ -16,7 +16,10 @@
     "deploy": "npm run build && wrangler deploy",
     "db:generate": "drizzle-kit generate",
     "db:apply:local": "wrangler d1 migrations apply EOD2012 --local",
-    "db:apply:remote": "wrangler d1 migrations apply EOD2012 --remote"
+    "db:apply:remote": "wrangler d1 migrations apply EOD2012 --remote",
+    "db:dtpmgeo:generate": "drizzle-kit generate --config=drizzle.dtpmgeo.config.ts",
+    "db:dtpmgeo:apply:local": "wrangler d1 migrations apply DTPMGEO --local",
+    "db:dtpmgeo:apply:remote": "wrangler d1 migrations apply DTPMGEO --remote"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.26.0",

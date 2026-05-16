@@ -7,6 +7,7 @@ declare module "cloudflare:workers" {
 
 	export const env: {
 		EOD2012: D1Database;
+		DTPMGEO: D1Database;
 		ADDITIONAL_EXAMPLE_DB: D1Database;
 	};
 }
