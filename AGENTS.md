@@ -177,7 +177,7 @@ npm run db:studio
 
 > **Development note**: If migrations fail or the schema gets out of sync, don't worry—just delete the `drizzle/migrations` folder and run `npm run db:push` again to reset everything.
 
-Schema lives in `src/db/schema.ts`. The Drizzle client is created in `src/db/index.ts`.
+Schema lives in `src/db/schema.ts` and `src/db/eod-schema.ts`. At runtime the app uses **D1 via Wrangler** (Cloudflare Workers binding); there is no singleton Drizzle client file because the D1 binding is passed per-request. `better-sqlite3` is present only because `drizzle-kit` requires a SQLite driver (`better-sqlite3` or `@libsql/client`) to connect to the local SQLite file during schema operations (`db:generate`, `db:push`, `db:studio`, etc.).
 
 ### Cloudflare D1
 
