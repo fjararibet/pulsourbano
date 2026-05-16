@@ -1,9 +1,15 @@
 import type { Map as MapLibreMap } from "maplibre-gl";
 import { useCallback, useEffect, useRef } from "react";
 import { BASE_STYLE, INITIAL_ZOOM, SANTIAGO_CENTER } from "./config";
-import { setupBusRouteHover, setupHoverLayer } from "./hover";
+import {
+	type HoverPinController,
+	setupBusRouteHover,
+	setupComunaHover,
+	setupHoverLayer,
+} from "./hover";
 import {
 	addBusLayers,
+	addComunaLayers,
 	addCyclewayLayers,
 	addMetroLayers,
 	applyLayerVisibility,
@@ -34,16 +40,13 @@ export function useSantiagoMap(
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const mapRef = useRef<MapLibreMap | null>(null);
 	const visibleLayersRef = useRef(visibleLayers);
-	const setPinnedInfoRef = useRef<((info: HoverInfo | null) => void) | null>(
-		null,
-	);
-
-	const setPinnedInfo = useCallback((info: HoverInfo | null) => {
-		if (setPinnedInfoRef.current) setPinnedInfoRef.current(info);
-	}, []);
+	const pinnedInfoRef = useRef<HoverInfo>(null);
+	const clearPinnedEffectsRef = useRef<(() => void) | null>(null);
 
 	const clearPinned = useCallback(() => {
-		setPinnedInfoRef.current?.(null);
+		clearPinnedEffectsRef.current?.();
+		clearPinnedEffectsRef.current = null;
+		pinnedInfoRef.current = null;
 		setHoverInfo(null);
 	}, [setHoverInfo]);
 
@@ -57,6 +60,16 @@ export function useSantiagoMap(
 	useEffect(() => {
 		let cancelled = false;
 		let cleanup: (() => void) | undefined;
+		const pinController: HoverPinController = {
+			isPinned: () => pinnedInfoRef.current !== null,
+			pin: (info, clearEffects) => {
+				clearPinnedEffectsRef.current?.();
+				const pinnedInfo = { ...info, pinned: true };
+				pinnedInfoRef.current = pinnedInfo;
+				clearPinnedEffectsRef.current = clearEffects ?? null;
+				setHoverInfo(pinnedInfo);
+			},
+		};
 
 		(async () => {
 			if (!containerRef.current) return;
@@ -104,6 +117,8 @@ export function useSantiagoMap(
 			const hoverCleanup: Array<() => void> = [];
 
 			cleanup = () => {
+				pinnedInfoRef.current = null;
+				clearPinnedEffectsRef.current = null;
 				for (const fn of hoverCleanup) fn();
 				popup.remove();
 				if (debugWindow?.__simMap === map) delete debugWindow.__simMap;
@@ -113,20 +128,28 @@ export function useSantiagoMap(
 
 			map.on("load", async () => {
 				resize();
-				const [metro, buses, cycleways, frequencies, travelTimes] =
+				const [comunas, metro, buses, cycleways, frequencies, travelTimes] =
 					await Promise.all([
+						loadGeoJSON("/data/comunas_rm.geojson"),
 						loadGeoJSON("/data/metro.geojson"),
 						loadGeoJSON("/data/buses.geojson"),
 						loadGeoJSON("/data/ciclovias.geojson"),
-						loadJSON<FrequencyMap>("/data/frequencies.json"),
-						loadJSON<TravelTimeMap>("/data/travel-times.json"),
+						loadJSON<FrequencyMap>("/data/frequencies.geojson"),
+						loadJSON<TravelTimeMap>("/data/travel-times.geojson"),
 					]);
 
+				if (comunas) addComunaLayers(map, comunas);
 				if (buses) addBusLayers(map, buses);
 				if (cycleways) addCyclewayLayers(map, cycleways);
 				if (metro) addMetroLayers(map, metro);
 
 				applyLayerVisibility(map, visibleLayersRef.current);
+
+				if (comunas) {
+					hoverCleanup.push(
+						setupComunaHover(map, popup, setHoverInfo, pinController),
+					);
+				}
 
 				hoverCleanup.push(
 					setupHoverLayer(
@@ -145,6 +168,7 @@ export function useSantiagoMap(
 								accent: getFeatureString(feature, "color") || "#0f8f98",
 							};
 						},
+						pinController,
 					),
 					setupHoverLayer(
 						map,
@@ -161,26 +185,33 @@ export function useSantiagoMap(
 								accent: "#102f37",
 							};
 						},
+						pinController,
 					),
 					setupBusRouteHover(
 						map,
 						popup,
 						setHoverInfo,
-						setPinnedInfo,
-						clearPinned,
+						pinController,
 						frequencies,
 						travelTimes,
 					),
-					setupHoverLayer(map, popup, "bus-stops", setHoverInfo, (feature) => {
-						const name = formatStationName(getFeatureString(feature, "name"));
-						return {
-							kind: "Paradero RED",
-							title: name || "Paradero",
-							description:
-								getFeatureString(feature, "stop_id") || "Punto de parada",
-							accent: "#f2a900",
-						};
-					}),
+					setupHoverLayer(
+						map,
+						popup,
+						"bus-stops",
+						setHoverInfo,
+						(feature) => {
+							const name = formatStationName(getFeatureString(feature, "name"));
+							return {
+								kind: "Paradero RED",
+								title: name || "Paradero",
+								description:
+									getFeatureString(feature, "stop_id") || "Punto de parada",
+								accent: "#f2a900",
+							};
+						},
+						pinController,
+					),
 					setupHoverLayer(
 						map,
 						popup,
@@ -200,6 +231,7 @@ export function useSantiagoMap(
 								accent: "#10a56f",
 							};
 						},
+						pinController,
 					),
 				);
 			});
@@ -210,7 +242,7 @@ export function useSantiagoMap(
 			cleanup?.();
 			mapRef.current = null;
 		};
-	}, [setHoverInfo, setPinnedInfo, clearPinned]);
+	}, [setHoverInfo]);
 
 	const resetView = () => {
 		mapRef.current?.easeTo({
@@ -222,5 +254,5 @@ export function useSantiagoMap(
 		});
 	};
 
-	return { containerRef, resetView, setPinnedInfo, clearPinned };
+	return { containerRef, resetView, clearPinned };
 }

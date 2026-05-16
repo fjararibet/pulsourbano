@@ -1,9 +1,10 @@
-import { BUS_COLOR } from "./config";
+import { BUS_COLOR, COMUNA_COLOR } from "./config";
 
 /** Leyenda fija en la esquina inferior derecha (solo desktop). */
 export function MapLegend() {
 	return (
 		<aside className="pointer-events-none absolute bottom-4 right-4 z-10 hidden rounded-3xl border border-white/70 bg-white/82 p-3 text-xs font-bold text-[#244b52] shadow-[0_18px_50px_rgba(16,47,55,0.16)] backdrop-blur-xl sm:block">
+			<LegendRow color={COMUNA_COLOR} label="Comunas RM" />
 			<LegendRow color="#0f8f98" label="Metro" />
 			<LegendRow color={BUS_COLOR} label="Micros RED" />
 			<LegendRow color="#f2a900" label="Paraderos RED" dot />

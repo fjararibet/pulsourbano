@@ -2,11 +2,77 @@ import type { Map as MapLibreMap } from "maplibre-gl";
 import {
 	BUS_ARROW_ICON_ID,
 	BUS_COLOR,
+	COMUNA_COLOR,
 	EMPTY_BUS_HOVER_FILTER,
+	EMPTY_COMUNA_HOVER_FILTER,
 	LAYER_TOGGLES,
 	LOGICAL_LAYERS,
 } from "./config";
 import type { LayerVisibility } from "./types";
+
+/** Límites comunales RM: relleno suave, borde y resaltado interactivo. */
+export function addComunaLayers(
+	map: MapLibreMap,
+	data: GeoJSON.FeatureCollection,
+) {
+	map.addSource("comunas-rm", { type: "geojson", data });
+	map.addLayer({
+		id: "comunas-fill",
+		type: "fill",
+		source: "comunas-rm",
+		paint: {
+			"fill-color": [
+				"match",
+				["get", "Provincia"],
+				"Santiago",
+				COMUNA_COLOR,
+				"Cordillera",
+				"#168a76",
+				"Chacabuco",
+				"#d75235",
+				"Maipo",
+				"#f2a900",
+				"Melipilla",
+				"#0f8f98",
+				"Talagante",
+				"#ba5bd5",
+				COMUNA_COLOR,
+			],
+			"fill-opacity": 0.1,
+		},
+	});
+	map.addLayer({
+		id: "comunas-outline",
+		type: "line",
+		source: "comunas-rm",
+		paint: {
+			"line-color": COMUNA_COLOR,
+			"line-width": ["interpolate", ["linear"], ["zoom"], 9, 0.7, 13, 1.2],
+			"line-opacity": 0.5,
+		},
+	});
+	map.addLayer({
+		id: "comunas-hover-fill",
+		type: "fill",
+		source: "comunas-rm",
+		filter: EMPTY_COMUNA_HOVER_FILTER,
+		paint: {
+			"fill-color": COMUNA_COLOR,
+			"fill-opacity": 0.23,
+		},
+	});
+	map.addLayer({
+		id: "comunas-hover-outline",
+		type: "line",
+		source: "comunas-rm",
+		filter: EMPTY_COMUNA_HOVER_FILTER,
+		paint: {
+			"line-color": COMUNA_COLOR,
+			"line-width": ["interpolate", ["linear"], ["zoom"], 9, 1.8, 13, 3],
+			"line-opacity": 0.95,
+		},
+	});
+}
 
 /** Capas del Metro: halo blanco, línea coloreada y estaciones. */
 export function addMetroLayers(

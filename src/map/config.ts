@@ -11,6 +11,9 @@ export const BUS_COLOR = "#d75235";
 /** Identificador del ícono de flecha que se dibuja sobre los recorridos. */
 export const BUS_ARROW_ICON_ID = "bus-route-arrow";
 
+/** Color base de la capa de comunas RM. */
+export const COMUNA_COLOR = "#6f5bd5";
+
 /**
  * Filtro neutro que oculta la capa "hover" de buses cuando no hay
  * ningún recorrido seleccionado bajo el cursor.
@@ -21,11 +24,24 @@ export const EMPTY_BUS_HOVER_FILTER: FilterSpecification = [
 	"",
 ];
 
+/** Filtro neutro que oculta el resaltado de comuna. */
+export const EMPTY_COMUNA_HOVER_FILTER: FilterSpecification = [
+	"==",
+	["get", "cod_comuna"],
+	-1,
+];
+
 /**
  * Capas que el usuario puede prender/apagar desde el panel lateral.
  * El orden define el orden en la UI.
  */
 export const LAYER_TOGGLES = [
+	{
+		id: "comunas",
+		label: "Comunas RM",
+		description: "Límites comunales",
+		color: COMUNA_COLOR,
+	},
 	{
 		id: "metro",
 		label: "Metro",
@@ -63,6 +79,7 @@ export type LayerId = (typeof LAYER_TOGGLES)[number]["id"];
 
 /** Estado inicial de qué capas vienen prendidas. */
 export const DEFAULT_VISIBLE_LAYERS: LayerVisibility = {
+	comunas: false,
 	metro: true,
 	stations: true,
 	buses: true,
@@ -75,6 +92,12 @@ export const DEFAULT_VISIBLE_LAYERS: LayerVisibility = {
  * Una capa lógica puede empujar varias capas físicas (halo + línea, etc.).
  */
 export const LOGICAL_LAYERS = {
+	comunas: [
+		"comunas-fill",
+		"comunas-outline",
+		"comunas-hover-fill",
+		"comunas-hover-outline",
+	],
 	metro: ["metro-line-halo", "metro-lines"],
 	stations: ["metro-stations"],
 	buses: [

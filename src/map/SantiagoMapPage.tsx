@@ -1,5 +1,5 @@
 import "maplibre-gl/dist/maplibre-gl.css";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { DEFAULT_VISIBLE_LAYERS, LAYER_TOGGLES } from "./config";
 import { MapLegend } from "./Legend";
 import type { HoverInfo, LayerVisibility } from "./types";
@@ -14,7 +14,7 @@ export function SantiagoMapPage() {
 		DEFAULT_VISIBLE_LAYERS,
 	);
 	const [hoverInfo, setHoverInfo] = useState<HoverInfo>(null);
-	const { containerRef, resetView, setPinnedInfo } = useSantiagoMap(
+	const { containerRef, resetView, clearPinned } = useSantiagoMap(
 		visibleLayers,
 		setHoverInfo,
 	);
@@ -23,11 +23,6 @@ export function SantiagoMapPage() {
 
 	const toggleLayer = (id: keyof LayerVisibility) =>
 		setVisibleLayers((current) => ({ ...current, [id]: !current[id] }));
-
-	const clearPinned = useCallback(() => {
-		setPinnedInfo(null);
-		setHoverInfo(null);
-	}, [setPinnedInfo]);
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
@@ -51,7 +46,7 @@ export function SantiagoMapPage() {
 			</div>
 
 			<section className="pointer-events-none absolute left-3 top-3 z-10 w-[min(360px,calc(100vw-24px))] sm:left-5 sm:top-5">
-				<div className="pointer-events-auto rounded-[28px] border border-white/70 bg-white/82 p-4 shadow-[0_24px_70px_rgba(16,47,55,0.18)] backdrop-blur-xl sm:p-5">
+				<div className="pointer-events-auto max-h-[calc(100svh-24px)] overflow-y-auto overscroll-contain rounded-[28px] border border-white/70 bg-white/82 p-4 shadow-[0_24px_70px_rgba(16,47,55,0.18)] backdrop-blur-xl sm:max-h-[calc(100svh-40px)] sm:p-5">
 					<header className="mb-4 flex items-start justify-between gap-3">
 						<div>
 							<p className="m-0 text-[10px] font-black uppercase tracking-[0.22em] text-[#168a76]">
@@ -118,7 +113,7 @@ export function SantiagoMapPage() {
 									className="mt-1 h-3 w-3 shrink-0 rounded-full"
 									style={{ backgroundColor: showInfo.accent }}
 								/>
-								<div>
+								<div className="min-w-0 flex-1">
 									<div className="flex items-start justify-between gap-2">
 										<div>
 											<p className="m-0 text-[10px] font-black uppercase tracking-[0.2em] text-[#5b777c]">
@@ -127,7 +122,7 @@ export function SantiagoMapPage() {
 											<p className="m-0 mt-0.5 text-sm font-black text-[#102f37]">
 												{showInfo.title}
 											</p>
-											<p className="m-0 mt-1 text-xs leading-4 text-[#5b777c]">
+											<p className="m-0 mt-1 break-words text-xs leading-4 text-[#5b777c]">
 												{showInfo.description}
 											</p>
 										</div>
@@ -147,12 +142,17 @@ export function SantiagoMapPage() {
 											{showInfo.details.map((detail) => (
 												<p
 													key={detail}
-													className="m-0 rounded-xl bg-[#f5faf7] px-2.5 py-1.5 text-xs font-semibold leading-4 text-[#315a61]"
+													className="m-0 rounded-xl bg-[#f5faf7] px-2.5 py-1.5 text-xs font-semibold leading-4 break-words text-[#315a61]"
 												>
 													{detail}
 												</p>
 											))}
 										</div>
+									) : null}
+									{showInfo.note ? (
+										<p className="m-0 mt-2 text-[11px] font-semibold leading-4 text-[#5b777c]">
+											{showInfo.note}
+										</p>
 									) : null}
 									{pinnedNote ? (
 										<p className="m-0 mt-2 text-[11px] font-semibold leading-4 text-[#789197]">
