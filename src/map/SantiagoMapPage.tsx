@@ -1,5 +1,6 @@
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useState } from "react";
+import { getComunasList, getDestinosDesdeComuna } from "#/map/server-od";
 import { QuickSimulationPanel } from "#/simulation/QuickSimulationPanel";
 import { DEFAULT_QUICK_SIMULATION_INPUT } from "#/simulation/quick-simulation";
 import { DEFAULT_VISIBLE_LAYERS, LAYER_TOGGLES } from "./config";
@@ -19,10 +20,19 @@ export function SantiagoMapPage() {
 	const [simulationInput, setSimulationInput] = useState(
 		DEFAULT_QUICK_SIMULATION_INPUT,
 	);
+	const [odMode, setOdMode] = useState(false);
+	const [comunasList, setComunasList] = useState<string[]>([]);
+	const [selectedOrigin, setSelectedOrigin] = useState("");
+	const [odData, setOdData] = useState<Array<{
+		comuna: string;
+		trips: number;
+	}> | null>(null);
+	const [odLoading, setOdLoading] = useState(false);
 	const { containerRef, resetView, clearPinned } = useSantiagoMap(
 		visibleLayers,
 		setHoverInfo,
 		simulationInput,
+		odData,
 	);
 
 	const activeLayerCount = Object.values(visibleLayers).filter(Boolean).length;
@@ -37,6 +47,32 @@ export function SantiagoMapPage() {
 		document.addEventListener("keydown", handleKeyDown);
 		return () => document.removeEventListener("keydown", handleKeyDown);
 	}, [clearPinned]);
+
+	useEffect(() => {
+		getComunasList().then(setComunasList);
+	}, []);
+
+	useEffect(() => {
+		if (!selectedOrigin) {
+			setOdData(null);
+			return;
+		}
+		setOdLoading(true);
+		getDestinosDesdeComuna({ data: { comunaOrigen: selectedOrigin } })
+			.then((results) => {
+				setOdData(
+					results.map((r) => ({
+						comuna: r.destino ?? "",
+						trips: r.total_viajes,
+					})),
+				);
+			})
+			.catch((err) => {
+				console.error("OD query failed", err);
+				setOdData(null);
+			})
+			.finally(() => setOdLoading(false));
+	}, [selectedOrigin]);
 
 	const showInfo = hoverInfo;
 	const pinnedNote = showInfo?.pinned
@@ -110,6 +146,66 @@ export function SantiagoMapPage() {
 								</button>
 							);
 						})}
+					</div>
+
+					<div className="mt-4 rounded-2xl border border-[#d9e7e4] bg-white/72 p-3">
+						<div className="flex items-start justify-between gap-3">
+							<div>
+								<p className="m-0 text-[10px] font-black uppercase tracking-[0.2em] text-[#5b777c]">
+									Origen-Destino
+								</p>
+								<p className="m-0 mt-0.5 text-sm font-black text-[#102f37]">
+									Viajes más frecuentes
+								</p>
+							</div>
+							<button
+								type="button"
+								onClick={() => {
+									setOdMode((v) => {
+										if (v) {
+											setSelectedOrigin("");
+											setOdData(null);
+										}
+										return !v;
+									});
+								}}
+								className={
+									odMode
+										? "rounded-full border border-[#168a76] bg-[#effaf5] px-3 py-1 text-xs font-black text-[#168a76] shadow-sm transition hover:-translate-y-0.5"
+										: "rounded-full border border-[#d9e7e4] bg-white/58 px-3 py-1 text-xs font-black text-[#5b777c] opacity-60 shadow-sm transition hover:-translate-y-0.5 hover:opacity-90"
+								}
+							>
+								{odMode ? "ON" : "OFF"}
+							</button>
+						</div>
+						{odMode && (
+							<div className="mt-2">
+								<select
+									value={selectedOrigin}
+									onChange={(e) => setSelectedOrigin(e.target.value)}
+									className="w-full rounded-xl border border-[#b9d7d1] bg-white px-3 py-2 text-sm text-[#102f37] outline-none ring-0 focus:border-[#5bb6a6]"
+								>
+									<option value="">Selecciona comuna origen…</option>
+									{comunasList.map((c) => (
+										<option key={c} value={c}>
+											{c}
+										</option>
+									))}
+								</select>
+								{odLoading && (
+									<p className="mt-2 text-xs text-[#5b777c]">
+										Cargando viajes…
+									</p>
+								)}
+								{!odLoading && odData && odData.length > 0 && (
+									<p className="mt-2 text-xs text-[#5b777c]">
+										{odData.length} destinos · máx:{" "}
+										{Math.round(odData[0]?.trips ?? 0).toLocaleString("es-CL")}{" "}
+										viajes
+									</p>
+								)}
+							</div>
+						)}
 					</div>
 
 					<QuickSimulationPanel

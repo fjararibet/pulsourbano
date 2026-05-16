@@ -25,10 +25,13 @@ import {
 	addComunaLayers,
 	addCyclewayLayers,
 	addMetroLayers,
+	addODLayers,
 	addSimulationImpactLayers,
 	applyLayerVisibility,
 	bringComunaHoverToFront,
 	clearSimulationImpact,
+	restoreComunaSource,
+	setComunaODData,
 	setSimulationImpactData,
 	startSimulationImpactAnimation,
 } from "./layers";
@@ -56,6 +59,7 @@ export function useSantiagoMap(
 	visibleLayers: LayerVisibility,
 	setHoverInfo: (info: HoverInfo) => void,
 	simulationInput: QuickSimulationInput,
+	odData: Array<{ comuna: string; trips: number }> | null,
 ) {
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const mapRef = useRef<MapLibreMap | null>(null);
@@ -63,6 +67,7 @@ export function useSantiagoMap(
 	const simulationInputRef = useRef(simulationInput);
 	const pinnedInfoRef = useRef<HoverInfo>(null);
 	const clearPinnedEffectsRef = useRef<(() => void) | null>(null);
+	const comunasRef = useRef<GeoJSON.FeatureCollection | null>(null);
 
 	const clearPinned = useCallback(() => {
 		clearPinnedEffectsRef.current?.();
@@ -81,6 +86,16 @@ export function useSantiagoMap(
 	useEffect(() => {
 		simulationInputRef.current = simulationInput;
 	}, [simulationInput]);
+
+	useEffect(() => {
+		const map = mapRef.current;
+		if (!map || !comunasRef.current) return;
+		if (!odData || odData.length === 0) {
+			restoreComunaSource(map, comunasRef.current);
+			return;
+		}
+		setComunaODData(map, odData, comunasRef.current);
+	}, [odData]);
 
 	useEffect(() => {
 		let cancelled = false;
@@ -163,7 +178,11 @@ export function useSantiagoMap(
 						loadJSON<TravelTimeMap>("/data/travel-times.geojson"),
 					]);
 
-				if (comunas) addComunaLayers(map, comunas);
+				if (comunas) {
+					comunasRef.current = comunas;
+					addComunaLayers(map, comunas);
+					addODLayers(map);
+				}
 				if (buses) addBusLayers(map, buses);
 				if (cycleways) addCyclewayLayers(map, cycleways);
 				if (metro) addMetroLayers(map, metro);

@@ -15,6 +15,7 @@ import {
 	LOGICAL_LAYERS,
 } from "./config";
 import type { LayerVisibility } from "./types";
+import { normalizeComunaName } from "./utils";
 
 const EMPTY_FEATURE_COLLECTION: GeoJSON.FeatureCollection = {
 	type: "FeatureCollection",
@@ -631,5 +632,93 @@ export function applyLayerVisibility(
 				);
 			}
 		}
+	}
+}
+
+const OD_FILL_LAYER_ID = "comunas-od-fill";
+
+/** Agrega la capa de relleno para el modo Origen-Destino (inicialmente oculta). */
+export function addODLayers(map: MapLibreMap) {
+	if (map.getLayer(OD_FILL_LAYER_ID)) return;
+	map.addLayer({
+		id: OD_FILL_LAYER_ID,
+		type: "fill",
+		source: "comunas-rm",
+		paint: {
+			"fill-color": [
+				"interpolate",
+				["linear"],
+				["get", "od_intensity"],
+				0,
+				"rgba(111, 91, 213, 0.03)",
+				0.25,
+				"rgba(111, 91, 213, 0.18)",
+				0.5,
+				"rgba(111, 91, 213, 0.35)",
+				0.75,
+				"rgba(111, 91, 213, 0.52)",
+				1,
+				"rgba(22, 138, 118, 0.68)",
+			],
+			"fill-opacity": 1,
+		},
+		layout: {
+			visibility: "none",
+		},
+	});
+}
+
+/** Oculta la capa OD y restaura el GeoJSON original (sin od_intensity). */
+export function restoreComunaSource(
+	map: MapLibreMap,
+	originalGeoJSON: GeoJSON.FeatureCollection,
+) {
+	const source = map.getSource("comunas-rm");
+	if (!source || !("setData" in source)) return;
+	(source as GeoJSONSource).setData(originalGeoJSON);
+	if (map.getLayer(OD_FILL_LAYER_ID)) {
+		map.setLayoutProperty(OD_FILL_LAYER_ID, "visibility", "none");
+	}
+}
+
+/**
+ * Pinta las comunas según la intensidad de viajes desde un origen.
+ * Actualiza la fuente GeoJSON agregando `od_intensity` a cada feature.
+ */
+export function setComunaODData(
+	map: MapLibreMap,
+	odData: Array<{ comuna: string; trips: number }>,
+	originalGeoJSON: GeoJSON.FeatureCollection,
+) {
+	const source = map.getSource("comunas-rm");
+	if (!source || !("setData" in source)) return;
+
+	const maxTrips = Math.max(...odData.map((d) => d.trips), 1);
+	const tripsMap = new Map<string, number>();
+	for (const item of odData) {
+		tripsMap.set(normalizeComunaName(item.comuna), item.trips / maxTrips);
+	}
+
+	const newFeatures = originalGeoJSON.features.map((feature) => {
+		const comuna = normalizeComunaName(
+			String(feature.properties?.Comuna ?? ""),
+		);
+		const intensity = tripsMap.get(comuna) ?? 0;
+		return {
+			...feature,
+			properties: {
+				...feature.properties,
+				od_intensity: intensity,
+			},
+		};
+	});
+
+	(source as GeoJSONSource).setData({
+		...originalGeoJSON,
+		features: newFeatures,
+	});
+
+	if (map.getLayer(OD_FILL_LAYER_ID)) {
+		map.setLayoutProperty(OD_FILL_LAYER_ID, "visibility", "visible");
 	}
 }

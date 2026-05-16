@@ -9,9 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as OdDebugRouteImport } from './routes/od-debug'
 import { Route as EodRouteImport } from './routes/eod'
 import { Route as IndexRouteImport } from './routes/index'
 
+const OdDebugRoute = OdDebugRouteImport.update({
+  id: '/od-debug',
+  path: '/od-debug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EodRoute = EodRouteImport.update({
   id: '/eod',
   path: '/eod',
@@ -26,31 +32,42 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/eod': typeof EodRoute
+  '/od-debug': typeof OdDebugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/eod': typeof EodRoute
+  '/od-debug': typeof OdDebugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/eod': typeof EodRoute
+  '/od-debug': typeof OdDebugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/eod'
+  fullPaths: '/' | '/eod' | '/od-debug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/eod'
-  id: '__root__' | '/' | '/eod'
+  to: '/' | '/eod' | '/od-debug'
+  id: '__root__' | '/' | '/eod' | '/od-debug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EodRoute: typeof EodRoute
+  OdDebugRoute: typeof OdDebugRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/od-debug': {
+      id: '/od-debug'
+      path: '/od-debug'
+      fullPath: '/od-debug'
+      preLoaderRoute: typeof OdDebugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/eod': {
       id: '/eod'
       path: '/eod'
@@ -71,6 +88,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EodRoute: EodRoute,
+  OdDebugRoute: OdDebugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

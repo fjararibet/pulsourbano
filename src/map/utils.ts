@@ -69,6 +69,18 @@ function formatMinutes(minutes: number) {
 }
 
 /**
+ * Normaliza nombre de comuna para cruzar DB (mayúsculas, sin tildes)
+ * con GeoJSON (título, con tildes).
+ */
+export function normalizeComunaName(name: string): string {
+	return name
+		.toLowerCase()
+		.normalize("NFD")
+		.replace(/[\u0300-\u036f]/g, "")
+		.trim();
+}
+
+/**
  * Limpia nombres de estación de Metro y paraderos RED, que en GTFS vienen
  * con prefijos del tipo "RED-", "I/L1 - ", "(M)", etc.
  */
