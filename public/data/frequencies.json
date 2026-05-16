@@ -1,0 +1,2870 @@
+{
+  "101|0|Cerrillos": {
+    "mean_headway_s": 850,
+    "samples": 10
+  },
+  "101|1|Recoleta": {
+    "mean_headway_s": 1466,
+    "samples": 11
+  },
+  "102|0|San Carlos Oriente": {
+    "mean_headway_s": 881,
+    "samples": 11
+  },
+  "102|1|(M) Las Rejas": {
+    "mean_headway_s": 910,
+    "samples": 11
+  },
+  "103|0|San Luis De Macul": {
+    "mean_headway_s": 1436,
+    "samples": 12
+  },
+  "103|1|Providencia": {
+    "mean_headway_s": 1167,
+    "samples": 12
+  },
+  "104|0|Camilo Henriquez": {
+    "mean_headway_s": 561,
+    "samples": 12
+  },
+  "104|1|Providencia": {
+    "mean_headway_s": 598,
+    "samples": 12
+  },
+  "105|0|Lo Espejo": {
+    "mean_headway_s": 1266,
+    "samples": 11
+  },
+  "105|1|Renca": {
+    "mean_headway_s": 1255,
+    "samples": 11
+  },
+  "105c|1|© Lo Valledor - Lo Espejo": {
+    "mean_headway_s": 1111,
+    "samples": 6
+  },
+  "106|0|Peñalolen": {
+    "mean_headway_s": 684,
+    "samples": 10
+  },
+  "106|1|Nueva San Martin": {
+    "mean_headway_s": 715,
+    "samples": 10
+  },
+  "107|0|Av. Departamental": {
+    "mean_headway_s": 712,
+    "samples": 12
+  },
+  "107|1|Ciudad Empresarial": {
+    "mean_headway_s": 665,
+    "samples": 12
+  },
+  "107c|0|Plaza Renca": {
+    "mean_headway_s": 900,
+    "samples": 3
+  },
+  "107c|1|Ciudad Empresarial": {
+    "mean_headway_s": 1380,
+    "samples": 3
+  },
+  "108|0|La Florida": {
+    "mean_headway_s": 891,
+    "samples": 11
+  },
+  "108|1|Maipu": {
+    "mean_headway_s": 680,
+    "samples": 10
+  },
+  "109|0|Maipu": {
+    "mean_headway_s": 631,
+    "samples": 10
+  },
+  "109|1|Renca": {
+    "mean_headway_s": 629,
+    "samples": 10
+  },
+  "109N|0|Maipu": {
+    "mean_headway_s": 1800,
+    "samples": 2
+  },
+  "109N|1|Plaza Italia": {
+    "mean_headway_s": 1800,
+    "samples": 2
+  },
+  "110|0|Maipu": {
+    "mean_headway_s": 824,
+    "samples": 11
+  },
+  "110|1|Renca": {
+    "mean_headway_s": 682,
+    "samples": 10
+  },
+  "110c|0|Pudahuel Sur": {
+    "mean_headway_s": 687,
+    "samples": 8
+  },
+  "110c|1|Lo Echevers": {
+    "mean_headway_s": 755,
+    "samples": 9
+  },
+  "111|0|Ciudad Satelite": {
+    "mean_headway_s": 824,
+    "samples": 10
+  },
+  "111|1|(M) Pajaritos": {
+    "mean_headway_s": 1210,
+    "samples": 11
+  },
+  "113|0|(M) Los Heroes": {
+    "mean_headway_s": 816,
+    "samples": 10
+  },
+  "113|1|Ciudad Satelite": {
+    "mean_headway_s": 762,
+    "samples": 9
+  },
+  "113c|0|(M) Cerrillos": {
+    "mean_headway_s": 1073,
+    "samples": 4
+  },
+  "113c|1|Ciudad Satelite": {
+    "mean_headway_s": 1092,
+    "samples": 3
+  },
+  "113e|0|(M) Los Heroes": {
+    "mean_headway_s": 1225,
+    "samples": 3
+  },
+  "113e|1|Ciudad Satelite": {
+    "mean_headway_s": 861,
+    "samples": 3
+  },
+  "114|0|Camilo Henriquez": {
+    "mean_headway_s": 788,
+    "samples": 10
+  },
+  "114|1|(M) Ñuñoa": {
+    "mean_headway_s": 1285,
+    "samples": 11
+  },
+  "115|0|(M) Los Heroes": {
+    "mean_headway_s": 762,
+    "samples": 10
+  },
+  "115|1|Villa El Abrazo": {
+    "mean_headway_s": 709,
+    "samples": 9
+  },
+  "115c|0|© Villa El Abrazo -  (M) Cerrillos": {
+    "mean_headway_s": 951,
+    "samples": 5
+  },
+  "116|0|© Huechuraba - Centro": {
+    "mean_headway_s": 764,
+    "samples": 10
+  },
+  "117|0|Departamental Oriente": {
+    "mean_headway_s": 664,
+    "samples": 10
+  },
+  "117|1|(M) Vespucio Norte": {
+    "mean_headway_s": 1335,
+    "samples": 11
+  },
+  "117c|0|© Huechuraba - Providencia": {
+    "mean_headway_s": 1486,
+    "samples": 7
+  },
+  "118|0|La Florida": {
+    "mean_headway_s": 705,
+    "samples": 10
+  },
+  "118|1|Maipu": {
+    "mean_headway_s": 705,
+    "samples": 10
+  },
+  "119|0|Lo Espejo": {
+    "mean_headway_s": 857,
+    "samples": 12
+  },
+  "119|1|Mapocho": {
+    "mean_headway_s": 810,
+    "samples": 12
+  },
+  "120|0|(M) La Cisterna": {
+    "mean_headway_s": 897,
+    "samples": 11
+  },
+  "120|1|Renca": {
+    "mean_headway_s": 845,
+    "samples": 11
+  },
+  "121|0|Lo Espejo": {
+    "mean_headway_s": 765,
+    "samples": 10
+  },
+  "121|1|Mapocho": {
+    "mean_headway_s": 750,
+    "samples": 10
+  },
+  "124|0|Puente Alto": {
+    "mean_headway_s": 2113,
+    "samples": 11
+  },
+  "124|1|(M) Macul": {
+    "mean_headway_s": 1135,
+    "samples": 11
+  },
+  "125|0|Lo Espejo": {
+    "mean_headway_s": 869,
+    "samples": 10
+  },
+  "125|1|(M) U. De Chile": {
+    "mean_headway_s": 2242,
+    "samples": 11
+  },
+  "126|0|© La Higuera - (M) Manuel Montt": {
+    "mean_headway_s": 704,
+    "samples": 9
+  },
+  "201|0|San Bernardo": {
+    "mean_headway_s": 669,
+    "samples": 12
+  },
+  "201|1|Mall Plaza Norte": {
+    "mean_headway_s": 692,
+    "samples": 12
+  },
+  "201e|0|San Bernardo": {
+    "mean_headway_s": 538,
+    "samples": 10
+  },
+  "201e|1|(M) Santa Ana": {
+    "mean_headway_s": 538,
+    "samples": 10
+  },
+  "203|0|La Pintana": {
+    "mean_headway_s": 624,
+    "samples": 10
+  },
+  "203|1|Av. Recoleta": {
+    "mean_headway_s": 646,
+    "samples": 10
+  },
+  "203N|0|La Pintana": {
+    "mean_headway_s": 1410,
+    "samples": 2
+  },
+  "203N|1|Huechuraba": {
+    "mean_headway_s": 1410,
+    "samples": 2
+  },
+  "203c|0|© La Pintana - La Granja": {
+    "mean_headway_s": 631,
+    "samples": 9
+  },
+  "203e|0|La Pintana": {
+    "mean_headway_s": 507,
+    "samples": 5
+  },
+  "203e|1|Centro": {
+    "mean_headway_s": 537,
+    "samples": 6
+  },
+  "204|0|Pie Andino": {
+    "mean_headway_s": 481,
+    "samples": 10
+  },
+  "204|1|Alameda": {
+    "mean_headway_s": 461,
+    "samples": 10
+  },
+  "204N|0|Pie Andino": {
+    "mean_headway_s": 1500,
+    "samples": 2
+  },
+  "204N|1|Alameda": {
+    "mean_headway_s": 1636,
+    "samples": 2
+  },
+  "205|0|Puente Alto": {
+    "mean_headway_s": 786,
+    "samples": 11
+  },
+  "205|1|Santiago": {
+    "mean_headway_s": 821,
+    "samples": 11
+  },
+  "206|0|La Pintana": {
+    "mean_headway_s": 1064,
+    "samples": 12
+  },
+  "206|1|Centro": {
+    "mean_headway_s": 1053,
+    "samples": 12
+  },
+  "206c|0|La Pintana": {
+    "mean_headway_s": 891,
+    "samples": 5
+  },
+  "206c|1|(M) Bio Bio": {
+    "mean_headway_s": 952,
+    "samples": 6
+  },
+  "207|0|Av. Santa Rosa": {
+    "mean_headway_s": 705,
+    "samples": 12
+  },
+  "207|1|Mapocho": {
+    "mean_headway_s": 710,
+    "samples": 12
+  },
+  "207c|0|© El Retiro - (M) Santa Rosa": {
+    "mean_headway_s": 586,
+    "samples": 5
+  },
+  "207e|0|Av. Santa Rosa": {
+    "mean_headway_s": 1169,
+    "samples": 6
+  },
+  "207e|1|Mapocho": {
+    "mean_headway_s": 988,
+    "samples": 6
+  },
+  "208|0|© Huechuraba - Centro": {
+    "mean_headway_s": 425,
+    "samples": 10
+  },
+  "208c|0|© Huechuraba - (M) Zapadores": {
+    "mean_headway_s": 494,
+    "samples": 10
+  },
+  "209|0|El Volcan": {
+    "mean_headway_s": 678,
+    "samples": 11
+  },
+  "209|1|Alameda": {
+    "mean_headway_s": 1000,
+    "samples": 12
+  },
+  "209c|0|© El Volcan - (M) Santa Rosa": {
+    "mean_headway_s": 692,
+    "samples": 6
+  },
+  "210|0|Puente Alto": {
+    "mean_headway_s": 601,
+    "samples": 12
+  },
+  "210|1|Estacion Central": {
+    "mean_headway_s": 573,
+    "samples": 12
+  },
+  "210e|0|Puente Alto": {
+    "mean_headway_s": 2340,
+    "samples": 4
+  },
+  "210e|1|Estacion Central": {
+    "mean_headway_s": 1830,
+    "samples": 5
+  },
+  "210v|0|Av. Mexico": {
+    "mean_headway_s": 880,
+    "samples": 12
+  },
+  "210v|1|Estacion Central": {
+    "mean_headway_s": 865,
+    "samples": 12
+  },
+  "211|0|Nos": {
+    "mean_headway_s": 631,
+    "samples": 10
+  },
+  "211|1|La Florida": {
+    "mean_headway_s": 869,
+    "samples": 11
+  },
+  "211c|0|San Bernardo": {
+    "mean_headway_s": 444,
+    "samples": 10
+  },
+  "211c|1|(M) La Cisterna": {
+    "mean_headway_s": 439,
+    "samples": 10
+  },
+  "212|0|La Pintana": {
+    "mean_headway_s": 599,
+    "samples": 11
+  },
+  "212|1|Mall Costanera Center": {
+    "mean_headway_s": 446,
+    "samples": 10
+  },
+  "213e|0|Puente Alto": {
+    "mean_headway_s": 707,
+    "samples": 10
+  },
+  "213e|1|Plaza Italia": {
+    "mean_headway_s": 1511,
+    "samples": 11
+  },
+  "214|0|Los Libertadores": {
+    "mean_headway_s": 659,
+    "samples": 10
+  },
+  "214|1|Santa Olga": {
+    "mean_headway_s": 659,
+    "samples": 10
+  },
+  "216|0|Vitacura": {
+    "mean_headway_s": 915,
+    "samples": 11
+  },
+  "216|1|Pablo De Rokha": {
+    "mean_headway_s": 614,
+    "samples": 11
+  },
+  "217e|0|(M) Santa Ana": {
+    "mean_headway_s": 1446,
+    "samples": 5
+  },
+  "217e|1|Maestranza": {
+    "mean_headway_s": 1926,
+    "samples": 5
+  },
+  "219e|0|Ciudad Empresarial": {
+    "mean_headway_s": 1077,
+    "samples": 6
+  },
+  "219e|1|(M) La Cisterna": {
+    "mean_headway_s": 1249,
+    "samples": 6
+  },
+  "223|0|Lo Espejo": {
+    "mean_headway_s": 641,
+    "samples": 11
+  },
+  "223|1|Santiago": {
+    "mean_headway_s": 587,
+    "samples": 10
+  },
+  "224|0|Gabriela": {
+    "mean_headway_s": 643,
+    "samples": 10
+  },
+  "224|1|Ñuñoa": {
+    "mean_headway_s": 700,
+    "samples": 10
+  },
+  "225|0|Villa Los Aromos": {
+    "mean_headway_s": 777,
+    "samples": 11
+  },
+  "225|1|Las Condes": {
+    "mean_headway_s": 647,
+    "samples": 10
+  },
+  "225c|0|© Villa Los Aromos - (M) Vicente Valdes": {
+    "mean_headway_s": 1234,
+    "samples": 5
+  },
+  "226|0|Nonato Coo": {
+    "mean_headway_s": 749,
+    "samples": 11
+  },
+  "226|1|Centro": {
+    "mean_headway_s": 692,
+    "samples": 11
+  },
+  "227|0|Av. Lo Ovalle": {
+    "mean_headway_s": 745,
+    "samples": 10
+  },
+  "227|1|La Reina": {
+    "mean_headway_s": 719,
+    "samples": 10
+  },
+  "228|0|Estacion San Bernardo": {
+    "mean_headway_s": 461,
+    "samples": 10
+  },
+  "228|1|(M) La Cisterna": {
+    "mean_headway_s": 472,
+    "samples": 10
+  },
+  "229|0|La Pintana": {
+    "mean_headway_s": 807,
+    "samples": 10
+  },
+  "229|1|(M) La Moneda": {
+    "mean_headway_s": 751,
+    "samples": 10
+  },
+  "230|0|© Los Libertadores - Centro": {
+    "mean_headway_s": 923,
+    "samples": 12
+  },
+  "233|0|© El Castillo - (M) B. De La Florida": {
+    "mean_headway_s": 751,
+    "samples": 10
+  },
+  "234|0|Ejercito Libertador": {
+    "mean_headway_s": 730,
+    "samples": 10
+  },
+  "234|1|Alameda": {
+    "mean_headway_s": 1207,
+    "samples": 11
+  },
+  "244|0|© La Foresta - Hospital Eloisa Diaz": {
+    "mean_headway_s": 1199,
+    "samples": 10
+  },
+  "245|0|© Puente Alto - (M) Santa Rosa": {
+    "mean_headway_s": 718,
+    "samples": 10
+  },
+  "262N|0|Villa España": {
+    "mean_headway_s": 1500,
+    "samples": 2
+  },
+  "262N|1|(M) Macul": {
+    "mean_headway_s": 1800,
+    "samples": 2
+  },
+  "264N|0|Santo Tomas": {
+    "mean_headway_s": 1500,
+    "samples": 2
+  },
+  "264N|1|Pedro Fontova": {
+    "mean_headway_s": 1500,
+    "samples": 2
+  },
+  "271|0|San Bernardo": {
+    "mean_headway_s": 811,
+    "samples": 10
+  },
+  "271|1|Santiago": {
+    "mean_headway_s": 848,
+    "samples": 10
+  },
+  "272|0|© Los Libertadores - Ciudad Empresarial": {
+    "mean_headway_s": 668,
+    "samples": 10
+  },
+  "282|0|(M) Plaza Puente Alto": {
+    "mean_headway_s": 5100,
+    "samples": 9
+  },
+  "282|1|Nos": {
+    "mean_headway_s": 5760,
+    "samples": 10
+  },
+  "286|0|Mall Alto Las Condes": {
+    "mean_headway_s": 1375,
+    "samples": 11
+  },
+  "286|1|La Pintana": {
+    "mean_headway_s": 849,
+    "samples": 11
+  },
+  "301|0|Angelmo": {
+    "mean_headway_s": 496,
+    "samples": 12
+  },
+  "301|1|Juan Antonio Rios": {
+    "mean_headway_s": 437,
+    "samples": 12
+  },
+  "301c|0|Angelmo": {
+    "mean_headway_s": 580,
+    "samples": 10
+  },
+  "301c|1|(M) La Cisterna": {
+    "mean_headway_s": 1319,
+    "samples": 11
+  },
+  "302|0|La Pintana": {
+    "mean_headway_s": 688,
+    "samples": 10
+  },
+  "302|1|(M) Santa Ana": {
+    "mean_headway_s": 1085,
+    "samples": 11
+  },
+  "302N|0|La Pintana": {
+    "mean_headway_s": 1800,
+    "samples": 2
+  },
+  "302N|1|Alameda": {
+    "mean_headway_s": 1800,
+    "samples": 2
+  },
+  "303|0|Plaza Italia": {
+    "mean_headway_s": 790,
+    "samples": 12
+  },
+  "303|1|Quilicura": {
+    "mean_headway_s": 772,
+    "samples": 12
+  },
+  "306|0|Pob. Las Turbinas": {
+    "mean_headway_s": 682,
+    "samples": 10
+  },
+  "306|1|Juan Antonio Rios": {
+    "mean_headway_s": 628,
+    "samples": 10
+  },
+  "307|0|© Lo Marcoleta - Plaza Italia": {
+    "mean_headway_s": 947,
+    "samples": 11
+  },
+  "307c|0|(M) Los Libertadores": {
+    "mean_headway_s": 694,
+    "samples": 10
+  },
+  "307c|1|Lo Marcoleta": {
+    "mean_headway_s": 644,
+    "samples": 10
+  },
+  "307e|0|(M) Santa Lucia": {
+    "mean_headway_s": 1414,
+    "samples": 7
+  },
+  "307e|1|Rigoberto Jara": {
+    "mean_headway_s": 800,
+    "samples": 6
+  },
+  "308|0|Mapocho": {
+    "mean_headway_s": 1052,
+    "samples": 11
+  },
+  "308|1|Lo Marcoleta": {
+    "mean_headway_s": 650,
+    "samples": 10
+  },
+  "308c|0|© San Luis - (M) Lo Cruzat": {
+    "mean_headway_s": 847,
+    "samples": 10
+  },
+  "313e|0|Estacion Central": {
+    "mean_headway_s": 920,
+    "samples": 5
+  },
+  "313e|1|Quilicura": {
+    "mean_headway_s": 1332,
+    "samples": 6
+  },
+  "314|0|© Lo Marcoleta - Plaza Italia": {
+    "mean_headway_s": 1110,
+    "samples": 11
+  },
+  "314c|0|© Lo Marcoleta - (M) Lo Cruzat": {
+    "mean_headway_s": 600,
+    "samples": 5
+  },
+  "315e|0|(M) Santa Lucia": {
+    "mean_headway_s": 758,
+    "samples": 11
+  },
+  "315e|1|Rigoberto Jara": {
+    "mean_headway_s": 540,
+    "samples": 10
+  },
+  "320|0|Maria Angelica": {
+    "mean_headway_s": 938,
+    "samples": 10
+  },
+  "320|1|(M) Franklin": {
+    "mean_headway_s": 2273,
+    "samples": 11
+  },
+  "320c|0|Maria Angelica": {
+    "mean_headway_s": 2376,
+    "samples": 5
+  },
+  "320c|1|(M) Bellavista De La Florida": {
+    "mean_headway_s": 2580,
+    "samples": 6
+  },
+  "321|0|Lo Sierra": {
+    "mean_headway_s": 944,
+    "samples": 10
+  },
+  "321|1|(M) Lo Ovalle": {
+    "mean_headway_s": 975,
+    "samples": 10
+  },
+  "322|0|Jardin Alto": {
+    "mean_headway_s": 816,
+    "samples": 10
+  },
+  "322|1|(M) Bellavista De La Florida": {
+    "mean_headway_s": 822,
+    "samples": 10
+  },
+  "323|0|La Loma": {
+    "mean_headway_s": 813,
+    "samples": 10
+  },
+  "323|1|(M) Bellavista La Florida": {
+    "mean_headway_s": 806,
+    "samples": 10
+  },
+  "325|0|(M) Irarrazaval": {
+    "mean_headway_s": 1527,
+    "samples": 11
+  },
+  "325|1|Gabriela": {
+    "mean_headway_s": 950,
+    "samples": 11
+  },
+  "329|0|Mall Florida Center": {
+    "mean_headway_s": 814,
+    "samples": 10
+  },
+  "329|1|Mall Plaza Oeste": {
+    "mean_headway_s": 818,
+    "samples": 10
+  },
+  "345|0|Alameda": {
+    "mean_headway_s": 926,
+    "samples": 10
+  },
+  "345|1|Lo Espejo": {
+    "mean_headway_s": 873,
+    "samples": 10
+  },
+  "346N|0|Alameda": {
+    "mean_headway_s": 1800,
+    "samples": 2
+  },
+  "346N|1|Lo Espejo": {
+    "mean_headway_s": 1800,
+    "samples": 2
+  },
+  "348|0|(M) Lo Ovalle": {
+    "mean_headway_s": 816,
+    "samples": 10
+  },
+  "348|1|Rinconada": {
+    "mean_headway_s": 792,
+    "samples": 10
+  },
+  "385|0|Florida Center": {
+    "mean_headway_s": 1491,
+    "samples": 11
+  },
+  "385|1|Villa Francia": {
+    "mean_headway_s": 836,
+    "samples": 10
+  },
+  "401|0|Las Condes": {
+    "mean_headway_s": 827,
+    "samples": 12
+  },
+  "401|1|Maipu": {
+    "mean_headway_s": 771,
+    "samples": 12
+  },
+  "401c|0|Las Condes": {
+    "mean_headway_s": 4950,
+    "samples": 6
+  },
+  "401c|1|(M) Escuela Militar": {
+    "mean_headway_s": 4950,
+    "samples": 6
+  },
+  "402|0|© Pudahuel - Centro": {
+    "mean_headway_s": 741,
+    "samples": 10
+  },
+  "403|0|La Reina": {
+    "mean_headway_s": 803,
+    "samples": 12
+  },
+  "403|1|(M) Santa Ana": {
+    "mean_headway_s": 813,
+    "samples": 12
+  },
+  "404|0|© El Descanso - Mapocho": {
+    "mean_headway_s": 725,
+    "samples": 11
+  },
+  "404c|0|(M) Las Rejas": {
+    "mean_headway_s": 695,
+    "samples": 3
+  },
+  "404c|1|El Descanso": {
+    "mean_headway_s": 1133,
+    "samples": 3
+  },
+  "405|0|Cantagallo": {
+    "mean_headway_s": 789,
+    "samples": 12
+  },
+  "405|1|Maipu": {
+    "mean_headway_s": 760,
+    "samples": 12
+  },
+  "405c|1|© Plaza Italia - Cantagallo": {
+    "mean_headway_s": 1459,
+    "samples": 8
+  },
+  "406|0|Cantagallo": {
+    "mean_headway_s": 947,
+    "samples": 11
+  },
+  "406|1|Pudahuel": {
+    "mean_headway_s": 571,
+    "samples": 10
+  },
+  "406c|0|© (M) Escuela Militar - Av. El Rodeo": {
+    "mean_headway_s": 1545,
+    "samples": 6
+  },
+  "407|0|Las Condes": {
+    "mean_headway_s": 734,
+    "samples": 12
+  },
+  "407|1|Enea": {
+    "mean_headway_s": 770,
+    "samples": 12
+  },
+  "408|0|Mapocho": {
+    "mean_headway_s": 605,
+    "samples": 10
+  },
+  "408|1|Renca": {
+    "mean_headway_s": 697,
+    "samples": 11
+  },
+  "408e|0|Mapocho": {
+    "mean_headway_s": 868,
+    "samples": 2
+  },
+  "408e|1|Renca": {
+    "mean_headway_s": 1080,
+    "samples": 2
+  },
+  "409|0|Plaza San Enrique": {
+    "mean_headway_s": 665,
+    "samples": 10
+  },
+  "409|1|Mapocho": {
+    "mean_headway_s": 762,
+    "samples": 11
+  },
+  "410|0|Providencia": {
+    "mean_headway_s": 1094,
+    "samples": 11
+  },
+  "410|1|Renca": {
+    "mean_headway_s": 748,
+    "samples": 11
+  },
+  "410e|0|Providencia": {
+    "mean_headway_s": 1003,
+    "samples": 3
+  },
+  "411|0|Plaza San Enrique": {
+    "mean_headway_s": 707,
+    "samples": 10
+  },
+  "411|1|Providencia": {
+    "mean_headway_s": 840,
+    "samples": 10
+  },
+  "412|0|La Reina": {
+    "mean_headway_s": 1454,
+    "samples": 12
+  },
+  "412|1|Enea": {
+    "mean_headway_s": 1190,
+    "samples": 12
+  },
+  "414e|0|Los Trapenses": {
+    "mean_headway_s": 810,
+    "samples": 3
+  },
+  "414e|1|(M) Pudahuel": {
+    "mean_headway_s": 1289,
+    "samples": 3
+  },
+  "415e|0|(M) Manquehue": {
+    "mean_headway_s": 820,
+    "samples": 3
+  },
+  "415e|1|(M) Pudahuel": {
+    "mean_headway_s": 1107,
+    "samples": 3
+  },
+  "417e|0|(M) Manquehue": {
+    "mean_headway_s": 915,
+    "samples": 3
+  },
+  "417e|1|Maipu": {
+    "mean_headway_s": 1543,
+    "samples": 3
+  },
+  "418|0|Av. Tobalaba": {
+    "mean_headway_s": 924,
+    "samples": 12
+  },
+  "418|1|Enea": {
+    "mean_headway_s": 938,
+    "samples": 12
+  },
+  "419|0|Plaza Italia": {
+    "mean_headway_s": 1232,
+    "samples": 11
+  },
+  "419|1|Villa Los Heroes": {
+    "mean_headway_s": 933,
+    "samples": 10
+  },
+  "420|0|© Av. Tobalaba - (M) Escuela Militar": {
+    "mean_headway_s": 961,
+    "samples": 6
+  },
+  "421|0|San Carlos De Apoquindo": {
+    "mean_headway_s": 866,
+    "samples": 11
+  },
+  "421|1|Maipu": {
+    "mean_headway_s": 809,
+    "samples": 11
+  },
+  "421c|0|© San Carlos De Apoquindo - (M) Los Dominicos": {
+    "mean_headway_s": 1332,
+    "samples": 5
+  },
+  "422|0|La Reina": {
+    "mean_headway_s": 708,
+    "samples": 10
+  },
+  "422|1|Pob. Teniente Merino": {
+    "mean_headway_s": 774,
+    "samples": 10
+  },
+  "422c|0|(M) San Pablo": {
+    "mean_headway_s": 754,
+    "samples": 3
+  },
+  "422c|1|Pob. Teniente Merino": {
+    "mean_headway_s": 1107,
+    "samples": 3
+  },
+  "423|0|Plaza Italia": {
+    "mean_headway_s": 1560,
+    "samples": 11
+  },
+  "423|1|Nueva San Martin": {
+    "mean_headway_s": 866,
+    "samples": 10
+  },
+  "424|0|(M) U. De Chile": {
+    "mean_headway_s": 793,
+    "samples": 10
+  },
+  "424|1|Pudahuel Sur": {
+    "mean_headway_s": 869,
+    "samples": 10
+  },
+  "425|0|Lo Hermida": {
+    "mean_headway_s": 998,
+    "samples": 12
+  },
+  "425|1|Rigoberto Jara": {
+    "mean_headway_s": 992,
+    "samples": 12
+  },
+  "426|0|La Dehesa": {
+    "mean_headway_s": 762,
+    "samples": 12
+  },
+  "426|1|Pudahuel": {
+    "mean_headway_s": 740,
+    "samples": 12
+  },
+  "428|0|(M) La Cisterna": {
+    "mean_headway_s": 902,
+    "samples": 12
+  },
+  "428|1|(M) Los Libertadores": {
+    "mean_headway_s": 818,
+    "samples": 12
+  },
+  "428e|0|(M) La Cisterna": {
+    "mean_headway_s": 757,
+    "samples": 6
+  },
+  "428e|1|(M) Los Libertadores": {
+    "mean_headway_s": 711,
+    "samples": 6
+  },
+  "429|0|Lo Hermida": {
+    "mean_headway_s": 1114,
+    "samples": 11
+  },
+  "429|1|Lo Echevers": {
+    "mean_headway_s": 1124,
+    "samples": 11
+  },
+  "429c|0|(M) Tobalaba": {
+    "mean_headway_s": 2402,
+    "samples": 5
+  },
+  "429c|1|Quilicura": {
+    "mean_headway_s": 1613,
+    "samples": 6
+  },
+  "430|0|La Dehesa": {
+    "mean_headway_s": 947,
+    "samples": 11
+  },
+  "430|1|Quilicura": {
+    "mean_headway_s": 687,
+    "samples": 10
+  },
+  "431c|0|(M) Ecuador": {
+    "mean_headway_s": 1080,
+    "samples": 3
+  },
+  "431c|1|Nueva San Martin": {
+    "mean_headway_s": 1244,
+    "samples": 4
+  },
+  "432N|0|La Reina": {
+    "mean_headway_s": 1800,
+    "samples": 2
+  },
+  "432N|1|Maipu": {
+    "mean_headway_s": 1800,
+    "samples": 2
+  },
+  "435|0|Vitacura": {
+    "mean_headway_s": 754,
+    "samples": 10
+  },
+  "435|1|Quilicura": {
+    "mean_headway_s": 720,
+    "samples": 9
+  },
+  "444|0|(M) La Cisterna": {
+    "mean_headway_s": 1194,
+    "samples": 10
+  },
+  "444|1|Intermodal Aeropuerto": {
+    "mean_headway_s": 1160,
+    "samples": 10
+  },
+  "445c|0|Vitacura": {
+    "mean_headway_s": 738,
+    "samples": 3
+  },
+  "445c|1|Centro": {
+    "mean_headway_s": 1143,
+    "samples": 4
+  },
+  "481|0|Avenida Portales": {
+    "mean_headway_s": 822,
+    "samples": 9
+  },
+  "481|1|Plaza Italia": {
+    "mean_headway_s": 1451,
+    "samples": 11
+  },
+  "486|0|© Enea - (M) San Pablo": {
+    "mean_headway_s": 703,
+    "samples": 5
+  },
+  "501|0|Fleming": {
+    "mean_headway_s": 598,
+    "samples": 10
+  },
+  "501|1|(M) Parque Bustamante": {
+    "mean_headway_s": 595,
+    "samples": 10
+  },
+  "502|0|Cantagallo": {
+    "mean_headway_s": 921,
+    "samples": 11
+  },
+  "502|1|Cerro Navia": {
+    "mean_headway_s": 823,
+    "samples": 11
+  },
+  "502c|0|Santiago": {
+    "mean_headway_s": 1365,
+    "samples": 3
+  },
+  "502c|1|Cerro Navia": {
+    "mean_headway_s": 1300,
+    "samples": 3
+  },
+  "503|0|Vital Apoquindo": {
+    "mean_headway_s": 936,
+    "samples": 11
+  },
+  "503|1|Av. La Estrella": {
+    "mean_headway_s": 609,
+    "samples": 11
+  },
+  "504|0|Hospital Dipreca": {
+    "mean_headway_s": 731,
+    "samples": 10
+  },
+  "504|1|El Tranque": {
+    "mean_headway_s": 698,
+    "samples": 10
+  },
+  "505|0|Las Parcelas": {
+    "mean_headway_s": 1222,
+    "samples": 11
+  },
+  "505|1|Cerro Navia": {
+    "mean_headway_s": 1201,
+    "samples": 11
+  },
+  "505c|0|© Las Parcelas - (M) Salvador": {
+    "mean_headway_s": 1800,
+    "samples": 3
+  },
+  "506|0|Peñalolen": {
+    "mean_headway_s": 796,
+    "samples": 12
+  },
+  "506|1|Maipu": {
+    "mean_headway_s": 758,
+    "samples": 12
+  },
+  "506e|0|Peñalolen": {
+    "mean_headway_s": 946,
+    "samples": 6
+  },
+  "506e|1|Maipu": {
+    "mean_headway_s": 1215,
+    "samples": 6
+  },
+  "506v|0|Peñalolen": {
+    "mean_headway_s": 648,
+    "samples": 10
+  },
+  "506v|1|Villa El Abrazo": {
+    "mean_headway_s": 643,
+    "samples": 10
+  },
+  "507|0|Av Grecia": {
+    "mean_headway_s": 711,
+    "samples": 11
+  },
+  "507|1|Enea": {
+    "mean_headway_s": 714,
+    "samples": 11
+  },
+  "507c|0|Peñalolen": {
+    "mean_headway_s": 967,
+    "samples": 6
+  },
+  "507c|1|(M) Parque O'Higgins": {
+    "mean_headway_s": 865,
+    "samples": 6
+  },
+  "508|0|Av. Las Torres": {
+    "mean_headway_s": 822,
+    "samples": 12
+  },
+  "508|1|Av. Mapocho": {
+    "mean_headway_s": 820,
+    "samples": 12
+  },
+  "509|0|Mapocho": {
+    "mean_headway_s": 1567,
+    "samples": 11
+  },
+  "509|1|Maipu": {
+    "mean_headway_s": 931,
+    "samples": 10
+  },
+  "510|0|Rio Claro": {
+    "mean_headway_s": 732,
+    "samples": 10
+  },
+  "510|1|Pudahuel Sur": {
+    "mean_headway_s": 740,
+    "samples": 10
+  },
+  "511|0|Peñalolen": {
+    "mean_headway_s": 869,
+    "samples": 11
+  },
+  "511|1|Cerro Navia": {
+    "mean_headway_s": 865,
+    "samples": 11
+  },
+  "513|0|Jose Arrieta": {
+    "mean_headway_s": 767,
+    "samples": 12
+  },
+  "513|1|El Montijo": {
+    "mean_headway_s": 778,
+    "samples": 12
+  },
+  "514|0|San Luis De Macul": {
+    "mean_headway_s": 668,
+    "samples": 10
+  },
+  "514|1|Enea": {
+    "mean_headway_s": 673,
+    "samples": 10
+  },
+  "514c|0|San Luis De Macul": {
+    "mean_headway_s": 890,
+    "samples": 3
+  },
+  "514c|1|(M) Salvador": {
+    "mean_headway_s": 1410,
+    "samples": 3
+  },
+  "516|0|Las Parcelas": {
+    "mean_headway_s": 641,
+    "samples": 12
+  },
+  "516|1|Pudahuel Sur": {
+    "mean_headway_s": 665,
+    "samples": 12
+  },
+  "517|0|Peñalolén": {
+    "mean_headway_s": 1295,
+    "samples": 10
+  },
+  "517|1|J. J. Pérez": {
+    "mean_headway_s": 1304,
+    "samples": 10
+  },
+  "518|0|Bilbao": {
+    "mean_headway_s": 805,
+    "samples": 12
+  },
+  "518|1|J.J. Perez": {
+    "mean_headway_s": 819,
+    "samples": 12
+  },
+  "519|0|Av. Grecia": {
+    "mean_headway_s": 951,
+    "samples": 9
+  },
+  "519|1|(M) Pajaritos": {
+    "mean_headway_s": 659,
+    "samples": 9
+  },
+  "541N|0|Colon": {
+    "mean_headway_s": 1800,
+    "samples": 2
+  },
+  "541N|1|El Tranque": {
+    "mean_headway_s": 1800,
+    "samples": 2
+  },
+  "542|0|Cantagallo": {
+    "mean_headway_s": 916,
+    "samples": 8
+  },
+  "542|1|Cerro Navia": {
+    "mean_headway_s": 1109,
+    "samples": 8
+  },
+  "546e|0|Vitacura": {
+    "mean_headway_s": 1560,
+    "samples": 3
+  },
+  "546e|1|Villa El Abrazo": {
+    "mean_headway_s": 1414,
+    "samples": 2
+  },
+  "555|0|(M) Pajaritos": {
+    "mean_headway_s": 881,
+    "samples": 10
+  },
+  "555|1|Intermodal Aeropuerto": {
+    "mean_headway_s": 828,
+    "samples": 10
+  },
+  "712|0|La Piramide": {
+    "mean_headway_s": 803,
+    "samples": 12
+  },
+  "712|1|Puente Alto": {
+    "mean_headway_s": 813,
+    "samples": 12
+  },
+  "722|0|Av. Colon": {
+    "mean_headway_s": 1026,
+    "samples": 11
+  },
+  "722|1|Gonel": {
+    "mean_headway_s": 1424,
+    "samples": 12
+  },
+  "B01|0|© Huamachuco - El Salto": {
+    "mean_headway_s": 899,
+    "samples": 11
+  },
+  "B02|0|© El Barrero - Centro": {
+    "mean_headway_s": 1090,
+    "samples": 10
+  },
+  "B02N|0|© El Barrero - Plaza Italia": {
+    "mean_headway_s": 1800,
+    "samples": 3
+  },
+  "B03|0|© Miraflores - (M) Cerro Blanco": {
+    "mean_headway_s": 1135,
+    "samples": 11
+  },
+  "B04|0|© (M) Los Libertadores - Mapocho": {
+    "mean_headway_s": 1459,
+    "samples": 11
+  },
+  "B05|0|Ciudad Empresarial": {
+    "mean_headway_s": 863,
+    "samples": 10
+  },
+  "B05|1|(M) Los Libertadores": {
+    "mean_headway_s": 863,
+    "samples": 10
+  },
+  "B06|0|Santa Laura": {
+    "mean_headway_s": 779,
+    "samples": 10
+  },
+  "B06|1|(M) Zapadores": {
+    "mean_headway_s": 1471,
+    "samples": 11
+  },
+  "B07|0|© M) Los Libertadores - San Ignacio": {
+    "mean_headway_s": 907,
+    "samples": 10
+  },
+  "B08|0|Mall Plaza Norte": {
+    "mean_headway_s": 962,
+    "samples": 11
+  },
+  "B08|1|Lo Marcoleta": {
+    "mean_headway_s": 1156,
+    "samples": 11
+  },
+  "B09|0|© Lo Boza - Lo Franco": {
+    "mean_headway_s": 1818,
+    "samples": 11
+  },
+  "B10|0|© Santa Marta Huechuraba - (M) Cerro Blanco": {
+    "mean_headway_s": 840,
+    "samples": 10
+  },
+  "B11|0|Lo Marcoleta": {
+    "mean_headway_s": 994,
+    "samples": 10
+  },
+  "B11|1|El Salto": {
+    "mean_headway_s": 1711,
+    "samples": 11
+  },
+  "B12|0|Lo Marcoleta": {
+    "mean_headway_s": 779,
+    "samples": 10
+  },
+  "B12|1|(M) Zapadores": {
+    "mean_headway_s": 2289,
+    "samples": 11
+  },
+  "B12c|0|Buenaventura": {
+    "mean_headway_s": 1044,
+    "samples": 6
+  },
+  "B12c|1|Lo Marcoleta": {
+    "mean_headway_s": 1666,
+    "samples": 6
+  },
+  "B13|0|© Valle Grande - (M) Lo Cruzat": {
+    "mean_headway_s": 535,
+    "samples": 10
+  },
+  "B14|0|© El Salto - Mapocho": {
+    "mean_headway_s": 1179,
+    "samples": 11
+  },
+  "B15|0|© El Salto - Plaza Italia": {
+    "mean_headway_s": 2356,
+    "samples": 11
+  },
+  "B16|0|(M) Vespucio Norte": {
+    "mean_headway_s": 1363,
+    "samples": 11
+  },
+  "B16|1|El Carmen": {
+    "mean_headway_s": 660,
+    "samples": 10
+  },
+  "B17|0|© Huamachuco - Av. Arzobispo Valdivieso": {
+    "mean_headway_s": 2219,
+    "samples": 11
+  },
+  "B18|0|(M) Vespucio Norte": {
+    "mean_headway_s": 1083,
+    "samples": 11
+  },
+  "B18|1|Villa Pucara": {
+    "mean_headway_s": 1427,
+    "samples": 11
+  },
+  "B18e|0|(M) Los Libertadores": {
+    "mean_headway_s": 976,
+    "samples": 10
+  },
+  "B18e|1|Villa Pucara": {
+    "mean_headway_s": 1664,
+    "samples": 11
+  },
+  "B19|1|© (M) Cardenal Caro - (M) Vespucio Norte": {
+    "mean_headway_s": 2312,
+    "samples": 11
+  },
+  "B20|0|© Miraflores - Mapocho": {
+    "mean_headway_s": 938,
+    "samples": 10
+  },
+  "B21|0|Lo Marcoleta": {
+    "mean_headway_s": 968,
+    "samples": 10
+  },
+  "B21|1|Plaza Chacabuco": {
+    "mean_headway_s": 2317,
+    "samples": 11
+  },
+  "B22|0|Urmeneta": {
+    "mean_headway_s": 808,
+    "samples": 10
+  },
+  "B22|1|Palacio Riesco": {
+    "mean_headway_s": 800,
+    "samples": 10
+  },
+  "B24|0|© Huamachuco - Centro": {
+    "mean_headway_s": 915,
+    "samples": 10
+  },
+  "B25|0|© (M) Vespucio Norte - (M) Cerro Blanco": {
+    "mean_headway_s": 2365,
+    "samples": 11
+  },
+  "B26|0|© (M) Los Libertadores - (M) Estacion Central": {
+    "mean_headway_s": 959,
+    "samples": 11
+  },
+  "B27|0|(M) Salvador": {
+    "mean_headway_s": 773,
+    "samples": 10
+  },
+  "B27|1|(M) Vespucio Norte": {
+    "mean_headway_s": 773,
+    "samples": 10
+  },
+  "B28|0|© Huamachuco - (M) Estacion Central": {
+    "mean_headway_s": 819,
+    "samples": 10
+  },
+  "B29|0|© Miraflores - Mapocho": {
+    "mean_headway_s": 1508,
+    "samples": 11
+  },
+  "B30N|0|© Renca - Centro": {
+    "mean_headway_s": 1680,
+    "samples": 3
+  },
+  "B31N|0|Quilicura": {
+    "mean_headway_s": 2400,
+    "samples": 3
+  },
+  "B31N|1|Centro": {
+    "mean_headway_s": 2000,
+    "samples": 3
+  },
+  "B32|0|© Valle Lo Campino - Muni. Quilicura": {
+    "mean_headway_s": 1334,
+    "samples": 10
+  },
+  "B33|0|© (M) Los Libertadores - Buenaventura": {
+    "mean_headway_s": 797,
+    "samples": 10
+  },
+  "B35|0|© (M) Los Libertadores - (M) Zapadores": {
+    "mean_headway_s": 2000,
+    "samples": 9
+  },
+  "B36|0|© (M) Los Libertadores - Pedro Fontova Norte": {
+    "mean_headway_s": 769,
+    "samples": 10
+  },
+  "B37|0|© (M) Los Libertadores - Parque Industrial": {
+    "mean_headway_s": 1884,
+    "samples": 10
+  },
+  "B38|0|© Hospital Felix Bulnes - Huamachuco": {
+    "mean_headway_s": 1800,
+    "samples": 9
+  },
+  "B41|0|© Mall Plaza Norte - (M) Cerro Blanco": {
+    "mean_headway_s": 773,
+    "samples": 10
+  },
+  "B42|0|Valle Grande": {
+    "mean_headway_s": 928,
+    "samples": 10
+  },
+  "B42|1|(M) Los Libertadores": {
+    "mean_headway_s": 921,
+    "samples": 10
+  },
+  "B43|0|Lo Marcoleta": {
+    "mean_headway_s": 1001,
+    "samples": 11
+  },
+  "B43|1|(M) Vespucio Norte": {
+    "mean_headway_s": 923,
+    "samples": 10
+  },
+  "B45|0|El Mañio": {
+    "mean_headway_s": 642,
+    "samples": 10
+  },
+  "B45|1|Rigoberto Jara": {
+    "mean_headway_s": 671,
+    "samples": 10
+  },
+  "C01|0|Cerro 18": {
+    "mean_headway_s": 659,
+    "samples": 11
+  },
+  "C01|1|(M) Francisco Bilbao": {
+    "mean_headway_s": 666,
+    "samples": 11
+  },
+  "C01c|0|Plaza San Enrique": {
+    "mean_headway_s": 548,
+    "samples": 10
+  },
+  "C01c|1|(M) Escuela Militar": {
+    "mean_headway_s": 505,
+    "samples": 9
+  },
+  "C02|0|© San Carlos De Apoquindo - (M) Escuela Militar": {
+    "mean_headway_s": 798,
+    "samples": 12
+  },
+  "C02c|0|(M) Los Dominicos": {
+    "mean_headway_s": 472,
+    "samples": 8
+  },
+  "C02c|1|San Carlos De Apoquindo": {
+    "mean_headway_s": 455,
+    "samples": 8
+  },
+  "C03|1|© (M) Tobalaba - Vital Apoquindo": {
+    "mean_headway_s": 935,
+    "samples": 11
+  },
+  "C03c|0|Vital Apoquindo": {
+    "mean_headway_s": 849,
+    "samples": 4
+  },
+  "C03c|1|Lo Gallo": {
+    "mean_headway_s": 859,
+    "samples": 4
+  },
+  "C05|0|(M) Francisco Bilbao": {
+    "mean_headway_s": 842,
+    "samples": 10
+  },
+  "C05|1|La Ermita": {
+    "mean_headway_s": 793,
+    "samples": 10
+  },
+  "C06|0|Ciudad Empresarial": {
+    "mean_headway_s": 797,
+    "samples": 10
+  },
+  "C06|1|Vital Apoquindo": {
+    "mean_headway_s": 790,
+    "samples": 10
+  },
+  "C07|0|(M) Francisco Bilbao": {
+    "mean_headway_s": 666,
+    "samples": 10
+  },
+  "C07|1|La Piramide": {
+    "mean_headway_s": 716,
+    "samples": 10
+  },
+  "C09|0|© La Dehesa - (M) Los Dominicos": {
+    "mean_headway_s": 1259,
+    "samples": 11
+  },
+  "C09c|0|© San Carlos De Apoquindo - (M) Los Dominicos": {
+    "mean_headway_s": 642,
+    "samples": 5
+  },
+  "C10e|0|Camino Juan Pablo Ii": {
+    "mean_headway_s": 954,
+    "samples": 8
+  },
+  "C10e|1|(M) Tobalaba": {
+    "mean_headway_s": 959,
+    "samples": 8
+  },
+  "C11|0|© (M) Escuela Militar - Tabancura": {
+    "mean_headway_s": 687,
+    "samples": 10
+  },
+  "C13|0|© Vital Apoquindo - Parque Del Sol": {
+    "mean_headway_s": 988,
+    "samples": 10
+  },
+  "C14|0|Los Trapenses": {
+    "mean_headway_s": 531,
+    "samples": 10
+  },
+  "C14|1|(M) Escuela Militar": {
+    "mean_headway_s": 651,
+    "samples": 11
+  },
+  "C15|0|© (M) Escuela Militar - Estoril": {
+    "mean_headway_s": 856,
+    "samples": 10
+  },
+  "C16|0|El Huinganal": {
+    "mean_headway_s": 771,
+    "samples": 10
+  },
+  "C16|1|Vital Apoquindo": {
+    "mean_headway_s": 677,
+    "samples": 10
+  },
+  "C17|0|Camino Real": {
+    "mean_headway_s": 1587,
+    "samples": 10
+  },
+  "C17|1|Cerro 18": {
+    "mean_headway_s": 1587,
+    "samples": 10
+  },
+  "C18|0|(M) Dorsal": {
+    "mean_headway_s": 688,
+    "samples": 10
+  },
+  "C18|1|(M) Escuela Militar": {
+    "mean_headway_s": 695,
+    "samples": 10
+  },
+  "C19|0|Valle De La Dehesa": {
+    "mean_headway_s": 914,
+    "samples": 10
+  },
+  "C19|1|(M) Escuela Militar": {
+    "mean_headway_s": 903,
+    "samples": 10
+  },
+  "C20|0|© (M) Escuela Militar - Parque Arauco": {
+    "mean_headway_s": 564,
+    "samples": 10
+  },
+  "C22|0|Rotonda Lo Curro": {
+    "mean_headway_s": 1174,
+    "samples": 10
+  },
+  "C22|1|(M) Escuela Militar": {
+    "mean_headway_s": 1170,
+    "samples": 10
+  },
+  "C25|0|Villa La Reina": {
+    "mean_headway_s": 1729,
+    "samples": 12
+  },
+  "C25|1|San Carlos De Apoquindo": {
+    "mean_headway_s": 881,
+    "samples": 10
+  },
+  "C26c|0|© Ciudad Empresarial - (M) Tobalaba": {
+    "mean_headway_s": 1170,
+    "samples": 4
+  },
+  "C27|0|© Republica De Honduras - (M) Los Dominicos": {
+    "mean_headway_s": 849,
+    "samples": 10
+  },
+  "C28|0|Los Bravos": {
+    "mean_headway_s": 2022,
+    "samples": 11
+  },
+  "C28|1|(M) Escuela Militar": {
+    "mean_headway_s": 2042,
+    "samples": 12
+  },
+  "C30e|0|Los Trapenses": {
+    "mean_headway_s": 1201,
+    "samples": 8
+  },
+  "C30e|1|(M) Los Leones": {
+    "mean_headway_s": 1209,
+    "samples": 8
+  },
+  "C33c|0|© Vitacura - (M) Tobalaba": {
+    "mean_headway_s": 1057,
+    "samples": 4
+  },
+  "C37|1|© (M) Los Dominicos - San Ramon Oriente": {
+    "mean_headway_s": 1037,
+    "samples": 9
+  },
+  "D01|0|© Antupirén - (M) Plaza Egaña": {
+    "mean_headway_s": 931,
+    "samples": 10
+  },
+  "D02|0|Álvaro Casanova": {
+    "mean_headway_s": 756,
+    "samples": 10
+  },
+  "D02|1|(M) Irarrázaval": {
+    "mean_headway_s": 790,
+    "samples": 10
+  },
+  "D03|0|(M) Toesca": {
+    "mean_headway_s": 1027,
+    "samples": 11
+  },
+  "D03|1|Las Parcelas": {
+    "mean_headway_s": 579,
+    "samples": 10
+  },
+  "D03c|0|© Las Parcelas - (M) Plaza Egaña": {
+    "mean_headway_s": 1574,
+    "samples": 5
+  },
+  "D05|0|Av. Tobalaba": {
+    "mean_headway_s": 622,
+    "samples": 10
+  },
+  "D05|1|(M) Franklin": {
+    "mean_headway_s": 1310,
+    "samples": 11
+  },
+  "D07|0|(M) Franklin": {
+    "mean_headway_s": 1355,
+    "samples": 11
+  },
+  "D07|1|Diagonal Las Torres": {
+    "mean_headway_s": 778,
+    "samples": 11
+  },
+  "D07c|0|© Antupiren - (M) Grecia": {
+    "mean_headway_s": 1268,
+    "samples": 5
+  },
+  "D08|0|© Av. Grecia - (M) Francisco Bilbao": {
+    "mean_headway_s": 1053,
+    "samples": 11
+  },
+  "D09|0|© Av. Grecia Oriente - (M) Manuel Montt": {
+    "mean_headway_s": 1082,
+    "samples": 12
+  },
+  "D10|0|Diagonal Las Torres": {
+    "mean_headway_s": 776,
+    "samples": 10
+  },
+  "D10|1|(M) Carlos Valdovino": {
+    "mean_headway_s": 789,
+    "samples": 10
+  },
+  "D11|0|Mall Alto Las Condes": {
+    "mean_headway_s": 727,
+    "samples": 10
+  },
+  "D11|1|Diagonal Las Torres": {
+    "mean_headway_s": 782,
+    "samples": 11
+  },
+  "D13|0|(M) Irarrazaval": {
+    "mean_headway_s": 892,
+    "samples": 10
+  },
+  "D13|1|(M) Bellavista De La Florida": {
+    "mean_headway_s": 892,
+    "samples": 10
+  },
+  "D14|0|(M) Quilin": {
+    "mean_headway_s": 779,
+    "samples": 10
+  },
+  "D14|1|(M) Pedrero": {
+    "mean_headway_s": 752,
+    "samples": 10
+  },
+  "D15|0|© Diagonal Las Torres - La Reina Alta": {
+    "mean_headway_s": 749,
+    "samples": 10
+  },
+  "D16|0|(M) Francisco Bilbao": {
+    "mean_headway_s": 913,
+    "samples": 10
+  },
+  "D16|1|San Luis De Macul": {
+    "mean_headway_s": 913,
+    "samples": 10
+  },
+  "D17|0|© (M) Quilin - Alto Macul": {
+    "mean_headway_s": 2178,
+    "samples": 11
+  },
+  "D17v|0|© (M) Quilin - Las Pircas": {
+    "mean_headway_s": 1186,
+    "samples": 9
+  },
+  "D18|0|(M) Santa Isabel": {
+    "mean_headway_s": 614,
+    "samples": 10
+  },
+  "D18|1|Álvaro Casanova": {
+    "mean_headway_s": 651,
+    "samples": 10
+  },
+  "D20|0|© Av. Grecia Oriente - Av. Las Torres": {
+    "mean_headway_s": 1116,
+    "samples": 5
+  },
+  "D26|0|© San Luis De Macul - Maria Angelica": {
+    "mean_headway_s": 1752,
+    "samples": 11
+  },
+  "E01|0|(M) Santa Rosa": {
+    "mean_headway_s": 787,
+    "samples": 10
+  },
+  "E01|1|San Jose De La Estrella": {
+    "mean_headway_s": 799,
+    "samples": 10
+  },
+  "E02|0|Diego Portales": {
+    "mean_headway_s": 821,
+    "samples": 10
+  },
+  "E02|1|(M) Lo Ovalle": {
+    "mean_headway_s": 880,
+    "samples": 10
+  },
+  "E03|0|Jardin Alto": {
+    "mean_headway_s": 1193,
+    "samples": 12
+  },
+  "E03|1|(M) Lo Ovalle": {
+    "mean_headway_s": 1038,
+    "samples": 12
+  },
+  "E04|0|(M) Franklin": {
+    "mean_headway_s": 891,
+    "samples": 10
+  },
+  "E04|1|Av. La Florida": {
+    "mean_headway_s": 793,
+    "samples": 10
+  },
+  "E05|0|(M) Bellavista De La Florida": {
+    "mean_headway_s": 760,
+    "samples": 10
+  },
+  "E05|1|(M) La Cisterna": {
+    "mean_headway_s": 755,
+    "samples": 10
+  },
+  "E07|0|Rojas Magallanes": {
+    "mean_headway_s": 780,
+    "samples": 10
+  },
+  "E07|1|(M) Bellavista La Florida": {
+    "mean_headway_s": 902,
+    "samples": 10
+  },
+  "E08|0|(M) Bellavista De La Florida": {
+    "mean_headway_s": 882,
+    "samples": 10
+  },
+  "E08|1|Diego Portales": {
+    "mean_headway_s": 860,
+    "samples": 10
+  },
+  "E09|0|(M) Santa Rosa": {
+    "mean_headway_s": 648,
+    "samples": 10
+  },
+  "E09|1|(M) Elisa Correa": {
+    "mean_headway_s": 644,
+    "samples": 10
+  },
+  "E10|0|Santa Rosa P21": {
+    "mean_headway_s": 1615,
+    "samples": 11
+  },
+  "E10|1|El Hualle": {
+    "mean_headway_s": 925,
+    "samples": 10
+  },
+  "E11|0|(M) Santa Rosa": {
+    "mean_headway_s": 998,
+    "samples": 11
+  },
+  "E11|1|Diego Portales": {
+    "mean_headway_s": 1991,
+    "samples": 11
+  },
+  "E12|0|© Gabriela - Santa Rosa P18": {
+    "mean_headway_s": 1346,
+    "samples": 11
+  },
+  "E13|0|(M) Bellavista De La Florida": {
+    "mean_headway_s": 754,
+    "samples": 10
+  },
+  "E13|1|Gabriela": {
+    "mean_headway_s": 680,
+    "samples": 10
+  },
+  "E14|0|(M) Bellavista De La Florida": {
+    "mean_headway_s": 961,
+    "samples": 10
+  },
+  "E14|1|San Jose De La Estrella": {
+    "mean_headway_s": 916,
+    "samples": 10
+  },
+  "E15c|0|(M) Bellavista De La Florida": {
+    "mean_headway_s": 929,
+    "samples": 10
+  },
+  "E15c|1|Gabriela": {
+    "mean_headway_s": 844,
+    "samples": 10
+  },
+  "E16|0|(M) Santa Rosa": {
+    "mean_headway_s": 882,
+    "samples": 10
+  },
+  "E16|1|Gabriela": {
+    "mean_headway_s": 737,
+    "samples": 10
+  },
+  "E17|0|Las Perdices": {
+    "mean_headway_s": 880,
+    "samples": 10
+  },
+  "E17|1|(M) Bellavista De La Florida": {
+    "mean_headway_s": 908,
+    "samples": 10
+  },
+  "E18|0|(M) Bellavista De La Florida": {
+    "mean_headway_s": 1566,
+    "samples": 11
+  },
+  "E18|1|(M) La Cisterna": {
+    "mean_headway_s": 2217,
+    "samples": 11
+  },
+  "F01|0|Casas Viejas": {
+    "mean_headway_s": 2192,
+    "samples": 11
+  },
+  "F01|1|Villa Padre Hurtado": {
+    "mean_headway_s": 1034,
+    "samples": 11
+  },
+  "F01c|1|© (M) Plaza Puente Alto - Casas Viejas": {
+    "mean_headway_s": 1775,
+    "samples": 8
+  },
+  "F02|0|© Pie Andino - San Geronimo": {
+    "mean_headway_s": 823,
+    "samples": 10
+  },
+  "F03|0|Plaza San Bernardo": {
+    "mean_headway_s": 873,
+    "samples": 11
+  },
+  "F03|1|(M) Plaza Puente Alto": {
+    "mean_headway_s": 1385,
+    "samples": 11
+  },
+  "F03c|0|© Pie Andino - Villa Las Mamiñas": {
+    "mean_headway_s": 2425,
+    "samples": 11
+  },
+  "F05|0|Pie Andino": {
+    "mean_headway_s": 672,
+    "samples": 11
+  },
+  "F05|1|(M) La Cisterna": {
+    "mean_headway_s": 1015,
+    "samples": 11
+  },
+  "F06|0|Pie Andino": {
+    "mean_headway_s": 1297,
+    "samples": 12
+  },
+  "F06|1|(M) La Cisterna": {
+    "mean_headway_s": 719,
+    "samples": 11
+  },
+  "F07|1|© Mall Plaza Tobalaba - Villa Padre Hurtado": {
+    "mean_headway_s": 2229,
+    "samples": 11
+  },
+  "F08|0|© Villa Padre Hurtado - Diego Portales": {
+    "mean_headway_s": 1592,
+    "samples": 12
+  },
+  "F09|0|(M) Elisa Correa": {
+    "mean_headway_s": 2156,
+    "samples": 11
+  },
+  "F09|1|Pie Andino": {
+    "mean_headway_s": 998,
+    "samples": 11
+  },
+  "F10|0|Mall Plaza Tobalaba": {
+    "mean_headway_s": 991,
+    "samples": 11
+  },
+  "F10|1|San Guillermo": {
+    "mean_headway_s": 825,
+    "samples": 12
+  },
+  "F10c|0|© San Guillermo - (M) Plaza Puente Alto": {
+    "mean_headway_s": 2959,
+    "samples": 8
+  },
+  "F11|0|© Pie Andino - Las Vizcachas": {
+    "mean_headway_s": 1424,
+    "samples": 11
+  },
+  "F12|0|(M) Plaza Puente Alto": {
+    "mean_headway_s": 1955,
+    "samples": 11
+  },
+  "F12|1|Bajos De Mena": {
+    "mean_headway_s": 1125,
+    "samples": 10
+  },
+  "F12c|0|(M) Plaza Puente Alto": {
+    "mean_headway_s": 1722,
+    "samples": 7
+  },
+  "F12c|1|Villa Costa Azul": {
+    "mean_headway_s": 1234,
+    "samples": 7
+  },
+  "F13|0|Mall Plaza Tobalaba": {
+    "mean_headway_s": 800,
+    "samples": 11
+  },
+  "F13|1|Bajos De Mena": {
+    "mean_headway_s": 1009,
+    "samples": 12
+  },
+  "F13c|0|© Mall Plaza Tobalaba - (M) Elisa Correa": {
+    "mean_headway_s": 761,
+    "samples": 6
+  },
+  "F14|0|(M) Plaza Puente Alto": {
+    "mean_headway_s": 924,
+    "samples": 11
+  },
+  "F14|1|Villa Padre Hurtado": {
+    "mean_headway_s": 606,
+    "samples": 10
+  },
+  "F15|0|(M) Elisa Correa": {
+    "mean_headway_s": 1255,
+    "samples": 11
+  },
+  "F15|1|Bajos De Mena": {
+    "mean_headway_s": 1026,
+    "samples": 11
+  },
+  "F16|0|Ribera Rio Maipo": {
+    "mean_headway_s": 1170,
+    "samples": 11
+  },
+  "F16|1|Villa Padre Hurtado": {
+    "mean_headway_s": 761,
+    "samples": 10
+  },
+  "F18|0|(M) Plaza Puente Alto": {
+    "mean_headway_s": 967,
+    "samples": 11
+  },
+  "F18|1|Villa Chiloe": {
+    "mean_headway_s": 2226,
+    "samples": 12
+  },
+  "F20|0|Pie Andino": {
+    "mean_headway_s": 835,
+    "samples": 12
+  },
+  "F20|1|(M) La Cisterna": {
+    "mean_headway_s": 801,
+    "samples": 12
+  },
+  "F24|0|Ciudad Del Sol": {
+    "mean_headway_s": 1521,
+    "samples": 11
+  },
+  "F24|1|Casas Viejas": {
+    "mean_headway_s": 818,
+    "samples": 10
+  },
+  "F25|0|(M) Bellavista De La Florida": {
+    "mean_headway_s": 1293,
+    "samples": 12
+  },
+  "F25|1|Bajos De Mena": {
+    "mean_headway_s": 852,
+    "samples": 11
+  },
+  "F25e|0|(M) Bellavista De La Florida": {
+    "mean_headway_s": 1526,
+    "samples": 6
+  },
+  "F25e|1|Bajos De Mena": {
+    "mean_headway_s": 1680,
+    "samples": 6
+  },
+  "F26|0|© Villa Padre Hurtado - San Carlos Oriente": {
+    "mean_headway_s": 1208,
+    "samples": 11
+  },
+  "F27|0|© Villa Padre Hurtado - Villa Portezuelo Oriente": {
+    "mean_headway_s": 950,
+    "samples": 11
+  },
+  "F28|0|Eduardo Cordero": {
+    "mean_headway_s": 987,
+    "samples": 10
+  },
+  "F28|1|Sargento Menadier": {
+    "mean_headway_s": 884,
+    "samples": 10
+  },
+  "F29|0|Casas Viejas": {
+    "mean_headway_s": 810,
+    "samples": 10
+  },
+  "F29|1|Pie Andino": {
+    "mean_headway_s": 1536,
+    "samples": 11
+  },
+  "F30N|0|La Moneda": {
+    "mean_headway_s": 2400,
+    "samples": 3
+  },
+  "F30N|1|Bajos De Mena": {
+    "mean_headway_s": 2700,
+    "samples": 4
+  },
+  "F33|0|(M) Plaza Puente Alto": {
+    "mean_headway_s": 1345,
+    "samples": 11
+  },
+  "F33|1|Bajos De Mena": {
+    "mean_headway_s": 972,
+    "samples": 11
+  },
+  "G01|0|Santo Tomas": {
+    "mean_headway_s": 738,
+    "samples": 11
+  },
+  "G01|1|La Vara": {
+    "mean_headway_s": 738,
+    "samples": 11
+  },
+  "G01c|0|Santa Rosa Parad. 21": {
+    "mean_headway_s": 1092,
+    "samples": 5
+  },
+  "G01c|1|La Vara": {
+    "mean_headway_s": 1092,
+    "samples": 5
+  },
+  "G02|0|Puente Los Morros": {
+    "mean_headway_s": 885,
+    "samples": 10
+  },
+  "G02|1|Catemito": {
+    "mean_headway_s": 858,
+    "samples": 10
+  },
+  "G04|0|Santo Tomas": {
+    "mean_headway_s": 726,
+    "samples": 11
+  },
+  "G04|1|(M) La Cisterna": {
+    "mean_headway_s": 883,
+    "samples": 11
+  },
+  "G05|0|(M) La Cisterna": {
+    "mean_headway_s": 951,
+    "samples": 11
+  },
+  "G05|1|El Castillo": {
+    "mean_headway_s": 583,
+    "samples": 10
+  },
+  "G07|0|Villa La Estrella": {
+    "mean_headway_s": 844,
+    "samples": 10
+  },
+  "G07|1|San Francisco": {
+    "mean_headway_s": 922,
+    "samples": 10
+  },
+  "G08|0|(M) La Cisterna": {
+    "mean_headway_s": 796,
+    "samples": 12
+  },
+  "G08|1|Poblacion La Selva": {
+    "mean_headway_s": 811,
+    "samples": 12
+  },
+  "G08v|0|(M) La Cisterna": {
+    "mean_headway_s": 653,
+    "samples": 10
+  },
+  "G08v|1|Nos": {
+    "mean_headway_s": 646,
+    "samples": 10
+  },
+  "G09|0|© Santa Margarita - Lo Blanco": {
+    "mean_headway_s": 968,
+    "samples": 11
+  },
+  "G11|0|© (M) Lo Ovalle - Lo Blanco": {
+    "mean_headway_s": 1089,
+    "samples": 12
+  },
+  "G12|0|Av. Lo Espejo": {
+    "mean_headway_s": 736,
+    "samples": 10
+  },
+  "G12|1|(M) Lo Ovalle": {
+    "mean_headway_s": 736,
+    "samples": 10
+  },
+  "G13|0|El Castillo": {
+    "mean_headway_s": 438,
+    "samples": 10
+  },
+  "G13|1|(M) La Cisterna": {
+    "mean_headway_s": 444,
+    "samples": 10
+  },
+  "G13c|0|© El Castillo - (M) Copa Lo Martinez": {
+    "mean_headway_s": 1107,
+    "samples": 5
+  },
+  "G14|0|Poblacion Valle Nevado": {
+    "mean_headway_s": 708,
+    "samples": 10
+  },
+  "G14|1|Estacion Lo Blanco": {
+    "mean_headway_s": 798,
+    "samples": 10
+  },
+  "G15|0|Santo Tomas": {
+    "mean_headway_s": 1279,
+    "samples": 11
+  },
+  "G15|1|(M) La Cisterna": {
+    "mean_headway_s": 976,
+    "samples": 11
+  },
+  "G16|0|El Castillo": {
+    "mean_headway_s": 735,
+    "samples": 11
+  },
+  "G16|1|(M) La Cisterna": {
+    "mean_headway_s": 847,
+    "samples": 11
+  },
+  "G18|0|(M) Lo Ovalle": {
+    "mean_headway_s": 765,
+    "samples": 10
+  },
+  "G18|1|Santo Tomas": {
+    "mean_headway_s": 728,
+    "samples": 10
+  },
+  "G22|0|(M) La Cisterna": {
+    "mean_headway_s": 418,
+    "samples": 10
+  },
+  "G22|1|Estacion 5 Pinos": {
+    "mean_headway_s": 410,
+    "samples": 10
+  },
+  "G23|0|Santa Rosa P.43": {
+    "mean_headway_s": 725,
+    "samples": 10
+  },
+  "G23|1|Estacion Lo Blanco": {
+    "mean_headway_s": 757,
+    "samples": 10
+  },
+  "G24|0|© Poblacion Valle Nevado - San Francisco": {
+    "mean_headway_s": 1500,
+    "samples": 11
+  },
+  "G27|0|© Mall Plaza Sur - Estacion San Bernardo": {
+    "mean_headway_s": 982,
+    "samples": 10
+  },
+  "G28|0|© Angelmo - La Pintana": {
+    "mean_headway_s": 1368,
+    "samples": 11
+  },
+  "G31|0|Angelmo": {
+    "mean_headway_s": 2124,
+    "samples": 8
+  },
+  "G31|1|Lo Blanco": {
+    "mean_headway_s": 1270,
+    "samples": 7
+  },
+  "G32|0|© Santa Ines - Estacion San Bernardo": {
+    "mean_headway_s": 743,
+    "samples": 10
+  },
+  "G34|0|© La Vara - (M) La Cisterna": {
+    "mean_headway_s": 1139,
+    "samples": 10
+  },
+  "G35|0|© El Castillo - (M) Copa Lo Martinez": {
+    "mean_headway_s": 804,
+    "samples": 10
+  },
+  "G37|0|El Romeral": {
+    "mean_headway_s": 5175,
+    "samples": 8
+  },
+  "G37|1|Estacion San Bernardo": {
+    "mean_headway_s": 5700,
+    "samples": 9
+  },
+  "G38|0|© Mall Plaza Sur - (M) Hospital El Pino": {
+    "mean_headway_s": 1353,
+    "samples": 11
+  },
+  "G39|0|© Lo Espejo - Santa Mercedes": {
+    "mean_headway_s": 723,
+    "samples": 10
+  },
+  "G43|0|San Alberto De Nos": {
+    "mean_headway_s": 898,
+    "samples": 10
+  },
+  "G43|1|Estacion Lo Blanco": {
+    "mean_headway_s": 898,
+    "samples": 10
+  },
+  "G46|0|© General Urrutia - La Estancilla De Nos": {
+    "mean_headway_s": 3300,
+    "samples": 10
+  },
+  "H03|0|Mall Plaza Oeste": {
+    "mean_headway_s": 839,
+    "samples": 10
+  },
+  "H03|1|(M) Lo Ovalle": {
+    "mean_headway_s": 886,
+    "samples": 10
+  },
+  "H05|0|Jose Maria Caro": {
+    "mean_headway_s": 881,
+    "samples": 10
+  },
+  "H05|1|(M) Valdovinos": {
+    "mean_headway_s": 983,
+    "samples": 10
+  },
+  "H07|0|(M) Lo Ovalle": {
+    "mean_headway_s": 853,
+    "samples": 10
+  },
+  "H07|1|(M) Ñuble": {
+    "mean_headway_s": 870,
+    "samples": 10
+  },
+  "H08|0|(M) Lo Ovalle": {
+    "mean_headway_s": 869,
+    "samples": 10
+  },
+  "H08|1|Pobl.  Las Turbinas": {
+    "mean_headway_s": 819,
+    "samples": 10
+  },
+  "H09|0|(M) Valdovinos": {
+    "mean_headway_s": 905,
+    "samples": 10
+  },
+  "H09|1|Jose Maria Caro": {
+    "mean_headway_s": 905,
+    "samples": 10
+  },
+  "H12|0|(M) Franklin": {
+    "mean_headway_s": 1063,
+    "samples": 10
+  },
+  "H12|1|Lo Espejo": {
+    "mean_headway_s": 967,
+    "samples": 10
+  },
+  "H13|0|© Santa Olga - (M) Los Heroes": {
+    "mean_headway_s": 1620,
+    "samples": 11
+  },
+  "H24|0|Portal Oeste": {
+    "mean_headway_s": 838,
+    "samples": 10
+  },
+  "H24|1|La Victoria": {
+    "mean_headway_s": 1546,
+    "samples": 11
+  },
+  "I01|0|Hospital Borja Arriarán": {
+    "mean_headway_s": 1393,
+    "samples": 11
+  },
+  "I01|1|Villa Los Heroes": {
+    "mean_headway_s": 827,
+    "samples": 11
+  },
+  "I02|0|(M) Laguna Sur": {
+    "mean_headway_s": 2300,
+    "samples": 11
+  },
+  "I02|1|Rinconada": {
+    "mean_headway_s": 881,
+    "samples": 10
+  },
+  "I03|0|(M) Quinta Normal": {
+    "mean_headway_s": 1360,
+    "samples": 11
+  },
+  "I03|1|Villa Los Heroes": {
+    "mean_headway_s": 649,
+    "samples": 10
+  },
+  "I03c|0|(M) San Alberto Hurtado": {
+    "mean_headway_s": 1575,
+    "samples": 2
+  },
+  "I03c|1|Valle Verde": {
+    "mean_headway_s": 1300,
+    "samples": 2
+  },
+  "I04|0|(M) San Alberto Hur": {
+    "mean_headway_s": 1359,
+    "samples": 11
+  },
+  "I04|1|Villa El Abraz": {
+    "mean_headway_s": 804,
+    "samples": 11
+  },
+  "I04c|0|(M) Plaza Maipu": {
+    "mean_headway_s": 1103,
+    "samples": 4
+  },
+  "I04c|1|Villa El Abrazo": {
+    "mean_headway_s": 1384,
+    "samples": 4
+  },
+  "I04e|0|(M) Plaza Maipu": {
+    "mean_headway_s": 1200,
+    "samples": 2
+  },
+  "I05|0|(M) Lo Ovalle": {
+    "mean_headway_s": 1600,
+    "samples": 11
+  },
+  "I05|1|Rinconada": {
+    "mean_headway_s": 872,
+    "samples": 10
+  },
+  "I07|0|Mall Arauco Maipu": {
+    "mean_headway_s": 894,
+    "samples": 10
+  },
+  "I07|1|Rinconada": {
+    "mean_headway_s": 892,
+    "samples": 10
+  },
+  "I08|0|(M) San Alberto H": {
+    "mean_headway_s": 428,
+    "samples": 10
+  },
+  "I08|1|Mall Arauco": {
+    "mean_headway_s": 363,
+    "samples": 10
+  },
+  "I08N|0|Alameda": {
+    "mean_headway_s": 1710,
+    "samples": 2
+  },
+  "I08N|1|La Farfana": {
+    "mean_headway_s": 1800,
+    "samples": 2
+  },
+  "I08c|0|(M) Del Sol": {
+    "mean_headway_s": 1125,
+    "samples": 2
+  },
+  "I09|0|(M) U. De Chile": {
+    "mean_headway_s": 489,
+    "samples": 11
+  },
+  "I09|1|Rinconada": {
+    "mean_headway_s": 319,
+    "samples": 10
+  },
+  "I09c|0|(M) Las Rejas": {
+    "mean_headway_s": 1080,
+    "samples": 4
+  },
+  "I09c|1|Rinconada": {
+    "mean_headway_s": 1260,
+    "samples": 4
+  },
+  "I09e|0|(M) U. De Chile": {
+    "mean_headway_s": 1039,
+    "samples": 5
+  },
+  "I09e|1|Rinconada": {
+    "mean_headway_s": 1219,
+    "samples": 4
+  },
+  "I10|0|(M) Quinta Normal": {
+    "mean_headway_s": 585,
+    "samples": 10
+  },
+  "I10|1|Villa Los Heroes": {
+    "mean_headway_s": 598,
+    "samples": 10
+  },
+  "I10N|0|Alameda": {
+    "mean_headway_s": 1636,
+    "samples": 2
+  },
+  "I10N|1|Villa Los Heroes": {
+    "mean_headway_s": 1800,
+    "samples": 2
+  },
+  "I11|0|Rinconada": {
+    "mean_headway_s": 1259,
+    "samples": 11
+  },
+  "I11|1|Ciudad Satelite": {
+    "mean_headway_s": 1975,
+    "samples": 11
+  },
+  "I11N|0|(M) Plaza Maipu": {
+    "mean_headway_s": 1913,
+    "samples": 2
+  },
+  "I11N|1|Ciudad Satelite": {
+    "mean_headway_s": 1913,
+    "samples": 2
+  },
+  "I12|0|Mall Plaza Oeste": {
+    "mean_headway_s": 1505,
+    "samples": 11
+  },
+  "I12|1|Pueblito La Farfan": {
+    "mean_headway_s": 830,
+    "samples": 10
+  },
+  "I13|0|(M) San Alberto Hurtado": {
+    "mean_headway_s": 1518,
+    "samples": 11
+  },
+  "I13|1|(M) Del Sol": {
+    "mean_headway_s": 800,
+    "samples": 10
+  },
+  "I14|0|Estacion Central": {
+    "mean_headway_s": 697,
+    "samples": 10
+  },
+  "I14|1|Mall Plaza Oeste": {
+    "mean_headway_s": 720,
+    "samples": 10
+  },
+  "I14N|0|Centro": {
+    "mean_headway_s": 1800,
+    "samples": 2
+  },
+  "I14N|1|Mall Plaza Oeste": {
+    "mean_headway_s": 1800,
+    "samples": 2
+  },
+  "I16|0|Ferrocarril": {
+    "mean_headway_s": 1477,
+    "samples": 11
+  },
+  "I16|1|Poblacion Santiago": {
+    "mean_headway_s": 1493,
+    "samples": 11
+  },
+  "I17|0|Hospital San Juan De Dios": {
+    "mean_headway_s": 948,
+    "samples": 10
+  },
+  "I17|1|Villa Francia": {
+    "mean_headway_s": 970,
+    "samples": 10
+  },
+  "I18|0|(M) Ula": {
+    "mean_headway_s": 957,
+    "samples": 10
+  },
+  "I18|1|Rinconada": {
+    "mean_headway_s": 834,
+    "samples": 10
+  },
+  "I20|0|Marta Ossa Ruiz": {
+    "mean_headway_s": 777,
+    "samples": 10
+  },
+  "I20|1|Valle Verde": {
+    "mean_headway_s": 835,
+    "samples": 10
+  },
+  "I21|0|(M) Plaza Maipu": {
+    "mean_headway_s": 892,
+    "samples": 10
+  },
+  "I21|1|Villa Hernan Diaz": {
+    "mean_headway_s": 923,
+    "samples": 10
+  },
+  "I22|0|(M) Del Sol": {
+    "mean_headway_s": 815,
+    "samples": 10
+  },
+  "I22|1|La Farfana": {
+    "mean_headway_s": 790,
+    "samples": 10
+  },
+  "I24|0|Plaza Oeste": {
+    "mean_headway_s": 904,
+    "samples": 10
+  },
+  "I24|1|Villa Los Maitenes": {
+    "mean_headway_s": 861,
+    "samples": 10
+  },
+  "I25|0|© Villa S. Henriquez - Portal Oeste": {
+    "mean_headway_s": 1419,
+    "samples": 11
+  },
+  "I26|0|© Avenida Portales - (M) Cerrillos": {
+    "mean_headway_s": 2370,
+    "samples": 11
+  },
+  "I35|0|Padre Hurtado": {
+    "mean_headway_s": 477,
+    "samples": 10
+  },
+  "I35|1|(M) Del Sol": {
+    "mean_headway_s": 829,
+    "samples": 11
+  },
+  "I39|0|© Villa San Alberto - (M) Cerrillos": {
+    "mean_headway_s": 2160,
+    "samples": 10
+  },
+  "J01|0|(M) Quinta Normal": {
+    "mean_headway_s": 1037,
+    "samples": 11
+  },
+  "J01|1|Pudahuel Sur": {
+    "mean_headway_s": 571,
+    "samples": 10
+  },
+  "J01c|0|(M) San Pablo": {
+    "mean_headway_s": 1800,
+    "samples": 2
+  },
+  "J01c|1|Carrascal": {
+    "mean_headway_s": 1013,
+    "samples": 2
+  },
+  "J02|0|© Enea - (M) Ula": {
+    "mean_headway_s": 915,
+    "samples": 10
+  },
+  "J03|0|© El Montijo - (M) Republica": {
+    "mean_headway_s": 848,
+    "samples": 10
+  },
+  "J04|0|La Alianza": {
+    "mean_headway_s": 720,
+    "samples": 10
+  },
+  "J04|1|(M) Neptuno": {
+    "mean_headway_s": 708,
+    "samples": 10
+  },
+  "J05|0|© El Montijo - (M) Ula": {
+    "mean_headway_s": 796,
+    "samples": 10
+  },
+  "J06|0|(M) Pajaritos": {
+    "mean_headway_s": 2496,
+    "samples": 10
+  },
+  "J06|1|(M) Pudahuel": {
+    "mean_headway_s": 2391,
+    "samples": 10
+  },
+  "J07|0|© Noviciado - (M) Pudahuel": {
+    "mean_headway_s": 1746,
+    "samples": 11
+  },
+  "J07c|0|Lo Boza": {
+    "mean_headway_s": 1575,
+    "samples": 2
+  },
+  "J07e|0|© Noviciado - (M) Pudahuel": {
+    "mean_headway_s": 1772,
+    "samples": 11
+  },
+  "J08|0|Lo Franco": {
+    "mean_headway_s": 942,
+    "samples": 12
+  },
+  "J08|1|Pudahuel Sur": {
+    "mean_headway_s": 964,
+    "samples": 12
+  },
+  "J10|0|Parque De Los Reyes": {
+    "mean_headway_s": 845,
+    "samples": 10
+  },
+  "J10|1|San Daniel": {
+    "mean_headway_s": 840,
+    "samples": 10
+  },
+  "J11|0|(M) Pajaritos": {
+    "mean_headway_s": 1292,
+    "samples": 10
+  },
+  "J11|1|Lomas De Lo Aguirre": {
+    "mean_headway_s": 1361,
+    "samples": 10
+  },
+  "J12|0|Ciudad De Los Valles": {
+    "mean_headway_s": 864,
+    "samples": 10
+  },
+  "J12|1|(M) Pajaritos": {
+    "mean_headway_s": 854,
+    "samples": 10
+  },
+  "J13|0|El Monitjo": {
+    "mean_headway_s": 950,
+    "samples": 11
+  },
+  "J13|1|(M) Estacion Central": {
+    "mean_headway_s": 812,
+    "samples": 10
+  },
+  "J13c|0|El Montijo": {
+    "mean_headway_s": 903,
+    "samples": 10
+  },
+  "J13c|1|(M) San Pablo": {
+    "mean_headway_s": 790,
+    "samples": 10
+  },
+  "J15c|0|(M) Neptuno": {
+    "mean_headway_s": 872,
+    "samples": 10
+  },
+  "J15c|1|La Alianza": {
+    "mean_headway_s": 957,
+    "samples": 10
+  },
+  "J16|0|© Cerro Navia - (M) Estacion Central": {
+    "mean_headway_s": 1072,
+    "samples": 10
+  },
+  "J17|0|Puerto Santiago": {
+    "mean_headway_s": 2223,
+    "samples": 9
+  },
+  "J17|1|(M) Pajaritos": {
+    "mean_headway_s": 2223,
+    "samples": 9
+  },
+  "J18|0|(M) San Pablo": {
+    "mean_headway_s": 2048,
+    "samples": 11
+  },
+  "J18|1|Enea": {
+    "mean_headway_s": 624,
+    "samples": 10
+  },
+  "J18c|0|(M) San Pablo": {
+    "mean_headway_s": 990,
+    "samples": 2
+  },
+  "J18c|1|El Tranque": {
+    "mean_headway_s": 1021,
+    "samples": 3
+  },
+  "J19|0|(M) Quinta Normal": {
+    "mean_headway_s": 949,
+    "samples": 10
+  },
+  "J19|1|Pudahuel Sur": {
+    "mean_headway_s": 1023,
+    "samples": 10
+  },
+  "J20|0|© El Montijo - (M) Pudahuel": {
+    "mean_headway_s": 896,
+    "samples": 10
+  },
+  "J22|0|Praderas De Lo Aguirre": {
+    "mean_headway_s": 6660,
+    "samples": 10
+  },
+  "J22|1|(M) Pajaritos": {
+    "mean_headway_s": 5500,
+    "samples": 9
+  },
+  "MTN": {
+    "mean_headway_s": 588,
+    "samples": 24
+  },
+  "BA|0|Acercamiento Aeropuerto": {
+    "mean_headway_s": 733,
+    "samples": 9
+  }
+}

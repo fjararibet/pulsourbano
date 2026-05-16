@@ -1,0 +1,4352 @@
+{
+  "101|0|Cerrillos": {
+    "mean_minutes": 98,
+    "mean_km": 25.2,
+    "avg_kmh": 15.5,
+    "samples": 10
+  },
+  "101|1|Recoleta": {
+    "mean_minutes": 89,
+    "mean_km": 23.8,
+    "avg_kmh": 16,
+    "samples": 11
+  },
+  "102|0|San Carlos Oriente": {
+    "mean_minutes": 110,
+    "mean_km": 29.4,
+    "avg_kmh": 16.1,
+    "samples": 11
+  },
+  "102|1|(M) Las Rejas": {
+    "mean_minutes": 102,
+    "mean_km": 28.8,
+    "avg_kmh": 16.9,
+    "samples": 11
+  },
+  "103|1|Providencia": {
+    "mean_minutes": 91,
+    "mean_km": 23.2,
+    "avg_kmh": 15.2,
+    "samples": 12
+  },
+  "103|0|San Luis De Macul": {
+    "mean_minutes": 89,
+    "mean_km": 22,
+    "avg_kmh": 14.8,
+    "samples": 12
+  },
+  "104|0|Camilo Henriquez": {
+    "mean_minutes": 82,
+    "mean_km": 22.2,
+    "avg_kmh": 16.1,
+    "samples": 12
+  },
+  "104|1|Providencia": {
+    "mean_minutes": 85,
+    "mean_km": 20.8,
+    "avg_kmh": 14.7,
+    "samples": 12
+  },
+  "105|0|Lo Espejo": {
+    "mean_minutes": 109,
+    "mean_km": 27,
+    "avg_kmh": 14.8,
+    "samples": 11
+  },
+  "105|1|Renca": {
+    "mean_minutes": 109,
+    "mean_km": 27.3,
+    "avg_kmh": 15.1,
+    "samples": 11
+  },
+  "105c|1|© Lo Valledor - Lo Espejo": {
+    "mean_minutes": 69,
+    "mean_km": 19.6,
+    "avg_kmh": 17,
+    "samples": 6
+  },
+  "106|1|Nueva San Martin": {
+    "mean_minutes": 153,
+    "mean_km": 38.4,
+    "avg_kmh": 15,
+    "samples": 10
+  },
+  "106|0|Peñalolen": {
+    "mean_minutes": 157,
+    "mean_km": 38.5,
+    "avg_kmh": 14.7,
+    "samples": 10
+  },
+  "107|1|Ciudad Empresarial": {
+    "mean_minutes": 116,
+    "mean_km": 36.9,
+    "avg_kmh": 19,
+    "samples": 12
+  },
+  "107|0|Av. Departamental": {
+    "mean_minutes": 122,
+    "mean_km": 36.4,
+    "avg_kmh": 17.9,
+    "samples": 12
+  },
+  "107c|1|Ciudad Empresarial": {
+    "mean_minutes": 46,
+    "mean_km": 10.6,
+    "avg_kmh": 13.9,
+    "samples": 3
+  },
+  "107c|0|Plaza Renca": {
+    "mean_minutes": 45,
+    "mean_km": 10.5,
+    "avg_kmh": 14.1,
+    "samples": 3
+  },
+  "108|1|Maipu": {
+    "mean_minutes": 126,
+    "mean_km": 33.2,
+    "avg_kmh": 15.9,
+    "samples": 10
+  },
+  "108|0|La Florida": {
+    "mean_minutes": 122,
+    "mean_km": 33.1,
+    "avg_kmh": 16.2,
+    "samples": 11
+  },
+  "109|1|Renca": {
+    "mean_minutes": 122,
+    "mean_km": 32.5,
+    "avg_kmh": 16,
+    "samples": 10
+  },
+  "109|0|Maipu": {
+    "mean_minutes": 113,
+    "mean_km": 31.2,
+    "avg_kmh": 16.5,
+    "samples": 10
+  },
+  "109N|0|Maipu": {
+    "mean_minutes": 54,
+    "mean_km": 22.2,
+    "avg_kmh": 24.7,
+    "samples": 2
+  },
+  "109N|1|Plaza Italia": {
+    "mean_minutes": 52,
+    "mean_km": 23,
+    "avg_kmh": 26.4,
+    "samples": 2
+  },
+  "110|1|Renca": {
+    "mean_minutes": 95,
+    "mean_km": 23.8,
+    "avg_kmh": 15.1,
+    "samples": 10
+  },
+  "110|0|Maipu": {
+    "mean_minutes": 92,
+    "mean_km": 23.7,
+    "avg_kmh": 15.4,
+    "samples": 11
+  },
+  "110c|1|Lo Echevers": {
+    "mean_minutes": 79,
+    "mean_km": 19.6,
+    "avg_kmh": 14.9,
+    "samples": 9
+  },
+  "110c|0|Pudahuel Sur": {
+    "mean_minutes": 85,
+    "mean_km": 19.9,
+    "avg_kmh": 14.1,
+    "samples": 8
+  },
+  "111|0|Ciudad Satelite": {
+    "mean_minutes": 97,
+    "mean_km": 25.1,
+    "avg_kmh": 15.6,
+    "samples": 10
+  },
+  "111|1|(M) Pajaritos": {
+    "mean_minutes": 93,
+    "mean_km": 25.3,
+    "avg_kmh": 16.4,
+    "samples": 11
+  },
+  "113|0|(M) Los Heroes": {
+    "mean_minutes": 86,
+    "mean_km": 24.8,
+    "avg_kmh": 17.4,
+    "samples": 10
+  },
+  "113|1|Ciudad Satelite": {
+    "mean_minutes": 85,
+    "mean_km": 24.8,
+    "avg_kmh": 17.5,
+    "samples": 9
+  },
+  "113c|1|Ciudad Satelite": {
+    "mean_minutes": 56,
+    "mean_km": 17.3,
+    "avg_kmh": 18.6,
+    "samples": 3
+  },
+  "113c|0|(M) Cerrillos": {
+    "mean_minutes": 63,
+    "mean_km": 18.6,
+    "avg_kmh": 17.6,
+    "samples": 4
+  },
+  "113e|1|Ciudad Satelite": {
+    "mean_minutes": 66,
+    "mean_km": 28.1,
+    "avg_kmh": 25.4,
+    "samples": 3
+  },
+  "113e|0|(M) Los Heroes": {
+    "mean_minutes": 75,
+    "mean_km": 27.2,
+    "avg_kmh": 21.8,
+    "samples": 3
+  },
+  "114|1|(M) Ñuñoa": {
+    "mean_minutes": 75,
+    "mean_km": 19.7,
+    "avg_kmh": 15.7,
+    "samples": 11
+  },
+  "114|0|Camilo Henriquez": {
+    "mean_minutes": 72,
+    "mean_km": 19.5,
+    "avg_kmh": 16.4,
+    "samples": 10
+  },
+  "115|0|(M) Los Heroes": {
+    "mean_minutes": 72,
+    "mean_km": 21.9,
+    "avg_kmh": 18.3,
+    "samples": 10
+  },
+  "115|1|Villa El Abrazo": {
+    "mean_minutes": 71,
+    "mean_km": 21.4,
+    "avg_kmh": 18.1,
+    "samples": 9
+  },
+  "115c|0|© Villa El Abrazo -  (M) Cerrillos": {
+    "mean_minutes": 91,
+    "mean_km": 27.4,
+    "avg_kmh": 18.1,
+    "samples": 5
+  },
+  "116|0|© Huechuraba - Centro": {
+    "mean_minutes": 107,
+    "mean_km": 24.8,
+    "avg_kmh": 13.9,
+    "samples": 10
+  },
+  "117|1|(M) Vespucio Norte": {
+    "mean_minutes": 107,
+    "mean_km": 27.9,
+    "avg_kmh": 15.7,
+    "samples": 11
+  },
+  "117|0|Departamental Oriente": {
+    "mean_minutes": 104,
+    "mean_km": 26,
+    "avg_kmh": 15.1,
+    "samples": 10
+  },
+  "117c|0|© Huechuraba - Providencia": {
+    "mean_minutes": 63,
+    "mean_km": 18.2,
+    "avg_kmh": 17.4,
+    "samples": 7
+  },
+  "118|0|La Florida": {
+    "mean_minutes": 118,
+    "mean_km": 32.1,
+    "avg_kmh": 16.3,
+    "samples": 10
+  },
+  "118|1|Maipu": {
+    "mean_minutes": 117,
+    "mean_km": 30.9,
+    "avg_kmh": 15.9,
+    "samples": 10
+  },
+  "119|0|Lo Espejo": {
+    "mean_minutes": 70,
+    "mean_km": 19.5,
+    "avg_kmh": 16.7,
+    "samples": 12
+  },
+  "119|1|Mapocho": {
+    "mean_minutes": 67,
+    "mean_km": 18.8,
+    "avg_kmh": 16.8,
+    "samples": 12
+  },
+  "120|1|Renca": {
+    "mean_minutes": 82,
+    "mean_km": 21.8,
+    "avg_kmh": 15.9,
+    "samples": 11
+  },
+  "120|0|(M) La Cisterna": {
+    "mean_minutes": 85,
+    "mean_km": 22,
+    "avg_kmh": 15.5,
+    "samples": 11
+  },
+  "121|0|Lo Espejo": {
+    "mean_minutes": 69,
+    "mean_km": 17.7,
+    "avg_kmh": 15.3,
+    "samples": 10
+  },
+  "121|1|Mapocho": {
+    "mean_minutes": 77,
+    "mean_km": 19.4,
+    "avg_kmh": 15.1,
+    "samples": 10
+  },
+  "124|0|Puente Alto": {
+    "mean_minutes": 97,
+    "mean_km": 25.3,
+    "avg_kmh": 15.7,
+    "samples": 11
+  },
+  "124|1|(M) Macul": {
+    "mean_minutes": 95,
+    "mean_km": 26.1,
+    "avg_kmh": 16.4,
+    "samples": 11
+  },
+  "125|0|Lo Espejo": {
+    "mean_minutes": 59,
+    "mean_km": 16.6,
+    "avg_kmh": 16.9,
+    "samples": 10
+  },
+  "125|1|(M) U. De Chile": {
+    "mean_minutes": 63,
+    "mean_km": 16.8,
+    "avg_kmh": 16.1,
+    "samples": 11
+  },
+  "126|0|© La Higuera - (M) Manuel Montt": {
+    "mean_minutes": 132,
+    "mean_km": 31.5,
+    "avg_kmh": 14.3,
+    "samples": 9
+  },
+  "201|1|Mall Plaza Norte": {
+    "mean_minutes": 131,
+    "mean_km": 33,
+    "avg_kmh": 15.1,
+    "samples": 12
+  },
+  "201|0|San Bernardo": {
+    "mean_minutes": 124,
+    "mean_km": 33.6,
+    "avg_kmh": 16.3,
+    "samples": 12
+  },
+  "201e|0|San Bernardo": {
+    "mean_minutes": 55,
+    "mean_km": 21.8,
+    "avg_kmh": 23.7,
+    "samples": 10
+  },
+  "201e|1|(M) Santa Ana": {
+    "mean_minutes": 60,
+    "mean_km": 22.3,
+    "avg_kmh": 22.2,
+    "samples": 10
+  },
+  "203|1|Av. Recoleta": {
+    "mean_minutes": 109,
+    "mean_km": 28.1,
+    "avg_kmh": 15.4,
+    "samples": 10
+  },
+  "203|0|La Pintana": {
+    "mean_minutes": 109,
+    "mean_km": 27.8,
+    "avg_kmh": 15.3,
+    "samples": 10
+  },
+  "203N|0|La Pintana": {
+    "mean_minutes": 88,
+    "mean_km": 36.9,
+    "avg_kmh": 25,
+    "samples": 2
+  },
+  "203N|1|Huechuraba": {
+    "mean_minutes": 92,
+    "mean_km": 37.4,
+    "avg_kmh": 24.4,
+    "samples": 2
+  },
+  "203c|0|© La Pintana - La Granja": {
+    "mean_minutes": 67,
+    "mean_km": 20.9,
+    "avg_kmh": 18.8,
+    "samples": 9
+  },
+  "203e|0|La Pintana": {
+    "mean_minutes": 69,
+    "mean_km": 21.8,
+    "avg_kmh": 19,
+    "samples": 5
+  },
+  "203e|1|Centro": {
+    "mean_minutes": 69,
+    "mean_km": 21.9,
+    "avg_kmh": 19,
+    "samples": 6
+  },
+  "204|0|Pie Andino": {
+    "mean_minutes": 88,
+    "mean_km": 25.2,
+    "avg_kmh": 17.2,
+    "samples": 10
+  },
+  "204|1|Alameda": {
+    "mean_minutes": 86,
+    "mean_km": 24.9,
+    "avg_kmh": 17.3,
+    "samples": 10
+  },
+  "204N|1|Alameda": {
+    "mean_minutes": 67,
+    "mean_km": 27,
+    "avg_kmh": 24.1,
+    "samples": 2
+  },
+  "204N|0|Pie Andino": {
+    "mean_minutes": 69,
+    "mean_km": 27.8,
+    "avg_kmh": 24.3,
+    "samples": 2
+  },
+  "205|0|Puente Alto": {
+    "mean_minutes": 91,
+    "mean_km": 25.2,
+    "avg_kmh": 16.6,
+    "samples": 11
+  },
+  "205|1|Santiago": {
+    "mean_minutes": 88,
+    "mean_km": 24.2,
+    "avg_kmh": 16.6,
+    "samples": 11
+  },
+  "206|0|La Pintana": {
+    "mean_minutes": 72,
+    "mean_km": 21.4,
+    "avg_kmh": 17.8,
+    "samples": 12
+  },
+  "206|1|Centro": {
+    "mean_minutes": 73,
+    "mean_km": 21,
+    "avg_kmh": 17.3,
+    "samples": 12
+  },
+  "206c|0|La Pintana": {
+    "mean_minutes": 55,
+    "mean_km": 16.2,
+    "avg_kmh": 17.6,
+    "samples": 5
+  },
+  "206c|1|(M) Bio Bio": {
+    "mean_minutes": 56,
+    "mean_km": 16.2,
+    "avg_kmh": 17.4,
+    "samples": 6
+  },
+  "207|0|Av. Santa Rosa": {
+    "mean_minutes": 77,
+    "mean_km": 25.6,
+    "avg_kmh": 19.9,
+    "samples": 12
+  },
+  "207|1|Mapocho": {
+    "mean_minutes": 79,
+    "mean_km": 24.8,
+    "avg_kmh": 18.8,
+    "samples": 12
+  },
+  "207c|0|© El Retiro - (M) Santa Rosa": {
+    "mean_minutes": 69,
+    "mean_km": 26,
+    "avg_kmh": 22.6,
+    "samples": 5
+  },
+  "207e|0|Av. Santa Rosa": {
+    "mean_minutes": 73,
+    "mean_km": 24.5,
+    "avg_kmh": 20.3,
+    "samples": 6
+  },
+  "207e|1|Mapocho": {
+    "mean_minutes": 74,
+    "mean_km": 23.8,
+    "avg_kmh": 19.4,
+    "samples": 6
+  },
+  "208|0|© Huechuraba - Centro": {
+    "mean_minutes": 84,
+    "mean_km": 19.6,
+    "avg_kmh": 13.9,
+    "samples": 10
+  },
+  "208c|0|© Huechuraba - (M) Zapadores": {
+    "mean_minutes": 33,
+    "mean_km": 8.1,
+    "avg_kmh": 14.8,
+    "samples": 10
+  },
+  "209|1|Alameda": {
+    "mean_minutes": 80,
+    "mean_km": 25.7,
+    "avg_kmh": 19.2,
+    "samples": 12
+  },
+  "209|0|El Volcan": {
+    "mean_minutes": 77,
+    "mean_km": 25.8,
+    "avg_kmh": 20.1,
+    "samples": 11
+  },
+  "209c|0|© El Volcan - (M) Santa Rosa": {
+    "mean_minutes": 75,
+    "mean_km": 31.5,
+    "avg_kmh": 25.1,
+    "samples": 6
+  },
+  "210|1|Estacion Central": {
+    "mean_minutes": 105,
+    "mean_km": 27.9,
+    "avg_kmh": 15.9,
+    "samples": 12
+  },
+  "210|0|Puente Alto": {
+    "mean_minutes": 107,
+    "mean_km": 27.9,
+    "avg_kmh": 15.7,
+    "samples": 12
+  },
+  "210e|0|Puente Alto": {
+    "mean_minutes": 96,
+    "mean_km": 27.9,
+    "avg_kmh": 17.4,
+    "samples": 4
+  },
+  "210e|1|Estacion Central": {
+    "mean_minutes": 90,
+    "mean_km": 28.4,
+    "avg_kmh": 18.8,
+    "samples": 5
+  },
+  "210v|0|Av. Mexico": {
+    "mean_minutes": 102,
+    "mean_km": 28.8,
+    "avg_kmh": 17,
+    "samples": 12
+  },
+  "210v|1|Estacion Central": {
+    "mean_minutes": 103,
+    "mean_km": 29.5,
+    "avg_kmh": 17.2,
+    "samples": 12
+  },
+  "211|1|La Florida": {
+    "mean_minutes": 84,
+    "mean_km": 23.8,
+    "avg_kmh": 17,
+    "samples": 11
+  },
+  "211|0|Nos": {
+    "mean_minutes": 84,
+    "mean_km": 24.7,
+    "avg_kmh": 17.7,
+    "samples": 10
+  },
+  "211c|0|San Bernardo": {
+    "mean_minutes": 48,
+    "mean_km": 14,
+    "avg_kmh": 17.4,
+    "samples": 10
+  },
+  "211c|1|(M) La Cisterna": {
+    "mean_minutes": 44,
+    "mean_km": 13.4,
+    "avg_kmh": 18.2,
+    "samples": 10
+  },
+  "212|1|Mall Costanera Center": {
+    "mean_minutes": 113,
+    "mean_km": 28.4,
+    "avg_kmh": 15.1,
+    "samples": 10
+  },
+  "212|0|La Pintana": {
+    "mean_minutes": 105,
+    "mean_km": 29,
+    "avg_kmh": 16.6,
+    "samples": 11
+  },
+  "213e|1|Plaza Italia": {
+    "mean_minutes": 84,
+    "mean_km": 26.7,
+    "avg_kmh": 19.2,
+    "samples": 11
+  },
+  "213e|0|Puente Alto": {
+    "mean_minutes": 88,
+    "mean_km": 27.6,
+    "avg_kmh": 18.7,
+    "samples": 10
+  },
+  "214|0|Los Libertadores": {
+    "mean_minutes": 118,
+    "mean_km": 28.2,
+    "avg_kmh": 14.3,
+    "samples": 10
+  },
+  "214|1|Santa Olga": {
+    "mean_minutes": 116,
+    "mean_km": 26,
+    "avg_kmh": 13.5,
+    "samples": 10
+  },
+  "216|1|Pablo De Rokha": {
+    "mean_minutes": 90,
+    "mean_km": 30.2,
+    "avg_kmh": 20.1,
+    "samples": 11
+  },
+  "216|0|Vitacura": {
+    "mean_minutes": 82,
+    "mean_km": 29.5,
+    "avg_kmh": 21.6,
+    "samples": 11
+  },
+  "217e|1|Maestranza": {
+    "mean_minutes": 59,
+    "mean_km": 25.8,
+    "avg_kmh": 26.2,
+    "samples": 5
+  },
+  "217e|0|(M) Santa Ana": {
+    "mean_minutes": 64,
+    "mean_km": 25.8,
+    "avg_kmh": 24.3,
+    "samples": 5
+  },
+  "219e|1|(M) La Cisterna": {
+    "mean_minutes": 61,
+    "mean_km": 32.9,
+    "avg_kmh": 32.6,
+    "samples": 6
+  },
+  "219e|0|Ciudad Empresarial": {
+    "mean_minutes": 62,
+    "mean_km": 31.5,
+    "avg_kmh": 30.5,
+    "samples": 6
+  },
+  "223|0|Lo Espejo": {
+    "mean_minutes": 71,
+    "mean_km": 16.9,
+    "avg_kmh": 14.4,
+    "samples": 11
+  },
+  "223|1|Santiago": {
+    "mean_minutes": 76,
+    "mean_km": 16.8,
+    "avg_kmh": 13.2,
+    "samples": 10
+  },
+  "224|0|Gabriela": {
+    "mean_minutes": 78,
+    "mean_km": 20.1,
+    "avg_kmh": 15.5,
+    "samples": 10
+  },
+  "224|1|Ñuñoa": {
+    "mean_minutes": 82,
+    "mean_km": 20.1,
+    "avg_kmh": 14.7,
+    "samples": 10
+  },
+  "225|1|Las Condes": {
+    "mean_minutes": 118,
+    "mean_km": 31.4,
+    "avg_kmh": 16,
+    "samples": 10
+  },
+  "225|0|Villa Los Aromos": {
+    "mean_minutes": 122,
+    "mean_km": 34.2,
+    "avg_kmh": 16.8,
+    "samples": 11
+  },
+  "225c|0|© Villa Los Aromos - (M) Vicente Valdes": {
+    "mean_minutes": 78,
+    "mean_km": 20.3,
+    "avg_kmh": 15.6,
+    "samples": 5
+  },
+  "226|1|Centro": {
+    "mean_minutes": 116,
+    "mean_km": 28.1,
+    "avg_kmh": 14.5,
+    "samples": 11
+  },
+  "226|0|Nonato Coo": {
+    "mean_minutes": 116,
+    "mean_km": 28.7,
+    "avg_kmh": 14.9,
+    "samples": 11
+  },
+  "227|1|La Reina": {
+    "mean_minutes": 102,
+    "mean_km": 27,
+    "avg_kmh": 15.9,
+    "samples": 10
+  },
+  "227|0|Av. Lo Ovalle": {
+    "mean_minutes": 102,
+    "mean_km": 28.2,
+    "avg_kmh": 16.6,
+    "samples": 10
+  },
+  "228|1|(M) La Cisterna": {
+    "mean_minutes": 58,
+    "mean_km": 14.3,
+    "avg_kmh": 14.8,
+    "samples": 10
+  },
+  "228|0|Estacion San Bernardo": {
+    "mean_minutes": 49,
+    "mean_km": 12.9,
+    "avg_kmh": 15.7,
+    "samples": 10
+  },
+  "229|0|La Pintana": {
+    "mean_minutes": 70,
+    "mean_km": 19.1,
+    "avg_kmh": 16.4,
+    "samples": 10
+  },
+  "229|1|(M) La Moneda": {
+    "mean_minutes": 76,
+    "mean_km": 19.6,
+    "avg_kmh": 15.5,
+    "samples": 10
+  },
+  "230|0|© Los Libertadores - Centro": {
+    "mean_minutes": 102,
+    "mean_km": 26.7,
+    "avg_kmh": 15.7,
+    "samples": 12
+  },
+  "233|0|© El Castillo - (M) B. De La Florida": {
+    "mean_minutes": 118,
+    "mean_km": 31.6,
+    "avg_kmh": 16.1,
+    "samples": 10
+  },
+  "234|0|Ejercito Libertador": {
+    "mean_minutes": 68,
+    "mean_km": 19.4,
+    "avg_kmh": 17.1,
+    "samples": 10
+  },
+  "234|1|Alameda": {
+    "mean_minutes": 66,
+    "mean_km": 19.4,
+    "avg_kmh": 17.6,
+    "samples": 11
+  },
+  "244|0|© La Foresta - Hospital Eloisa Diaz": {
+    "mean_minutes": 77,
+    "mean_km": 20.1,
+    "avg_kmh": 15.6,
+    "samples": 10
+  },
+  "245|0|© Puente Alto - (M) Santa Rosa": {
+    "mean_minutes": 116,
+    "mean_km": 34.3,
+    "avg_kmh": 17.8,
+    "samples": 10
+  },
+  "262N|1|(M) Macul": {
+    "mean_minutes": 49,
+    "mean_km": 23.2,
+    "avg_kmh": 28.3,
+    "samples": 2
+  },
+  "262N|0|Villa España": {
+    "mean_minutes": 50,
+    "mean_km": 24.1,
+    "avg_kmh": 29.1,
+    "samples": 2
+  },
+  "264N|0|Santo Tomas": {
+    "mean_minutes": 88,
+    "mean_km": 37.8,
+    "avg_kmh": 25.9,
+    "samples": 2
+  },
+  "264N|1|Pedro Fontova": {
+    "mean_minutes": 88,
+    "mean_km": 36.6,
+    "avg_kmh": 24.8,
+    "samples": 2
+  },
+  "271|0|San Bernardo": {
+    "mean_minutes": 93,
+    "mean_km": 23.6,
+    "avg_kmh": 15.3,
+    "samples": 10
+  },
+  "271|1|Santiago": {
+    "mean_minutes": 98,
+    "mean_km": 24.2,
+    "avg_kmh": 14.8,
+    "samples": 10
+  },
+  "272|0|© Los Libertadores - Ciudad Empresarial": {
+    "mean_minutes": 94,
+    "mean_km": 25.1,
+    "avg_kmh": 16,
+    "samples": 10
+  },
+  "282|0|(M) Plaza Puente Alto": {
+    "mean_minutes": 69,
+    "mean_km": 23.4,
+    "avg_kmh": 20.3,
+    "samples": 9
+  },
+  "282|1|Nos": {
+    "mean_minutes": 63,
+    "mean_km": 21.8,
+    "avg_kmh": 20.8,
+    "samples": 10
+  },
+  "286|0|Mall Alto Las Condes": {
+    "mean_minutes": 102,
+    "mean_km": 31.4,
+    "avg_kmh": 18.5,
+    "samples": 11
+  },
+  "286|1|La Pintana": {
+    "mean_minutes": 102,
+    "mean_km": 33.2,
+    "avg_kmh": 19.4,
+    "samples": 11
+  },
+  "301|0|Angelmo": {
+    "mean_minutes": 104,
+    "mean_km": 26.3,
+    "avg_kmh": 15.2,
+    "samples": 12
+  },
+  "301|1|Juan Antonio Rios": {
+    "mean_minutes": 111,
+    "mean_km": 26.4,
+    "avg_kmh": 14.3,
+    "samples": 12
+  },
+  "301c|1|(M) La Cisterna": {
+    "mean_minutes": 32,
+    "mean_km": 7.8,
+    "avg_kmh": 14.8,
+    "samples": 11
+  },
+  "301c|0|Angelmo": {
+    "mean_minutes": 34,
+    "mean_km": 8.4,
+    "avg_kmh": 14.7,
+    "samples": 10
+  },
+  "302|1|(M) Santa Ana": {
+    "mean_minutes": 84,
+    "mean_km": 23.3,
+    "avg_kmh": 16.7,
+    "samples": 11
+  },
+  "302|0|La Pintana": {
+    "mean_minutes": 78,
+    "mean_km": 22.7,
+    "avg_kmh": 17.4,
+    "samples": 10
+  },
+  "302N|1|Alameda": {
+    "mean_minutes": 55,
+    "mean_km": 24.3,
+    "avg_kmh": 26.3,
+    "samples": 2
+  },
+  "302N|0|La Pintana": {
+    "mean_minutes": 54,
+    "mean_km": 22.7,
+    "avg_kmh": 25.4,
+    "samples": 2
+  },
+  "303|1|Quilicura": {
+    "mean_minutes": 62,
+    "mean_km": 19.7,
+    "avg_kmh": 19,
+    "samples": 12
+  },
+  "303|0|Plaza Italia": {
+    "mean_minutes": 71,
+    "mean_km": 19.5,
+    "avg_kmh": 16.5,
+    "samples": 12
+  },
+  "306|1|Juan Antonio Rios": {
+    "mean_minutes": 103,
+    "mean_km": 24.9,
+    "avg_kmh": 14.5,
+    "samples": 10
+  },
+  "306|0|Pob. Las Turbinas": {
+    "mean_minutes": 82,
+    "mean_km": 23.2,
+    "avg_kmh": 17,
+    "samples": 10
+  },
+  "307|0|© Lo Marcoleta - Plaza Italia": {
+    "mean_minutes": 153,
+    "mean_km": 41.8,
+    "avg_kmh": 16.4,
+    "samples": 11
+  },
+  "307c|0|(M) Los Libertadores": {
+    "mean_minutes": 32,
+    "mean_km": 8.8,
+    "avg_kmh": 16.5,
+    "samples": 10
+  },
+  "307c|1|Lo Marcoleta": {
+    "mean_minutes": 32,
+    "mean_km": 8.6,
+    "avg_kmh": 16.2,
+    "samples": 10
+  },
+  "307e|1|Rigoberto Jara": {
+    "mean_minutes": 61,
+    "mean_km": 20.3,
+    "avg_kmh": 20,
+    "samples": 6
+  },
+  "307e|0|(M) Santa Lucia": {
+    "mean_minutes": 56,
+    "mean_km": 18.5,
+    "avg_kmh": 19.8,
+    "samples": 7
+  },
+  "308|1|Lo Marcoleta": {
+    "mean_minutes": 70,
+    "mean_km": 18.2,
+    "avg_kmh": 15.6,
+    "samples": 10
+  },
+  "308|0|Mapocho": {
+    "mean_minutes": 66,
+    "mean_km": 18.4,
+    "avg_kmh": 16.6,
+    "samples": 11
+  },
+  "308c|0|© San Luis - (M) Lo Cruzat": {
+    "mean_minutes": 40,
+    "mean_km": 9.6,
+    "avg_kmh": 14.2,
+    "samples": 10
+  },
+  "313e|1|Quilicura": {
+    "mean_minutes": 54,
+    "mean_km": 22.8,
+    "avg_kmh": 25.6,
+    "samples": 6
+  },
+  "313e|0|Estacion Central": {
+    "mean_minutes": 59,
+    "mean_km": 22,
+    "avg_kmh": 22.3,
+    "samples": 5
+  },
+  "314|0|© Lo Marcoleta - Plaza Italia": {
+    "mean_minutes": 145,
+    "mean_km": 40.2,
+    "avg_kmh": 16.6,
+    "samples": 11
+  },
+  "314c|0|© Lo Marcoleta - (M) Lo Cruzat": {
+    "mean_minutes": 52,
+    "mean_km": 9.9,
+    "avg_kmh": 11.4,
+    "samples": 5
+  },
+  "315e|1|Rigoberto Jara": {
+    "mean_minutes": 67,
+    "mean_km": 23.8,
+    "avg_kmh": 21.2,
+    "samples": 10
+  },
+  "315e|0|(M) Santa Lucia": {
+    "mean_minutes": 64,
+    "mean_km": 22.1,
+    "avg_kmh": 20.9,
+    "samples": 11
+  },
+  "320|1|(M) Franklin": {
+    "mean_minutes": 71,
+    "mean_km": 20.6,
+    "avg_kmh": 17.5,
+    "samples": 11
+  },
+  "320|0|Maria Angelica": {
+    "mean_minutes": 70,
+    "mean_km": 19,
+    "avg_kmh": 16.4,
+    "samples": 10
+  },
+  "320c|1|(M) Bellavista De La Florida": {
+    "mean_minutes": 30,
+    "mean_km": 7.4,
+    "avg_kmh": 14.7,
+    "samples": 6
+  },
+  "320c|0|Maria Angelica": {
+    "mean_minutes": 32,
+    "mean_km": 6.7,
+    "avg_kmh": 12.4,
+    "samples": 5
+  },
+  "321|0|Lo Sierra": {
+    "mean_minutes": 30,
+    "mean_km": 9.3,
+    "avg_kmh": 18.9,
+    "samples": 10
+  },
+  "321|1|(M) Lo Ovalle": {
+    "mean_minutes": 28,
+    "mean_km": 9.3,
+    "avg_kmh": 19.6,
+    "samples": 10
+  },
+  "322|1|(M) Bellavista De La Florida": {
+    "mean_minutes": 30,
+    "mean_km": 7.4,
+    "avg_kmh": 15,
+    "samples": 10
+  },
+  "322|0|Jardin Alto": {
+    "mean_minutes": 26,
+    "mean_km": 7.5,
+    "avg_kmh": 17.2,
+    "samples": 10
+  },
+  "323|1|(M) Bellavista La Florida": {
+    "mean_minutes": 34,
+    "mean_km": 9.9,
+    "avg_kmh": 17.2,
+    "samples": 10
+  },
+  "323|0|La Loma": {
+    "mean_minutes": 33,
+    "mean_km": 9.5,
+    "avg_kmh": 17,
+    "samples": 10
+  },
+  "325|0|(M) Irarrazaval": {
+    "mean_minutes": 84,
+    "mean_km": 21.9,
+    "avg_kmh": 15.6,
+    "samples": 11
+  },
+  "325|1|Gabriela": {
+    "mean_minutes": 94,
+    "mean_km": 22.9,
+    "avg_kmh": 14.6,
+    "samples": 11
+  },
+  "329|0|Mall Florida Center": {
+    "mean_minutes": 66,
+    "mean_km": 19.2,
+    "avg_kmh": 17.6,
+    "samples": 10
+  },
+  "329|1|Mall Plaza Oeste": {
+    "mean_minutes": 64,
+    "mean_km": 18.9,
+    "avg_kmh": 17.7,
+    "samples": 10
+  },
+  "345|0|Alameda": {
+    "mean_minutes": 58,
+    "mean_km": 14.4,
+    "avg_kmh": 14.8,
+    "samples": 10
+  },
+  "345|1|Lo Espejo": {
+    "mean_minutes": 59,
+    "mean_km": 15.8,
+    "avg_kmh": 16,
+    "samples": 10
+  },
+  "346N|1|Lo Espejo": {
+    "mean_minutes": 33,
+    "mean_km": 13.5,
+    "avg_kmh": 24.6,
+    "samples": 2
+  },
+  "346N|0|Alameda": {
+    "mean_minutes": 32,
+    "mean_km": 13.8,
+    "avg_kmh": 26.1,
+    "samples": 2
+  },
+  "348|1|Rinconada": {
+    "mean_minutes": 72,
+    "mean_km": 20.8,
+    "avg_kmh": 17.3,
+    "samples": 10
+  },
+  "348|0|(M) Lo Ovalle": {
+    "mean_minutes": 75,
+    "mean_km": 22.3,
+    "avg_kmh": 17.9,
+    "samples": 10
+  },
+  "385|1|Villa Francia": {
+    "mean_minutes": 98,
+    "mean_km": 26.2,
+    "avg_kmh": 16.1,
+    "samples": 10
+  },
+  "385|0|Florida Center": {
+    "mean_minutes": 96,
+    "mean_km": 26,
+    "avg_kmh": 16.2,
+    "samples": 11
+  },
+  "401|1|Maipu": {
+    "mean_minutes": 143,
+    "mean_km": 37.4,
+    "avg_kmh": 15.7,
+    "samples": 12
+  },
+  "401|0|Las Condes": {
+    "mean_minutes": 149,
+    "mean_km": 37.2,
+    "avg_kmh": 15,
+    "samples": 12
+  },
+  "401c|1|(M) Escuela Militar": {
+    "mean_minutes": 43,
+    "mean_km": 10.3,
+    "avg_kmh": 14.4,
+    "samples": 6
+  },
+  "401c|0|Las Condes": {
+    "mean_minutes": 42,
+    "mean_km": 9.9,
+    "avg_kmh": 14.1,
+    "samples": 6
+  },
+  "402|0|© Pudahuel - Centro": {
+    "mean_minutes": 121,
+    "mean_km": 29.7,
+    "avg_kmh": 14.7,
+    "samples": 10
+  },
+  "403|0|La Reina": {
+    "mean_minutes": 74,
+    "mean_km": 17.5,
+    "avg_kmh": 14.2,
+    "samples": 12
+  },
+  "403|1|(M) Santa Ana": {
+    "mean_minutes": 65,
+    "mean_km": 16.7,
+    "avg_kmh": 15.3,
+    "samples": 12
+  },
+  "404|0|© El Descanso - Mapocho": {
+    "mean_minutes": 109,
+    "mean_km": 32.7,
+    "avg_kmh": 18.1,
+    "samples": 11
+  },
+  "404c|0|(M) Las Rejas": {
+    "mean_minutes": 28,
+    "mean_km": 7.9,
+    "avg_kmh": 17.2,
+    "samples": 3
+  },
+  "404c|1|El Descanso": {
+    "mean_minutes": 21,
+    "mean_km": 6.4,
+    "avg_kmh": 18.7,
+    "samples": 3
+  },
+  "405|1|Maipu": {
+    "mean_minutes": 140,
+    "mean_km": 35.2,
+    "avg_kmh": 15.1,
+    "samples": 12
+  },
+  "405|0|Cantagallo": {
+    "mean_minutes": 144,
+    "mean_km": 35.9,
+    "avg_kmh": 14.9,
+    "samples": 12
+  },
+  "405c|1|© Plaza Italia - Cantagallo": {
+    "mean_minutes": 122,
+    "mean_km": 30.6,
+    "avg_kmh": 15.1,
+    "samples": 8
+  },
+  "406|0|Cantagallo": {
+    "mean_minutes": 125,
+    "mean_km": 30.9,
+    "avg_kmh": 14.8,
+    "samples": 11
+  },
+  "406|1|Pudahuel": {
+    "mean_minutes": 127,
+    "mean_km": 31.6,
+    "avg_kmh": 14.9,
+    "samples": 10
+  },
+  "406c|0|© (M) Escuela Militar - Av. El Rodeo": {
+    "mean_minutes": 101,
+    "mean_km": 27,
+    "avg_kmh": 16,
+    "samples": 6
+  },
+  "407|0|Las Condes": {
+    "mean_minutes": 122,
+    "mean_km": 30.7,
+    "avg_kmh": 15.1,
+    "samples": 12
+  },
+  "407|1|Enea": {
+    "mean_minutes": 116,
+    "mean_km": 30.7,
+    "avg_kmh": 15.9,
+    "samples": 12
+  },
+  "408|1|Renca": {
+    "mean_minutes": 49,
+    "mean_km": 16.6,
+    "avg_kmh": 20.4,
+    "samples": 11
+  },
+  "408|0|Mapocho": {
+    "mean_minutes": 45,
+    "mean_km": 15.3,
+    "avg_kmh": 20.5,
+    "samples": 10
+  },
+  "408e|1|Renca": {
+    "mean_minutes": 58,
+    "mean_km": 14.4,
+    "avg_kmh": 14.8,
+    "samples": 2
+  },
+  "408e|0|Mapocho": {
+    "mean_minutes": 46,
+    "mean_km": 11.9,
+    "avg_kmh": 15.6,
+    "samples": 2
+  },
+  "409|1|Mapocho": {
+    "mean_minutes": 59,
+    "mean_km": 17.5,
+    "avg_kmh": 17.7,
+    "samples": 11
+  },
+  "409|0|Plaza San Enrique": {
+    "mean_minutes": 64,
+    "mean_km": 22.2,
+    "avg_kmh": 20.7,
+    "samples": 10
+  },
+  "410|1|Renca": {
+    "mean_minutes": 50,
+    "mean_km": 18,
+    "avg_kmh": 21.5,
+    "samples": 11
+  },
+  "410|0|Providencia": {
+    "mean_minutes": 38,
+    "mean_km": 17.3,
+    "avg_kmh": 27.2,
+    "samples": 11
+  },
+  "410e|0|Providencia": {
+    "mean_minutes": 49,
+    "mean_km": 16.3,
+    "avg_kmh": 20,
+    "samples": 3
+  },
+  "411|0|Plaza San Enrique": {
+    "mean_minutes": 45,
+    "mean_km": 14.3,
+    "avg_kmh": 19.2,
+    "samples": 10
+  },
+  "411|1|Providencia": {
+    "mean_minutes": 51,
+    "mean_km": 15.2,
+    "avg_kmh": 18,
+    "samples": 10
+  },
+  "412|0|La Reina": {
+    "mean_minutes": 145,
+    "mean_km": 37.3,
+    "avg_kmh": 15.4,
+    "samples": 12
+  },
+  "412|1|Enea": {
+    "mean_minutes": 146,
+    "mean_km": 38.3,
+    "avg_kmh": 15.8,
+    "samples": 12
+  },
+  "414e|1|(M) Pudahuel": {
+    "mean_minutes": 67,
+    "mean_km": 32.5,
+    "avg_kmh": 29.2,
+    "samples": 3
+  },
+  "414e|0|Los Trapenses": {
+    "mean_minutes": 67,
+    "mean_km": 32.8,
+    "avg_kmh": 29.3,
+    "samples": 3
+  },
+  "415e|1|(M) Pudahuel": {
+    "mean_minutes": 51,
+    "mean_km": 24.8,
+    "avg_kmh": 29.1,
+    "samples": 3
+  },
+  "415e|0|(M) Manquehue": {
+    "mean_minutes": 56,
+    "mean_km": 25,
+    "avg_kmh": 26.7,
+    "samples": 3
+  },
+  "417e|0|(M) Manquehue": {
+    "mean_minutes": 77,
+    "mean_km": 36.7,
+    "avg_kmh": 28.6,
+    "samples": 3
+  },
+  "417e|1|Maipu": {
+    "mean_minutes": 68,
+    "mean_km": 37.5,
+    "avg_kmh": 33.1,
+    "samples": 3
+  },
+  "418|0|Av. Tobalaba": {
+    "mean_minutes": 143,
+    "mean_km": 39.2,
+    "avg_kmh": 16.4,
+    "samples": 12
+  },
+  "418|1|Enea": {
+    "mean_minutes": 141,
+    "mean_km": 39.5,
+    "avg_kmh": 16.8,
+    "samples": 12
+  },
+  "419|0|Plaza Italia": {
+    "mean_minutes": 88,
+    "mean_km": 25.3,
+    "avg_kmh": 17.4,
+    "samples": 11
+  },
+  "419|1|Villa Los Heroes": {
+    "mean_minutes": 89,
+    "mean_km": 26.7,
+    "avg_kmh": 17.9,
+    "samples": 10
+  },
+  "420|0|© Av. Tobalaba - (M) Escuela Militar": {
+    "mean_minutes": 104,
+    "mean_km": 24.3,
+    "avg_kmh": 13.9,
+    "samples": 6
+  },
+  "421|1|Maipu": {
+    "mean_minutes": 154,
+    "mean_km": 38.8,
+    "avg_kmh": 15.1,
+    "samples": 11
+  },
+  "421|0|San Carlos De Apoquindo": {
+    "mean_minutes": 152,
+    "mean_km": 37.3,
+    "avg_kmh": 14.8,
+    "samples": 11
+  },
+  "421c|0|© San Carlos De Apoquindo - (M) Los Dominicos": {
+    "mean_minutes": 49,
+    "mean_km": 12,
+    "avg_kmh": 14.7,
+    "samples": 5
+  },
+  "422|0|La Reina": {
+    "mean_minutes": 143,
+    "mean_km": 34.3,
+    "avg_kmh": 14.4,
+    "samples": 10
+  },
+  "422|1|Pob. Teniente Merino": {
+    "mean_minutes": 138,
+    "mean_km": 33.6,
+    "avg_kmh": 14.6,
+    "samples": 10
+  },
+  "422c|1|Pob. Teniente Merino": {
+    "mean_minutes": 28,
+    "mean_km": 7.4,
+    "avg_kmh": 16.1,
+    "samples": 3
+  },
+  "422c|0|(M) San Pablo": {
+    "mean_minutes": 31,
+    "mean_km": 7.5,
+    "avg_kmh": 14.4,
+    "samples": 3
+  },
+  "423|0|Plaza Italia": {
+    "mean_minutes": 93,
+    "mean_km": 23.6,
+    "avg_kmh": 15.2,
+    "samples": 11
+  },
+  "423|1|Nueva San Martin": {
+    "mean_minutes": 92,
+    "mean_km": 25.5,
+    "avg_kmh": 16.7,
+    "samples": 10
+  },
+  "424|1|Pudahuel Sur": {
+    "mean_minutes": 66,
+    "mean_km": 19.1,
+    "avg_kmh": 17.3,
+    "samples": 10
+  },
+  "424|0|(M) U. De Chile": {
+    "mean_minutes": 63,
+    "mean_km": 17.4,
+    "avg_kmh": 16.7,
+    "samples": 10
+  },
+  "425|1|Rigoberto Jara": {
+    "mean_minutes": 119,
+    "mean_km": 33.7,
+    "avg_kmh": 17,
+    "samples": 12
+  },
+  "425|0|Lo Hermida": {
+    "mean_minutes": 114,
+    "mean_km": 34.1,
+    "avg_kmh": 17.9,
+    "samples": 12
+  },
+  "426|1|Pudahuel": {
+    "mean_minutes": 123,
+    "mean_km": 33.7,
+    "avg_kmh": 16.5,
+    "samples": 12
+  },
+  "426|0|La Dehesa": {
+    "mean_minutes": 129,
+    "mean_km": 34.5,
+    "avg_kmh": 16,
+    "samples": 12
+  },
+  "428|0|(M) La Cisterna": {
+    "mean_minutes": 108,
+    "mean_km": 35.6,
+    "avg_kmh": 19.7,
+    "samples": 12
+  },
+  "428|1|(M) Los Libertadores": {
+    "mean_minutes": 110,
+    "mean_km": 36.1,
+    "avg_kmh": 19.7,
+    "samples": 12
+  },
+  "428e|1|(M) Los Libertadores": {
+    "mean_minutes": 77,
+    "mean_km": 33.6,
+    "avg_kmh": 26,
+    "samples": 6
+  },
+  "428e|0|(M) La Cisterna": {
+    "mean_minutes": 85,
+    "mean_km": 34.1,
+    "avg_kmh": 24.2,
+    "samples": 6
+  },
+  "429|0|Lo Hermida": {
+    "mean_minutes": 122,
+    "mean_km": 33.9,
+    "avg_kmh": 16.7,
+    "samples": 11
+  },
+  "429|1|Lo Echevers": {
+    "mean_minutes": 123,
+    "mean_km": 33.7,
+    "avg_kmh": 16.4,
+    "samples": 11
+  },
+  "429c|0|(M) Tobalaba": {
+    "mean_minutes": 80,
+    "mean_km": 21.6,
+    "avg_kmh": 16.3,
+    "samples": 5
+  },
+  "429c|1|Quilicura": {
+    "mean_minutes": 74,
+    "mean_km": 21.1,
+    "avg_kmh": 17.2,
+    "samples": 6
+  },
+  "430|0|La Dehesa": {
+    "mean_minutes": 113,
+    "mean_km": 33.9,
+    "avg_kmh": 18,
+    "samples": 11
+  },
+  "430|1|Quilicura": {
+    "mean_minutes": 105,
+    "mean_km": 33,
+    "avg_kmh": 18.9,
+    "samples": 10
+  },
+  "431c|0|(M) Ecuador": {
+    "mean_minutes": 66,
+    "mean_km": 16.5,
+    "avg_kmh": 14.9,
+    "samples": 3
+  },
+  "431c|1|Nueva San Martin": {
+    "mean_minutes": 69,
+    "mean_km": 16.8,
+    "avg_kmh": 14.6,
+    "samples": 4
+  },
+  "432N|0|La Reina": {
+    "mean_minutes": 97,
+    "mean_km": 37.2,
+    "avg_kmh": 23.1,
+    "samples": 2
+  },
+  "432N|1|Maipu": {
+    "mean_minutes": 99,
+    "mean_km": 36.9,
+    "avg_kmh": 22.2,
+    "samples": 2
+  },
+  "435|1|Quilicura": {
+    "mean_minutes": 66,
+    "mean_km": 25,
+    "avg_kmh": 22.8,
+    "samples": 9
+  },
+  "435|0|Vitacura": {
+    "mean_minutes": 72,
+    "mean_km": 25.3,
+    "avg_kmh": 21.1,
+    "samples": 10
+  },
+  "444|1|Intermodal Aeropuerto": {
+    "mean_minutes": 72,
+    "mean_km": 24,
+    "avg_kmh": 19.9,
+    "samples": 10
+  },
+  "444|0|(M) La Cisterna": {
+    "mean_minutes": 81,
+    "mean_km": 25.6,
+    "avg_kmh": 19,
+    "samples": 10
+  },
+  "445c|0|Vitacura": {
+    "mean_minutes": 56,
+    "mean_km": 11.7,
+    "avg_kmh": 12.6,
+    "samples": 3
+  },
+  "445c|1|Centro": {
+    "mean_minutes": 57,
+    "mean_km": 10.7,
+    "avg_kmh": 11.3,
+    "samples": 4
+  },
+  "481|0|Avenida Portales": {
+    "mean_minutes": 112,
+    "mean_km": 28.6,
+    "avg_kmh": 15.4,
+    "samples": 9
+  },
+  "481|1|Plaza Italia": {
+    "mean_minutes": 93,
+    "mean_km": 24,
+    "avg_kmh": 15.5,
+    "samples": 11
+  },
+  "486|0|© Enea - (M) San Pablo": {
+    "mean_minutes": 66,
+    "mean_km": 19.9,
+    "avg_kmh": 18.2,
+    "samples": 5
+  },
+  "501|1|(M) Parque Bustamante": {
+    "mean_minutes": 44,
+    "mean_km": 10.8,
+    "avg_kmh": 14.8,
+    "samples": 10
+  },
+  "501|0|Fleming": {
+    "mean_minutes": 50,
+    "mean_km": 11.1,
+    "avg_kmh": 13.4,
+    "samples": 10
+  },
+  "502|0|Cantagallo": {
+    "mean_minutes": 113,
+    "mean_km": 30.4,
+    "avg_kmh": 16.2,
+    "samples": 11
+  },
+  "502|1|Cerro Navia": {
+    "mean_minutes": 111,
+    "mean_km": 30.1,
+    "avg_kmh": 16.2,
+    "samples": 11
+  },
+  "502c|1|Cerro Navia": {
+    "mean_minutes": 58,
+    "mean_km": 14.7,
+    "avg_kmh": 15.1,
+    "samples": 3
+  },
+  "502c|0|Santiago": {
+    "mean_minutes": 75,
+    "mean_km": 17.1,
+    "avg_kmh": 13.6,
+    "samples": 3
+  },
+  "503|0|Vital Apoquindo": {
+    "mean_minutes": 118,
+    "mean_km": 28.7,
+    "avg_kmh": 14.7,
+    "samples": 11
+  },
+  "503|1|Av. La Estrella": {
+    "mean_minutes": 107,
+    "mean_km": 28.8,
+    "avg_kmh": 16.2,
+    "samples": 11
+  },
+  "504|1|El Tranque": {
+    "mean_minutes": 119,
+    "mean_km": 31.5,
+    "avg_kmh": 15.9,
+    "samples": 10
+  },
+  "504|0|Hospital Dipreca": {
+    "mean_minutes": 123,
+    "mean_km": 31.8,
+    "avg_kmh": 15.5,
+    "samples": 10
+  },
+  "505|0|Las Parcelas": {
+    "mean_minutes": 143,
+    "mean_km": 35.5,
+    "avg_kmh": 14.9,
+    "samples": 11
+  },
+  "505|1|Cerro Navia": {
+    "mean_minutes": 141,
+    "mean_km": 35.7,
+    "avg_kmh": 15.2,
+    "samples": 11
+  },
+  "505c|0|© Las Parcelas - (M) Salvador": {
+    "mean_minutes": 120,
+    "mean_km": 30.8,
+    "avg_kmh": 15.4,
+    "samples": 3
+  },
+  "506|0|Peñalolen": {
+    "mean_minutes": 123,
+    "mean_km": 36.9,
+    "avg_kmh": 18,
+    "samples": 12
+  },
+  "506|1|Maipu": {
+    "mean_minutes": 124,
+    "mean_km": 37,
+    "avg_kmh": 18,
+    "samples": 12
+  },
+  "506e|1|Maipu": {
+    "mean_minutes": 112,
+    "mean_km": 32.9,
+    "avg_kmh": 17.7,
+    "samples": 6
+  },
+  "506e|0|Peñalolen": {
+    "mean_minutes": 107,
+    "mean_km": 32.9,
+    "avg_kmh": 18.6,
+    "samples": 6
+  },
+  "506v|1|Villa El Abrazo": {
+    "mean_minutes": 130,
+    "mean_km": 34.7,
+    "avg_kmh": 16,
+    "samples": 10
+  },
+  "506v|0|Peñalolen": {
+    "mean_minutes": 130,
+    "mean_km": 34.6,
+    "avg_kmh": 16,
+    "samples": 10
+  },
+  "507|0|Av Grecia": {
+    "mean_minutes": 120,
+    "mean_km": 31.9,
+    "avg_kmh": 16,
+    "samples": 11
+  },
+  "507|1|Enea": {
+    "mean_minutes": 114,
+    "mean_km": 31.7,
+    "avg_kmh": 16.6,
+    "samples": 11
+  },
+  "507c|1|(M) Parque O'Higgins": {
+    "mean_minutes": 55,
+    "mean_km": 14.3,
+    "avg_kmh": 15.7,
+    "samples": 6
+  },
+  "507c|0|Peñalolen": {
+    "mean_minutes": 55,
+    "mean_km": 14.5,
+    "avg_kmh": 15.7,
+    "samples": 6
+  },
+  "508|0|Av. Las Torres": {
+    "mean_minutes": 124,
+    "mean_km": 33.4,
+    "avg_kmh": 16.2,
+    "samples": 12
+  },
+  "508|1|Av. Mapocho": {
+    "mean_minutes": 126,
+    "mean_km": 33.1,
+    "avg_kmh": 15.7,
+    "samples": 12
+  },
+  "509|0|Mapocho": {
+    "mean_minutes": 88,
+    "mean_km": 24.3,
+    "avg_kmh": 16.5,
+    "samples": 11
+  },
+  "509|1|Maipu": {
+    "mean_minutes": 93,
+    "mean_km": 25,
+    "avg_kmh": 16.1,
+    "samples": 10
+  },
+  "510|1|Pudahuel Sur": {
+    "mean_minutes": 116,
+    "mean_km": 29.6,
+    "avg_kmh": 15.4,
+    "samples": 10
+  },
+  "510|0|Rio Claro": {
+    "mean_minutes": 123,
+    "mean_km": 30,
+    "avg_kmh": 14.6,
+    "samples": 10
+  },
+  "511|0|Peñalolen": {
+    "mean_minutes": 141,
+    "mean_km": 35.8,
+    "avg_kmh": 15.2,
+    "samples": 11
+  },
+  "511|1|Cerro Navia": {
+    "mean_minutes": 131,
+    "mean_km": 33.7,
+    "avg_kmh": 15.4,
+    "samples": 11
+  },
+  "513|1|El Montijo": {
+    "mean_minutes": 119,
+    "mean_km": 31.1,
+    "avg_kmh": 15.7,
+    "samples": 12
+  },
+  "513|0|Jose Arrieta": {
+    "mean_minutes": 124,
+    "mean_km": 31.1,
+    "avg_kmh": 15,
+    "samples": 12
+  },
+  "514|1|Enea": {
+    "mean_minutes": 143,
+    "mean_km": 37.1,
+    "avg_kmh": 15.6,
+    "samples": 10
+  },
+  "514|0|San Luis De Macul": {
+    "mean_minutes": 144,
+    "mean_km": 36.6,
+    "avg_kmh": 15.3,
+    "samples": 10
+  },
+  "514c|0|San Luis De Macul": {
+    "mean_minutes": 83,
+    "mean_km": 18.3,
+    "avg_kmh": 13.3,
+    "samples": 3
+  },
+  "514c|1|(M) Salvador": {
+    "mean_minutes": 84,
+    "mean_km": 17.6,
+    "avg_kmh": 12.6,
+    "samples": 3
+  },
+  "516|0|Las Parcelas": {
+    "mean_minutes": 114,
+    "mean_km": 28.7,
+    "avg_kmh": 15,
+    "samples": 12
+  },
+  "516|1|Pudahuel Sur": {
+    "mean_minutes": 108,
+    "mean_km": 28.8,
+    "avg_kmh": 16,
+    "samples": 12
+  },
+  "517|0|Peñalolén": {
+    "mean_minutes": 123,
+    "mean_km": 28.5,
+    "avg_kmh": 13.9,
+    "samples": 10
+  },
+  "517|1|J. J. Pérez": {
+    "mean_minutes": 118,
+    "mean_km": 28.5,
+    "avg_kmh": 14.5,
+    "samples": 10
+  },
+  "518|0|Bilbao": {
+    "mean_minutes": 106,
+    "mean_km": 25.5,
+    "avg_kmh": 14.4,
+    "samples": 12
+  },
+  "518|1|J.J. Perez": {
+    "mean_minutes": 101,
+    "mean_km": 25.2,
+    "avg_kmh": 15,
+    "samples": 12
+  },
+  "519|0|Av. Grecia": {
+    "mean_minutes": 89,
+    "mean_km": 21.5,
+    "avg_kmh": 14.4,
+    "samples": 9
+  },
+  "519|1|(M) Pajaritos": {
+    "mean_minutes": 82,
+    "mean_km": 21.6,
+    "avg_kmh": 15.8,
+    "samples": 9
+  },
+  "541N|1|El Tranque": {
+    "mean_minutes": 73,
+    "mean_km": 31.4,
+    "avg_kmh": 25.7,
+    "samples": 2
+  },
+  "541N|0|Colon": {
+    "mean_minutes": 80,
+    "mean_km": 31.8,
+    "avg_kmh": 24,
+    "samples": 2
+  },
+  "542|0|Cantagallo": {
+    "mean_minutes": 108,
+    "mean_km": 30.1,
+    "avg_kmh": 16.7,
+    "samples": 8
+  },
+  "542|1|Cerro Navia": {
+    "mean_minutes": 107,
+    "mean_km": 30.4,
+    "avg_kmh": 17.1,
+    "samples": 8
+  },
+  "546e|0|Vitacura": {
+    "mean_minutes": 130,
+    "mean_km": 38.8,
+    "avg_kmh": 17.9,
+    "samples": 3
+  },
+  "546e|1|Villa El Abrazo": {
+    "mean_minutes": 130,
+    "mean_km": 40.2,
+    "avg_kmh": 18.5,
+    "samples": 2
+  },
+  "555|0|(M) Pajaritos": {
+    "mean_minutes": 28,
+    "mean_km": 13.2,
+    "avg_kmh": 28,
+    "samples": 10
+  },
+  "555|1|Intermodal Aeropuerto": {
+    "mean_minutes": 29,
+    "mean_km": 13.2,
+    "avg_kmh": 27.7,
+    "samples": 10
+  },
+  "712|1|Puente Alto": {
+    "mean_minutes": 138,
+    "mean_km": 41.5,
+    "avg_kmh": 18.1,
+    "samples": 12
+  },
+  "712|0|La Piramide": {
+    "mean_minutes": 144,
+    "mean_km": 42.3,
+    "avg_kmh": 17.6,
+    "samples": 12
+  },
+  "722|1|Gonel": {
+    "mean_minutes": 70,
+    "mean_km": 23.4,
+    "avg_kmh": 20,
+    "samples": 12
+  },
+  "722|0|Av. Colon": {
+    "mean_minutes": 73,
+    "mean_km": 22.8,
+    "avg_kmh": 18.8,
+    "samples": 11
+  },
+  "B01|0|© Huamachuco - El Salto": {
+    "mean_minutes": 87,
+    "mean_km": 21.6,
+    "avg_kmh": 14.9,
+    "samples": 11
+  },
+  "B02|0|© El Barrero - Centro": {
+    "mean_minutes": 133,
+    "mean_km": 29.2,
+    "avg_kmh": 13.2,
+    "samples": 10
+  },
+  "B02N|0|© El Barrero - Plaza Italia": {
+    "mean_minutes": 89,
+    "mean_km": 30.6,
+    "avg_kmh": 20.6,
+    "samples": 3
+  },
+  "B03|0|© Miraflores - (M) Cerro Blanco": {
+    "mean_minutes": 151,
+    "mean_km": 36.4,
+    "avg_kmh": 14.4,
+    "samples": 11
+  },
+  "B04|0|© (M) Los Libertadores - Mapocho": {
+    "mean_minutes": 91,
+    "mean_km": 22.1,
+    "avg_kmh": 14.6,
+    "samples": 11
+  },
+  "B05|1|(M) Los Libertadores": {
+    "mean_minutes": 48,
+    "mean_km": 14,
+    "avg_kmh": 17.7,
+    "samples": 10
+  },
+  "B05|0|Ciudad Empresarial": {
+    "mean_minutes": 45,
+    "mean_km": 13.8,
+    "avg_kmh": 18.4,
+    "samples": 10
+  },
+  "B06|0|Santa Laura": {
+    "mean_minutes": 65,
+    "mean_km": 16.8,
+    "avg_kmh": 15.4,
+    "samples": 10
+  },
+  "B06|1|(M) Zapadores": {
+    "mean_minutes": 65,
+    "mean_km": 16.2,
+    "avg_kmh": 15,
+    "samples": 11
+  },
+  "B07|0|© M) Los Libertadores - San Ignacio": {
+    "mean_minutes": 42,
+    "mean_km": 15.9,
+    "avg_kmh": 22.5,
+    "samples": 10
+  },
+  "B08|1|Lo Marcoleta": {
+    "mean_minutes": 44,
+    "mean_km": 13.5,
+    "avg_kmh": 18.1,
+    "samples": 11
+  },
+  "B08|0|Mall Plaza Norte": {
+    "mean_minutes": 55,
+    "mean_km": 15.4,
+    "avg_kmh": 16.8,
+    "samples": 11
+  },
+  "B09|0|© Lo Boza - Lo Franco": {
+    "mean_minutes": 82,
+    "mean_km": 28,
+    "avg_kmh": 20.5,
+    "samples": 11
+  },
+  "B10|0|© Santa Marta Huechuraba - (M) Cerro Blanco": {
+    "mean_minutes": 91,
+    "mean_km": 20.9,
+    "avg_kmh": 13.8,
+    "samples": 10
+  },
+  "B11|1|El Salto": {
+    "mean_minutes": 63,
+    "mean_km": 18.1,
+    "avg_kmh": 17.2,
+    "samples": 11
+  },
+  "B11|0|Lo Marcoleta": {
+    "mean_minutes": 68,
+    "mean_km": 17.8,
+    "avg_kmh": 15.7,
+    "samples": 10
+  },
+  "B12|1|(M) Zapadores": {
+    "mean_minutes": 78,
+    "mean_km": 22,
+    "avg_kmh": 16.8,
+    "samples": 11
+  },
+  "B12|0|Lo Marcoleta": {
+    "mean_minutes": 82,
+    "mean_km": 22.6,
+    "avg_kmh": 16.5,
+    "samples": 10
+  },
+  "B12c|1|Lo Marcoleta": {
+    "mean_minutes": 40,
+    "mean_km": 11.9,
+    "avg_kmh": 17.9,
+    "samples": 6
+  },
+  "B12c|0|Buenaventura": {
+    "mean_minutes": 45,
+    "mean_km": 11.9,
+    "avg_kmh": 16,
+    "samples": 6
+  },
+  "B13|0|© Valle Grande - (M) Lo Cruzat": {
+    "mean_minutes": 76,
+    "mean_km": 22.2,
+    "avg_kmh": 17.5,
+    "samples": 10
+  },
+  "B14|0|© El Salto - Mapocho": {
+    "mean_minutes": 92,
+    "mean_km": 24.4,
+    "avg_kmh": 15.9,
+    "samples": 11
+  },
+  "B15|0|© El Salto - Plaza Italia": {
+    "mean_minutes": 95,
+    "mean_km": 25.3,
+    "avg_kmh": 16,
+    "samples": 11
+  },
+  "B16|0|(M) Vespucio Norte": {
+    "mean_minutes": 28,
+    "mean_km": 8.2,
+    "avg_kmh": 17.8,
+    "samples": 11
+  },
+  "B16|1|El Carmen": {
+    "mean_minutes": 33,
+    "mean_km": 8.6,
+    "avg_kmh": 15.6,
+    "samples": 10
+  },
+  "B17|0|© Huamachuco - Av. Arzobispo Valdivieso": {
+    "mean_minutes": 82,
+    "mean_km": 20.1,
+    "avg_kmh": 14.7,
+    "samples": 11
+  },
+  "B18|1|Villa Pucara": {
+    "mean_minutes": 44,
+    "mean_km": 13.1,
+    "avg_kmh": 17.9,
+    "samples": 11
+  },
+  "B18|0|(M) Vespucio Norte": {
+    "mean_minutes": 29,
+    "mean_km": 10.5,
+    "avg_kmh": 21.3,
+    "samples": 11
+  },
+  "B18e|0|(M) Los Libertadores": {
+    "mean_minutes": 17,
+    "mean_km": 7.3,
+    "avg_kmh": 26.4,
+    "samples": 10
+  },
+  "B18e|1|Villa Pucara": {
+    "mean_minutes": 18,
+    "mean_km": 7.9,
+    "avg_kmh": 25.9,
+    "samples": 11
+  },
+  "B19|1|© (M) Cardenal Caro - (M) Vespucio Norte": {
+    "mean_minutes": 37,
+    "mean_km": 11.1,
+    "avg_kmh": 18.1,
+    "samples": 11
+  },
+  "B20|0|© Miraflores - Mapocho": {
+    "mean_minutes": 128,
+    "mean_km": 34.8,
+    "avg_kmh": 16.3,
+    "samples": 10
+  },
+  "B21|1|Plaza Chacabuco": {
+    "mean_minutes": 74,
+    "mean_km": 19.6,
+    "avg_kmh": 15.9,
+    "samples": 11
+  },
+  "B21|0|Lo Marcoleta": {
+    "mean_minutes": 76,
+    "mean_km": 20.3,
+    "avg_kmh": 16,
+    "samples": 10
+  },
+  "B22|0|Urmeneta": {
+    "mean_minutes": 54,
+    "mean_km": 14.8,
+    "avg_kmh": 16.4,
+    "samples": 10
+  },
+  "B22|1|Palacio Riesco": {
+    "mean_minutes": 61,
+    "mean_km": 15.2,
+    "avg_kmh": 15,
+    "samples": 10
+  },
+  "B24|0|© Huamachuco - Centro": {
+    "mean_minutes": 112,
+    "mean_km": 26.3,
+    "avg_kmh": 14.1,
+    "samples": 10
+  },
+  "B25|0|© (M) Vespucio Norte - (M) Cerro Blanco": {
+    "mean_minutes": 60,
+    "mean_km": 15.7,
+    "avg_kmh": 15.8,
+    "samples": 11
+  },
+  "B26|0|© (M) Los Libertadores - (M) Estacion Central": {
+    "mean_minutes": 129,
+    "mean_km": 33.3,
+    "avg_kmh": 15.5,
+    "samples": 11
+  },
+  "B27|1|(M) Vespucio Norte": {
+    "mean_minutes": 55,
+    "mean_km": 12.9,
+    "avg_kmh": 14,
+    "samples": 10
+  },
+  "B27|0|(M) Salvador": {
+    "mean_minutes": 60,
+    "mean_km": 13.9,
+    "avg_kmh": 14,
+    "samples": 10
+  },
+  "B28|0|© Huamachuco - (M) Estacion Central": {
+    "mean_minutes": 94,
+    "mean_km": 24.7,
+    "avg_kmh": 15.7,
+    "samples": 10
+  },
+  "B29|0|© Miraflores - Mapocho": {
+    "mean_minutes": 125,
+    "mean_km": 36.9,
+    "avg_kmh": 17.7,
+    "samples": 11
+  },
+  "B30N|0|© Renca - Centro": {
+    "mean_minutes": 101,
+    "mean_km": 36,
+    "avg_kmh": 21.5,
+    "samples": 3
+  },
+  "B31N|0|Quilicura": {
+    "mean_minutes": 58,
+    "mean_km": 23,
+    "avg_kmh": 24,
+    "samples": 3
+  },
+  "B31N|1|Centro": {
+    "mean_minutes": 57,
+    "mean_km": 22.7,
+    "avg_kmh": 24,
+    "samples": 3
+  },
+  "B32|0|© Valle Lo Campino - Muni. Quilicura": {
+    "mean_minutes": 39,
+    "mean_km": 12.6,
+    "avg_kmh": 19.5,
+    "samples": 10
+  },
+  "B33|0|© (M) Los Libertadores - Buenaventura": {
+    "mean_minutes": 44,
+    "mean_km": 17,
+    "avg_kmh": 23.3,
+    "samples": 10
+  },
+  "B35|0|© (M) Los Libertadores - (M) Zapadores": {
+    "mean_minutes": 63,
+    "mean_km": 20.7,
+    "avg_kmh": 19.6,
+    "samples": 9
+  },
+  "B36|0|© (M) Los Libertadores - Pedro Fontova Norte": {
+    "mean_minutes": 52,
+    "mean_km": 14.6,
+    "avg_kmh": 16.9,
+    "samples": 10
+  },
+  "B37|0|© (M) Los Libertadores - Parque Industrial": {
+    "mean_minutes": 55,
+    "mean_km": 19.5,
+    "avg_kmh": 21.2,
+    "samples": 10
+  },
+  "B38|0|© Hospital Felix Bulnes - Huamachuco": {
+    "mean_minutes": 102,
+    "mean_km": 27.4,
+    "avg_kmh": 16.1,
+    "samples": 9
+  },
+  "B41|0|© Mall Plaza Norte - (M) Cerro Blanco": {
+    "mean_minutes": 75,
+    "mean_km": 21.3,
+    "avg_kmh": 17.1,
+    "samples": 10
+  },
+  "B42|0|Valle Grande": {
+    "mean_minutes": 40,
+    "mean_km": 13.7,
+    "avg_kmh": 20.6,
+    "samples": 10
+  },
+  "B42|1|(M) Los Libertadores": {
+    "mean_minutes": 38,
+    "mean_km": 13.7,
+    "avg_kmh": 21.9,
+    "samples": 10
+  },
+  "B43|1|(M) Vespucio Norte": {
+    "mean_minutes": 61,
+    "mean_km": 17.6,
+    "avg_kmh": 17.2,
+    "samples": 10
+  },
+  "B43|0|Lo Marcoleta": {
+    "mean_minutes": 61,
+    "mean_km": 18.6,
+    "avg_kmh": 18.2,
+    "samples": 11
+  },
+  "B45|1|Rigoberto Jara": {
+    "mean_minutes": 56,
+    "mean_km": 13,
+    "avg_kmh": 14,
+    "samples": 10
+  },
+  "B45|0|El Mañio": {
+    "mean_minutes": 52,
+    "mean_km": 12.5,
+    "avg_kmh": 14.3,
+    "samples": 10
+  },
+  "C01|1|(M) Francisco Bilbao": {
+    "mean_minutes": 75,
+    "mean_km": 21.3,
+    "avg_kmh": 17.1,
+    "samples": 11
+  },
+  "C01|0|Cerro 18": {
+    "mean_minutes": 74,
+    "mean_km": 21.1,
+    "avg_kmh": 17.2,
+    "samples": 11
+  },
+  "C01c|0|Plaza San Enrique": {
+    "mean_minutes": 45,
+    "mean_km": 11.8,
+    "avg_kmh": 15.6,
+    "samples": 10
+  },
+  "C01c|1|(M) Escuela Militar": {
+    "mean_minutes": 45,
+    "mean_km": 11.7,
+    "avg_kmh": 15.5,
+    "samples": 9
+  },
+  "C02|0|© San Carlos De Apoquindo - (M) Escuela Militar": {
+    "mean_minutes": 67,
+    "mean_km": 17.5,
+    "avg_kmh": 15.7,
+    "samples": 12
+  },
+  "C02c|0|(M) Los Dominicos": {
+    "mean_minutes": 19,
+    "mean_km": 5,
+    "avg_kmh": 15.3,
+    "samples": 8
+  },
+  "C02c|1|San Carlos De Apoquindo": {
+    "mean_minutes": 18,
+    "mean_km": 4.6,
+    "avg_kmh": 15.5,
+    "samples": 8
+  },
+  "C03|1|© (M) Tobalaba - Vital Apoquindo": {
+    "mean_minutes": 137,
+    "mean_km": 32.9,
+    "avg_kmh": 14.5,
+    "samples": 11
+  },
+  "C03c|0|Vital Apoquindo": {
+    "mean_minutes": 37,
+    "mean_km": 6.9,
+    "avg_kmh": 11.1,
+    "samples": 4
+  },
+  "C03c|1|Lo Gallo": {
+    "mean_minutes": 35,
+    "mean_km": 7,
+    "avg_kmh": 12,
+    "samples": 4
+  },
+  "C05|0|(M) Francisco Bilbao": {
+    "mean_minutes": 51,
+    "mean_km": 13.2,
+    "avg_kmh": 15.7,
+    "samples": 10
+  },
+  "C05|1|La Ermita": {
+    "mean_minutes": 51,
+    "mean_km": 14.7,
+    "avg_kmh": 17.2,
+    "samples": 10
+  },
+  "C06|1|Vital Apoquindo": {
+    "mean_minutes": 58,
+    "mean_km": 14.5,
+    "avg_kmh": 15.1,
+    "samples": 10
+  },
+  "C06|0|Ciudad Empresarial": {
+    "mean_minutes": 67,
+    "mean_km": 18.5,
+    "avg_kmh": 16.5,
+    "samples": 10
+  },
+  "C07|1|La Piramide": {
+    "mean_minutes": 46,
+    "mean_km": 12.6,
+    "avg_kmh": 16.5,
+    "samples": 10
+  },
+  "C07|0|(M) Francisco Bilbao": {
+    "mean_minutes": 44,
+    "mean_km": 11.8,
+    "avg_kmh": 16.1,
+    "samples": 10
+  },
+  "C09|0|© La Dehesa - (M) Los Dominicos": {
+    "mean_minutes": 111,
+    "mean_km": 31.6,
+    "avg_kmh": 17.1,
+    "samples": 11
+  },
+  "C09c|0|© San Carlos De Apoquindo - (M) Los Dominicos": {
+    "mean_minutes": 48,
+    "mean_km": 12.1,
+    "avg_kmh": 15.2,
+    "samples": 5
+  },
+  "C10e|0|Camino Juan Pablo Ii": {
+    "mean_minutes": 35,
+    "mean_km": 20.7,
+    "avg_kmh": 35.2,
+    "samples": 8
+  },
+  "C10e|1|(M) Tobalaba": {
+    "mean_minutes": 34,
+    "mean_km": 19.9,
+    "avg_kmh": 35.1,
+    "samples": 8
+  },
+  "C11|0|© (M) Escuela Militar - Tabancura": {
+    "mean_minutes": 62,
+    "mean_km": 15.2,
+    "avg_kmh": 14.7,
+    "samples": 10
+  },
+  "C13|0|© Vital Apoquindo - Parque Del Sol": {
+    "mean_minutes": 111,
+    "mean_km": 29.8,
+    "avg_kmh": 16.1,
+    "samples": 10
+  },
+  "C14|0|Los Trapenses": {
+    "mean_minutes": 36,
+    "mean_km": 15.4,
+    "avg_kmh": 25.3,
+    "samples": 10
+  },
+  "C14|1|(M) Escuela Militar": {
+    "mean_minutes": 39,
+    "mean_km": 14.7,
+    "avg_kmh": 22.6,
+    "samples": 11
+  },
+  "C15|0|© (M) Escuela Militar - Estoril": {
+    "mean_minutes": 61,
+    "mean_km": 15.5,
+    "avg_kmh": 15.2,
+    "samples": 10
+  },
+  "C16|0|El Huinganal": {
+    "mean_minutes": 56,
+    "mean_km": 16.1,
+    "avg_kmh": 17.2,
+    "samples": 10
+  },
+  "C16|1|Vital Apoquindo": {
+    "mean_minutes": 60,
+    "mean_km": 16.7,
+    "avg_kmh": 16.7,
+    "samples": 10
+  },
+  "C17|1|Cerro 18": {
+    "mean_minutes": 31,
+    "mean_km": 11,
+    "avg_kmh": 21.2,
+    "samples": 10
+  },
+  "C17|0|Camino Real": {
+    "mean_minutes": 29,
+    "mean_km": 9.8,
+    "avg_kmh": 20,
+    "samples": 10
+  },
+  "C18|1|(M) Escuela Militar": {
+    "mean_minutes": 53,
+    "mean_km": 18.6,
+    "avg_kmh": 21.1,
+    "samples": 10
+  },
+  "C18|0|(M) Dorsal": {
+    "mean_minutes": 54,
+    "mean_km": 18.7,
+    "avg_kmh": 20.8,
+    "samples": 10
+  },
+  "C19|1|(M) Escuela Militar": {
+    "mean_minutes": 51,
+    "mean_km": 14.1,
+    "avg_kmh": 16.4,
+    "samples": 10
+  },
+  "C19|0|Valle De La Dehesa": {
+    "mean_minutes": 51,
+    "mean_km": 14,
+    "avg_kmh": 16.6,
+    "samples": 10
+  },
+  "C20|0|© (M) Escuela Militar - Parque Arauco": {
+    "mean_minutes": 24,
+    "mean_km": 5.1,
+    "avg_kmh": 12.6,
+    "samples": 10
+  },
+  "C22|0|Rotonda Lo Curro": {
+    "mean_minutes": 23,
+    "mean_km": 7.4,
+    "avg_kmh": 19.1,
+    "samples": 10
+  },
+  "C22|1|(M) Escuela Militar": {
+    "mean_minutes": 24,
+    "mean_km": 7.7,
+    "avg_kmh": 19.5,
+    "samples": 10
+  },
+  "C25|1|San Carlos De Apoquindo": {
+    "mean_minutes": 50,
+    "mean_km": 14.1,
+    "avg_kmh": 16.8,
+    "samples": 10
+  },
+  "C25|0|Villa La Reina": {
+    "mean_minutes": 52,
+    "mean_km": 15,
+    "avg_kmh": 17.4,
+    "samples": 12
+  },
+  "C26c|0|© Ciudad Empresarial - (M) Tobalaba": {
+    "mean_minutes": 50,
+    "mean_km": 13.2,
+    "avg_kmh": 16,
+    "samples": 4
+  },
+  "C27|0|© Republica De Honduras - (M) Los Dominicos": {
+    "mean_minutes": 55,
+    "mean_km": 15.6,
+    "avg_kmh": 17,
+    "samples": 10
+  },
+  "C28|1|(M) Escuela Militar": {
+    "mean_minutes": 62,
+    "mean_km": 20.6,
+    "avg_kmh": 19.9,
+    "samples": 12
+  },
+  "C28|0|Los Bravos": {
+    "mean_minutes": 61,
+    "mean_km": 19.9,
+    "avg_kmh": 19.6,
+    "samples": 11
+  },
+  "C30e|0|Los Trapenses": {
+    "mean_minutes": 34,
+    "mean_km": 19.3,
+    "avg_kmh": 33.6,
+    "samples": 8
+  },
+  "C30e|1|(M) Los Leones": {
+    "mean_minutes": 32,
+    "mean_km": 18.3,
+    "avg_kmh": 33.8,
+    "samples": 8
+  },
+  "C33c|0|© Vitacura - (M) Tobalaba": {
+    "mean_minutes": 39,
+    "mean_km": 7.7,
+    "avg_kmh": 11.9,
+    "samples": 4
+  },
+  "C37|1|© (M) Los Dominicos - San Ramon Oriente": {
+    "mean_minutes": 59,
+    "mean_km": 17.6,
+    "avg_kmh": 18,
+    "samples": 9
+  },
+  "D01|0|© Antupirén - (M) Plaza Egaña": {
+    "mean_minutes": 89,
+    "mean_km": 21.8,
+    "avg_kmh": 14.7,
+    "samples": 10
+  },
+  "D02|0|Álvaro Casanova": {
+    "mean_minutes": 66,
+    "mean_km": 17.4,
+    "avg_kmh": 15.9,
+    "samples": 10
+  },
+  "D02|1|(M) Irarrázaval": {
+    "mean_minutes": 62,
+    "mean_km": 16.8,
+    "avg_kmh": 16.3,
+    "samples": 10
+  },
+  "D03|0|(M) Toesca": {
+    "mean_minutes": 67,
+    "mean_km": 14.9,
+    "avg_kmh": 13.3,
+    "samples": 11
+  },
+  "D03|1|Las Parcelas": {
+    "mean_minutes": 74,
+    "mean_km": 15.4,
+    "avg_kmh": 12.5,
+    "samples": 10
+  },
+  "D03c|0|© Las Parcelas - (M) Plaza Egaña": {
+    "mean_minutes": 88,
+    "mean_km": 18.9,
+    "avg_kmh": 12.8,
+    "samples": 5
+  },
+  "D05|0|Av. Tobalaba": {
+    "mean_minutes": 63,
+    "mean_km": 14.4,
+    "avg_kmh": 13.7,
+    "samples": 10
+  },
+  "D05|1|(M) Franklin": {
+    "mean_minutes": 59,
+    "mean_km": 15,
+    "avg_kmh": 15.3,
+    "samples": 11
+  },
+  "D07|0|(M) Franklin": {
+    "mean_minutes": 78,
+    "mean_km": 20,
+    "avg_kmh": 15.4,
+    "samples": 11
+  },
+  "D07|1|Diagonal Las Torres": {
+    "mean_minutes": 85,
+    "mean_km": 21.2,
+    "avg_kmh": 14.9,
+    "samples": 11
+  },
+  "D07c|0|© Antupiren - (M) Grecia": {
+    "mean_minutes": 74,
+    "mean_km": 16,
+    "avg_kmh": 13.1,
+    "samples": 5
+  },
+  "D08|0|© Av. Grecia - (M) Francisco Bilbao": {
+    "mean_minutes": 100,
+    "mean_km": 26.1,
+    "avg_kmh": 15.7,
+    "samples": 11
+  },
+  "D09|0|© Av. Grecia Oriente - (M) Manuel Montt": {
+    "mean_minutes": 122,
+    "mean_km": 29.5,
+    "avg_kmh": 14.4,
+    "samples": 12
+  },
+  "D10|0|Diagonal Las Torres": {
+    "mean_minutes": 97,
+    "mean_km": 23.6,
+    "avg_kmh": 14.7,
+    "samples": 10
+  },
+  "D10|1|(M) Carlos Valdovino": {
+    "mean_minutes": 97,
+    "mean_km": 23.8,
+    "avg_kmh": 14.7,
+    "samples": 10
+  },
+  "D11|1|Diagonal Las Torres": {
+    "mean_minutes": 58,
+    "mean_km": 15,
+    "avg_kmh": 15.4,
+    "samples": 11
+  },
+  "D11|0|Mall Alto Las Condes": {
+    "mean_minutes": 58,
+    "mean_km": 15,
+    "avg_kmh": 15.6,
+    "samples": 10
+  },
+  "D13|0|(M) Irarrazaval": {
+    "mean_minutes": 40,
+    "mean_km": 12.5,
+    "avg_kmh": 19,
+    "samples": 10
+  },
+  "D13|1|(M) Bellavista De La Florida": {
+    "mean_minutes": 47,
+    "mean_km": 13.5,
+    "avg_kmh": 17.3,
+    "samples": 10
+  },
+  "D14|1|(M) Pedrero": {
+    "mean_minutes": 36,
+    "mean_km": 10.5,
+    "avg_kmh": 17.6,
+    "samples": 10
+  },
+  "D14|0|(M) Quilin": {
+    "mean_minutes": 36,
+    "mean_km": 10.3,
+    "avg_kmh": 17,
+    "samples": 10
+  },
+  "D15|0|© Diagonal Las Torres - La Reina Alta": {
+    "mean_minutes": 118,
+    "mean_km": 30.8,
+    "avg_kmh": 15.6,
+    "samples": 10
+  },
+  "D16|1|San Luis De Macul": {
+    "mean_minutes": 61,
+    "mean_km": 15.5,
+    "avg_kmh": 15.2,
+    "samples": 10
+  },
+  "D16|0|(M) Francisco Bilbao": {
+    "mean_minutes": 55,
+    "mean_km": 15.6,
+    "avg_kmh": 16.9,
+    "samples": 10
+  },
+  "D17|0|© (M) Quilin - Alto Macul": {
+    "mean_minutes": 67,
+    "mean_km": 22,
+    "avg_kmh": 19.6,
+    "samples": 11
+  },
+  "D17v|0|© (M) Quilin - Las Pircas": {
+    "mean_minutes": 67,
+    "mean_km": 21.9,
+    "avg_kmh": 19.7,
+    "samples": 9
+  },
+  "D18|1|Álvaro Casanova": {
+    "mean_minutes": 66,
+    "mean_km": 16.5,
+    "avg_kmh": 15.1,
+    "samples": 10
+  },
+  "D18|0|(M) Santa Isabel": {
+    "mean_minutes": 65,
+    "mean_km": 17.3,
+    "avg_kmh": 15.9,
+    "samples": 10
+  },
+  "D20|0|© Av. Grecia Oriente - Av. Las Torres": {
+    "mean_minutes": 85,
+    "mean_km": 20.7,
+    "avg_kmh": 14.6,
+    "samples": 5
+  },
+  "D26|0|© San Luis De Macul - Maria Angelica": {
+    "mean_minutes": 72,
+    "mean_km": 20.5,
+    "avg_kmh": 17,
+    "samples": 11
+  },
+  "E01|1|San Jose De La Estrella": {
+    "mean_minutes": 48,
+    "mean_km": 11.2,
+    "avg_kmh": 14.1,
+    "samples": 10
+  },
+  "E01|0|(M) Santa Rosa": {
+    "mean_minutes": 50,
+    "mean_km": 11.4,
+    "avg_kmh": 13.6,
+    "samples": 10
+  },
+  "E02|1|(M) Lo Ovalle": {
+    "mean_minutes": 62,
+    "mean_km": 15.5,
+    "avg_kmh": 15.1,
+    "samples": 10
+  },
+  "E02|0|Diego Portales": {
+    "mean_minutes": 66,
+    "mean_km": 17,
+    "avg_kmh": 15.4,
+    "samples": 10
+  },
+  "E03|1|(M) Lo Ovalle": {
+    "mean_minutes": 55,
+    "mean_km": 14.4,
+    "avg_kmh": 15.8,
+    "samples": 12
+  },
+  "E03|0|Jardin Alto": {
+    "mean_minutes": 52,
+    "mean_km": 14.8,
+    "avg_kmh": 17.1,
+    "samples": 12
+  },
+  "E04|1|Av. La Florida": {
+    "mean_minutes": 72,
+    "mean_km": 18,
+    "avg_kmh": 15,
+    "samples": 10
+  },
+  "E04|0|(M) Franklin": {
+    "mean_minutes": 69,
+    "mean_km": 17.5,
+    "avg_kmh": 15.2,
+    "samples": 10
+  },
+  "E05|1|(M) La Cisterna": {
+    "mean_minutes": 42,
+    "mean_km": 11.5,
+    "avg_kmh": 16.4,
+    "samples": 10
+  },
+  "E05|0|(M) Bellavista De La Florida": {
+    "mean_minutes": 47,
+    "mean_km": 11.2,
+    "avg_kmh": 14.3,
+    "samples": 10
+  },
+  "E07|0|Rojas Magallanes": {
+    "mean_minutes": 28,
+    "mean_km": 7.1,
+    "avg_kmh": 15,
+    "samples": 10
+  },
+  "E07|1|(M) Bellavista La Florida": {
+    "mean_minutes": 28,
+    "mean_km": 6.4,
+    "avg_kmh": 13.8,
+    "samples": 10
+  },
+  "E08|1|Diego Portales": {
+    "mean_minutes": 33,
+    "mean_km": 9,
+    "avg_kmh": 16.6,
+    "samples": 10
+  },
+  "E08|0|(M) Bellavista De La Florida": {
+    "mean_minutes": 33,
+    "mean_km": 8.7,
+    "avg_kmh": 16,
+    "samples": 10
+  },
+  "E09|1|(M) Elisa Correa": {
+    "mean_minutes": 40,
+    "mean_km": 10,
+    "avg_kmh": 14.9,
+    "samples": 10
+  },
+  "E09|0|(M) Santa Rosa": {
+    "mean_minutes": 38,
+    "mean_km": 9.9,
+    "avg_kmh": 15.8,
+    "samples": 10
+  },
+  "E10|1|El Hualle": {
+    "mean_minutes": 49,
+    "mean_km": 14.3,
+    "avg_kmh": 17.3,
+    "samples": 10
+  },
+  "E10|0|Santa Rosa P21": {
+    "mean_minutes": 51,
+    "mean_km": 14.8,
+    "avg_kmh": 17.5,
+    "samples": 11
+  },
+  "E11|1|Diego Portales": {
+    "mean_minutes": 47,
+    "mean_km": 12.1,
+    "avg_kmh": 15.6,
+    "samples": 11
+  },
+  "E11|0|(M) Santa Rosa": {
+    "mean_minutes": 45,
+    "mean_km": 11.4,
+    "avg_kmh": 15.2,
+    "samples": 11
+  },
+  "E12|0|© Gabriela - Santa Rosa P18": {
+    "mean_minutes": 149,
+    "mean_km": 38.2,
+    "avg_kmh": 15.4,
+    "samples": 11
+  },
+  "E13|0|(M) Bellavista De La Florida": {
+    "mean_minutes": 37,
+    "mean_km": 8.6,
+    "avg_kmh": 14.1,
+    "samples": 10
+  },
+  "E13|1|Gabriela": {
+    "mean_minutes": 40,
+    "mean_km": 9.9,
+    "avg_kmh": 14.8,
+    "samples": 10
+  },
+  "E14|0|(M) Bellavista De La Florida": {
+    "mean_minutes": 30,
+    "mean_km": 7.8,
+    "avg_kmh": 15.7,
+    "samples": 10
+  },
+  "E14|1|San Jose De La Estrella": {
+    "mean_minutes": 32,
+    "mean_km": 8.1,
+    "avg_kmh": 15.1,
+    "samples": 10
+  },
+  "E15c|0|(M) Bellavista De La Florida": {
+    "mean_minutes": 37,
+    "mean_km": 9.4,
+    "avg_kmh": 15.3,
+    "samples": 10
+  },
+  "E15c|1|Gabriela": {
+    "mean_minutes": 42,
+    "mean_km": 10.5,
+    "avg_kmh": 15.1,
+    "samples": 10
+  },
+  "E16|0|(M) Santa Rosa": {
+    "mean_minutes": 60,
+    "mean_km": 13.8,
+    "avg_kmh": 13.8,
+    "samples": 10
+  },
+  "E16|1|Gabriela": {
+    "mean_minutes": 47,
+    "mean_km": 11.4,
+    "avg_kmh": 14.7,
+    "samples": 10
+  },
+  "E17|1|(M) Bellavista De La Florida": {
+    "mean_minutes": 33,
+    "mean_km": 8,
+    "avg_kmh": 14.5,
+    "samples": 10
+  },
+  "E17|0|Las Perdices": {
+    "mean_minutes": 35,
+    "mean_km": 9,
+    "avg_kmh": 15.5,
+    "samples": 10
+  },
+  "E18|1|(M) La Cisterna": {
+    "mean_minutes": 63,
+    "mean_km": 15.9,
+    "avg_kmh": 15.3,
+    "samples": 11
+  },
+  "E18|0|(M) Bellavista De La Florida": {
+    "mean_minutes": 59,
+    "mean_km": 14.9,
+    "avg_kmh": 15.2,
+    "samples": 11
+  },
+  "F01|0|Casas Viejas": {
+    "mean_minutes": 60,
+    "mean_km": 16.5,
+    "avg_kmh": 16.5,
+    "samples": 11
+  },
+  "F01|1|Villa Padre Hurtado": {
+    "mean_minutes": 56,
+    "mean_km": 16.1,
+    "avg_kmh": 17.2,
+    "samples": 11
+  },
+  "F01c|1|© (M) Plaza Puente Alto - Casas Viejas": {
+    "mean_minutes": 43,
+    "mean_km": 13.3,
+    "avg_kmh": 18.6,
+    "samples": 8
+  },
+  "F02|0|© Pie Andino - San Geronimo": {
+    "mean_minutes": 63,
+    "mean_km": 15.5,
+    "avg_kmh": 14.7,
+    "samples": 10
+  },
+  "F03|1|(M) Plaza Puente Alto": {
+    "mean_minutes": 89,
+    "mean_km": 24.9,
+    "avg_kmh": 16.9,
+    "samples": 11
+  },
+  "F03|0|Plaza San Bernardo": {
+    "mean_minutes": 78,
+    "mean_km": 21.7,
+    "avg_kmh": 16.7,
+    "samples": 11
+  },
+  "F03c|0|© Pie Andino - Villa Las Mamiñas": {
+    "mean_minutes": 75,
+    "mean_km": 16.7,
+    "avg_kmh": 13.3,
+    "samples": 11
+  },
+  "F05|0|Pie Andino": {
+    "mean_minutes": 76,
+    "mean_km": 19.2,
+    "avg_kmh": 15.1,
+    "samples": 11
+  },
+  "F05|1|(M) La Cisterna": {
+    "mean_minutes": 80,
+    "mean_km": 20.9,
+    "avg_kmh": 15.6,
+    "samples": 11
+  },
+  "F06|0|Pie Andino": {
+    "mean_minutes": 93,
+    "mean_km": 22.6,
+    "avg_kmh": 14.5,
+    "samples": 12
+  },
+  "F06|1|(M) La Cisterna": {
+    "mean_minutes": 92,
+    "mean_km": 22.2,
+    "avg_kmh": 14.5,
+    "samples": 11
+  },
+  "F07|1|© Mall Plaza Tobalaba - Villa Padre Hurtado": {
+    "mean_minutes": 75,
+    "mean_km": 20.4,
+    "avg_kmh": 16.4,
+    "samples": 11
+  },
+  "F08|0|© Villa Padre Hurtado - Diego Portales": {
+    "mean_minutes": 82,
+    "mean_km": 22.3,
+    "avg_kmh": 16.4,
+    "samples": 12
+  },
+  "F09|0|(M) Elisa Correa": {
+    "mean_minutes": 38,
+    "mean_km": 10.5,
+    "avg_kmh": 16.6,
+    "samples": 11
+  },
+  "F09|1|Pie Andino": {
+    "mean_minutes": 38,
+    "mean_km": 10,
+    "avg_kmh": 15.6,
+    "samples": 11
+  },
+  "F10|0|Mall Plaza Tobalaba": {
+    "mean_minutes": 56,
+    "mean_km": 15.1,
+    "avg_kmh": 16.1,
+    "samples": 11
+  },
+  "F10|1|San Guillermo": {
+    "mean_minutes": 52,
+    "mean_km": 14.5,
+    "avg_kmh": 16.7,
+    "samples": 12
+  },
+  "F10c|0|© San Guillermo - (M) Plaza Puente Alto": {
+    "mean_minutes": 73,
+    "mean_km": 17.4,
+    "avg_kmh": 14.4,
+    "samples": 8
+  },
+  "F11|0|© Pie Andino - Las Vizcachas": {
+    "mean_minutes": 72,
+    "mean_km": 20.6,
+    "avg_kmh": 17.1,
+    "samples": 11
+  },
+  "F12|0|(M) Plaza Puente Alto": {
+    "mean_minutes": 40,
+    "mean_km": 10.4,
+    "avg_kmh": 15.6,
+    "samples": 11
+  },
+  "F12|1|Bajos De Mena": {
+    "mean_minutes": 47,
+    "mean_km": 11.8,
+    "avg_kmh": 15.1,
+    "samples": 10
+  },
+  "F12c|1|Villa Costa Azul": {
+    "mean_minutes": 36,
+    "mean_km": 10,
+    "avg_kmh": 16.8,
+    "samples": 7
+  },
+  "F12c|0|(M) Plaza Puente Alto": {
+    "mean_minutes": 33,
+    "mean_km": 9.2,
+    "avg_kmh": 16.8,
+    "samples": 7
+  },
+  "F13|1|Bajos De Mena": {
+    "mean_minutes": 66,
+    "mean_km": 18.1,
+    "avg_kmh": 16.5,
+    "samples": 12
+  },
+  "F13|0|Mall Plaza Tobalaba": {
+    "mean_minutes": 70,
+    "mean_km": 18.3,
+    "avg_kmh": 15.7,
+    "samples": 11
+  },
+  "F13c|0|© Mall Plaza Tobalaba - (M) Elisa Correa": {
+    "mean_minutes": 28,
+    "mean_km": 8,
+    "avg_kmh": 17,
+    "samples": 6
+  },
+  "F14|0|(M) Plaza Puente Alto": {
+    "mean_minutes": 59,
+    "mean_km": 13.9,
+    "avg_kmh": 14.2,
+    "samples": 11
+  },
+  "F14|1|Villa Padre Hurtado": {
+    "mean_minutes": 60,
+    "mean_km": 15.7,
+    "avg_kmh": 15.6,
+    "samples": 10
+  },
+  "F15|1|Bajos De Mena": {
+    "mean_minutes": 63,
+    "mean_km": 16.5,
+    "avg_kmh": 15.7,
+    "samples": 11
+  },
+  "F15|0|(M) Elisa Correa": {
+    "mean_minutes": 53,
+    "mean_km": 14.2,
+    "avg_kmh": 16,
+    "samples": 11
+  },
+  "F16|1|Villa Padre Hurtado": {
+    "mean_minutes": 49,
+    "mean_km": 11.8,
+    "avg_kmh": 14.3,
+    "samples": 10
+  },
+  "F16|0|Ribera Rio Maipo": {
+    "mean_minutes": 40,
+    "mean_km": 10,
+    "avg_kmh": 14.9,
+    "samples": 11
+  },
+  "F18|1|Villa Chiloe": {
+    "mean_minutes": 41,
+    "mean_km": 11.5,
+    "avg_kmh": 16.7,
+    "samples": 12
+  },
+  "F18|0|(M) Plaza Puente Alto": {
+    "mean_minutes": 39,
+    "mean_km": 10.4,
+    "avg_kmh": 16.1,
+    "samples": 11
+  },
+  "F20|0|Pie Andino": {
+    "mean_minutes": 81,
+    "mean_km": 21.7,
+    "avg_kmh": 16.2,
+    "samples": 12
+  },
+  "F20|1|(M) La Cisterna": {
+    "mean_minutes": 78,
+    "mean_km": 22.6,
+    "avg_kmh": 17.4,
+    "samples": 12
+  },
+  "F24|0|Ciudad Del Sol": {
+    "mean_minutes": 47,
+    "mean_km": 15.1,
+    "avg_kmh": 19.4,
+    "samples": 11
+  },
+  "F24|1|Casas Viejas": {
+    "mean_minutes": 47,
+    "mean_km": 15.2,
+    "avg_kmh": 19.4,
+    "samples": 10
+  },
+  "F25|0|(M) Bellavista De La Florida": {
+    "mean_minutes": 73,
+    "mean_km": 19.5,
+    "avg_kmh": 16,
+    "samples": 12
+  },
+  "F25|1|Bajos De Mena": {
+    "mean_minutes": 77,
+    "mean_km": 20.3,
+    "avg_kmh": 15.8,
+    "samples": 11
+  },
+  "F25e|1|Bajos De Mena": {
+    "mean_minutes": 37,
+    "mean_km": 16.9,
+    "avg_kmh": 27.5,
+    "samples": 6
+  },
+  "F25e|0|(M) Bellavista De La Florida": {
+    "mean_minutes": 42,
+    "mean_km": 17.6,
+    "avg_kmh": 25.2,
+    "samples": 6
+  },
+  "F26|0|© Villa Padre Hurtado - San Carlos Oriente": {
+    "mean_minutes": 80,
+    "mean_km": 23.9,
+    "avg_kmh": 17.9,
+    "samples": 11
+  },
+  "F27|0|© Villa Padre Hurtado - Villa Portezuelo Oriente": {
+    "mean_minutes": 70,
+    "mean_km": 18.8,
+    "avg_kmh": 16,
+    "samples": 11
+  },
+  "F28|1|Sargento Menadier": {
+    "mean_minutes": 38,
+    "mean_km": 10.8,
+    "avg_kmh": 16.9,
+    "samples": 10
+  },
+  "F28|0|Eduardo Cordero": {
+    "mean_minutes": 40,
+    "mean_km": 10.7,
+    "avg_kmh": 16,
+    "samples": 10
+  },
+  "F29|1|Pie Andino": {
+    "mean_minutes": 67,
+    "mean_km": 19.2,
+    "avg_kmh": 17.1,
+    "samples": 11
+  },
+  "F29|0|Casas Viejas": {
+    "mean_minutes": 66,
+    "mean_km": 19.9,
+    "avg_kmh": 18.2,
+    "samples": 10
+  },
+  "F30N|0|La Moneda": {
+    "mean_minutes": 88,
+    "mean_km": 34.8,
+    "avg_kmh": 23.8,
+    "samples": 3
+  },
+  "F30N|1|Bajos De Mena": {
+    "mean_minutes": 90,
+    "mean_km": 33.9,
+    "avg_kmh": 22.6,
+    "samples": 4
+  },
+  "F33|0|(M) Plaza Puente Alto": {
+    "mean_minutes": 36,
+    "mean_km": 9.3,
+    "avg_kmh": 15.7,
+    "samples": 11
+  },
+  "F33|1|Bajos De Mena": {
+    "mean_minutes": 40,
+    "mean_km": 10.8,
+    "avg_kmh": 16.3,
+    "samples": 11
+  },
+  "G01|1|La Vara": {
+    "mean_minutes": 64,
+    "mean_km": 17.8,
+    "avg_kmh": 16.7,
+    "samples": 11
+  },
+  "G01|0|Santo Tomas": {
+    "mean_minutes": 62,
+    "mean_km": 17.4,
+    "avg_kmh": 16.9,
+    "samples": 11
+  },
+  "G01c|0|Santa Rosa Parad. 21": {
+    "mean_minutes": 43,
+    "mean_km": 11.5,
+    "avg_kmh": 16.2,
+    "samples": 5
+  },
+  "G01c|1|La Vara": {
+    "mean_minutes": 41,
+    "mean_km": 11.2,
+    "avg_kmh": 16.3,
+    "samples": 5
+  },
+  "G02|0|Puente Los Morros": {
+    "mean_minutes": 55,
+    "mean_km": 17.9,
+    "avg_kmh": 19.6,
+    "samples": 10
+  },
+  "G02|1|Catemito": {
+    "mean_minutes": 50,
+    "mean_km": 14.9,
+    "avg_kmh": 18,
+    "samples": 10
+  },
+  "G04|1|(M) La Cisterna": {
+    "mean_minutes": 35,
+    "mean_km": 8.7,
+    "avg_kmh": 14.9,
+    "samples": 11
+  },
+  "G04|0|Santo Tomas": {
+    "mean_minutes": 34,
+    "mean_km": 8.6,
+    "avg_kmh": 15.2,
+    "samples": 11
+  },
+  "G05|0|(M) La Cisterna": {
+    "mean_minutes": 55,
+    "mean_km": 15.7,
+    "avg_kmh": 17,
+    "samples": 11
+  },
+  "G05|1|El Castillo": {
+    "mean_minutes": 57,
+    "mean_km": 14.7,
+    "avg_kmh": 15.4,
+    "samples": 10
+  },
+  "G07|0|Villa La Estrella": {
+    "mean_minutes": 81,
+    "mean_km": 25,
+    "avg_kmh": 18.4,
+    "samples": 10
+  },
+  "G07|1|San Francisco": {
+    "mean_minutes": 79,
+    "mean_km": 25.2,
+    "avg_kmh": 19.2,
+    "samples": 10
+  },
+  "G08|1|Poblacion La Selva": {
+    "mean_minutes": 65,
+    "mean_km": 18.4,
+    "avg_kmh": 16.8,
+    "samples": 12
+  },
+  "G08|0|(M) La Cisterna": {
+    "mean_minutes": 62,
+    "mean_km": 17.8,
+    "avg_kmh": 17.3,
+    "samples": 12
+  },
+  "G08v|0|(M) La Cisterna": {
+    "mean_minutes": 71,
+    "mean_km": 21.6,
+    "avg_kmh": 18.1,
+    "samples": 10
+  },
+  "G08v|1|Nos": {
+    "mean_minutes": 65,
+    "mean_km": 20.2,
+    "avg_kmh": 18.7,
+    "samples": 10
+  },
+  "G09|0|© Santa Margarita - Lo Blanco": {
+    "mean_minutes": 155,
+    "mean_km": 42.7,
+    "avg_kmh": 16.5,
+    "samples": 11
+  },
+  "G11|0|© (M) Lo Ovalle - Lo Blanco": {
+    "mean_minutes": 119,
+    "mean_km": 32.4,
+    "avg_kmh": 16.3,
+    "samples": 12
+  },
+  "G12|0|Av. Lo Espejo": {
+    "mean_minutes": 51,
+    "mean_km": 17.6,
+    "avg_kmh": 20.6,
+    "samples": 10
+  },
+  "G12|1|(M) Lo Ovalle": {
+    "mean_minutes": 54,
+    "mean_km": 15.3,
+    "avg_kmh": 17.1,
+    "samples": 10
+  },
+  "G13|1|(M) La Cisterna": {
+    "mean_minutes": 58,
+    "mean_km": 15,
+    "avg_kmh": 15.4,
+    "samples": 10
+  },
+  "G13|0|El Castillo": {
+    "mean_minutes": 56,
+    "mean_km": 14.3,
+    "avg_kmh": 15.3,
+    "samples": 10
+  },
+  "G13c|0|© El Castillo - (M) Copa Lo Martinez": {
+    "mean_minutes": 88,
+    "mean_km": 21,
+    "avg_kmh": 14.4,
+    "samples": 5
+  },
+  "G14|1|Estacion Lo Blanco": {
+    "mean_minutes": 63,
+    "mean_km": 16.1,
+    "avg_kmh": 15.3,
+    "samples": 10
+  },
+  "G14|0|Poblacion Valle Nevado": {
+    "mean_minutes": 57,
+    "mean_km": 15.4,
+    "avg_kmh": 16.3,
+    "samples": 10
+  },
+  "G15|1|(M) La Cisterna": {
+    "mean_minutes": 41,
+    "mean_km": 10.4,
+    "avg_kmh": 15,
+    "samples": 11
+  },
+  "G15|0|Santo Tomas": {
+    "mean_minutes": 39,
+    "mean_km": 10.7,
+    "avg_kmh": 16.3,
+    "samples": 11
+  },
+  "G16|0|El Castillo": {
+    "mean_minutes": 53,
+    "mean_km": 15.8,
+    "avg_kmh": 17.9,
+    "samples": 11
+  },
+  "G16|1|(M) La Cisterna": {
+    "mean_minutes": 55,
+    "mean_km": 17.7,
+    "avg_kmh": 19.1,
+    "samples": 11
+  },
+  "G18|1|Santo Tomas": {
+    "mean_minutes": 74,
+    "mean_km": 17.6,
+    "avg_kmh": 14.3,
+    "samples": 10
+  },
+  "G18|0|(M) Lo Ovalle": {
+    "mean_minutes": 74,
+    "mean_km": 17.1,
+    "avg_kmh": 13.9,
+    "samples": 10
+  },
+  "G22|0|(M) La Cisterna": {
+    "mean_minutes": 51,
+    "mean_km": 14.4,
+    "avg_kmh": 16.9,
+    "samples": 10
+  },
+  "G22|1|Estacion 5 Pinos": {
+    "mean_minutes": 54,
+    "mean_km": 14.3,
+    "avg_kmh": 16,
+    "samples": 10
+  },
+  "G23|1|Estacion Lo Blanco": {
+    "mean_minutes": 44,
+    "mean_km": 11.5,
+    "avg_kmh": 15.5,
+    "samples": 10
+  },
+  "G23|0|Santa Rosa P.43": {
+    "mean_minutes": 36,
+    "mean_km": 11.7,
+    "avg_kmh": 19.2,
+    "samples": 10
+  },
+  "G24|0|© Poblacion Valle Nevado - San Francisco": {
+    "mean_minutes": 84,
+    "mean_km": 24,
+    "avg_kmh": 17.3,
+    "samples": 11
+  },
+  "G27|0|© Mall Plaza Sur - Estacion San Bernardo": {
+    "mean_minutes": 49,
+    "mean_km": 15.8,
+    "avg_kmh": 19.2,
+    "samples": 10
+  },
+  "G28|0|© Angelmo - La Pintana": {
+    "mean_minutes": 131,
+    "mean_km": 33.6,
+    "avg_kmh": 15.4,
+    "samples": 11
+  },
+  "G31|1|Lo Blanco": {
+    "mean_minutes": 19,
+    "mean_km": 4.8,
+    "avg_kmh": 15.4,
+    "samples": 7
+  },
+  "G31|0|Angelmo": {
+    "mean_minutes": 18,
+    "mean_km": 5.2,
+    "avg_kmh": 17.8,
+    "samples": 8
+  },
+  "G32|0|© Santa Ines - Estacion San Bernardo": {
+    "mean_minutes": 65,
+    "mean_km": 16.5,
+    "avg_kmh": 15.3,
+    "samples": 10
+  },
+  "G34|0|© La Vara - (M) La Cisterna": {
+    "mean_minutes": 48,
+    "mean_km": 14.5,
+    "avg_kmh": 18.2,
+    "samples": 10
+  },
+  "G35|0|© El Castillo - (M) Copa Lo Martinez": {
+    "mean_minutes": 79,
+    "mean_km": 22.3,
+    "avg_kmh": 17,
+    "samples": 10
+  },
+  "G37|1|Estacion San Bernardo": {
+    "mean_minutes": 43,
+    "mean_km": 16,
+    "avg_kmh": 22.3,
+    "samples": 9
+  },
+  "G37|0|El Romeral": {
+    "mean_minutes": 48,
+    "mean_km": 16,
+    "avg_kmh": 20.1,
+    "samples": 8
+  },
+  "G38|0|© Mall Plaza Sur - (M) Hospital El Pino": {
+    "mean_minutes": 66,
+    "mean_km": 22.6,
+    "avg_kmh": 20.4,
+    "samples": 11
+  },
+  "G39|0|© Lo Espejo - Santa Mercedes": {
+    "mean_minutes": 124,
+    "mean_km": 34,
+    "avg_kmh": 16.5,
+    "samples": 10
+  },
+  "G43|0|San Alberto De Nos": {
+    "mean_minutes": 29,
+    "mean_km": 7.3,
+    "avg_kmh": 15,
+    "samples": 10
+  },
+  "G43|1|Estacion Lo Blanco": {
+    "mean_minutes": 31,
+    "mean_km": 7.1,
+    "avg_kmh": 13.7,
+    "samples": 10
+  },
+  "G46|0|© General Urrutia - La Estancilla De Nos": {
+    "mean_minutes": 63,
+    "mean_km": 20.4,
+    "avg_kmh": 19.5,
+    "samples": 10
+  },
+  "H03|0|Mall Plaza Oeste": {
+    "mean_minutes": 48,
+    "mean_km": 13.2,
+    "avg_kmh": 16.4,
+    "samples": 10
+  },
+  "H03|1|(M) Lo Ovalle": {
+    "mean_minutes": 43,
+    "mean_km": 11.5,
+    "avg_kmh": 15.8,
+    "samples": 10
+  },
+  "H05|0|Jose Maria Caro": {
+    "mean_minutes": 57,
+    "mean_km": 14.7,
+    "avg_kmh": 15.4,
+    "samples": 10
+  },
+  "H05|1|(M) Valdovinos": {
+    "mean_minutes": 57,
+    "mean_km": 15.5,
+    "avg_kmh": 16.2,
+    "samples": 10
+  },
+  "H07|1|(M) Ñuble": {
+    "mean_minutes": 52,
+    "mean_km": 14.5,
+    "avg_kmh": 16.5,
+    "samples": 10
+  },
+  "H07|0|(M) Lo Ovalle": {
+    "mean_minutes": 55,
+    "mean_km": 15.9,
+    "avg_kmh": 17.4,
+    "samples": 10
+  },
+  "H08|1|Pobl.  Las Turbinas": {
+    "mean_minutes": 27,
+    "mean_km": 7.9,
+    "avg_kmh": 17.9,
+    "samples": 10
+  },
+  "H08|0|(M) Lo Ovalle": {
+    "mean_minutes": 28,
+    "mean_km": 8,
+    "avg_kmh": 16.9,
+    "samples": 10
+  },
+  "H09|0|(M) Valdovinos": {
+    "mean_minutes": 58,
+    "mean_km": 14.4,
+    "avg_kmh": 15,
+    "samples": 10
+  },
+  "H09|1|Jose Maria Caro": {
+    "mean_minutes": 60,
+    "mean_km": 14.4,
+    "avg_kmh": 14.3,
+    "samples": 10
+  },
+  "H12|1|Lo Espejo": {
+    "mean_minutes": 58,
+    "mean_km": 15.9,
+    "avg_kmh": 16.3,
+    "samples": 10
+  },
+  "H12|0|(M) Franklin": {
+    "mean_minutes": 57,
+    "mean_km": 15.7,
+    "avg_kmh": 16.5,
+    "samples": 10
+  },
+  "H13|0|© Santa Olga - (M) Los Heroes": {
+    "mean_minutes": 140,
+    "mean_km": 34.8,
+    "avg_kmh": 14.9,
+    "samples": 11
+  },
+  "H24|0|Portal Oeste": {
+    "mean_minutes": 78,
+    "mean_km": 21,
+    "avg_kmh": 16.1,
+    "samples": 10
+  },
+  "H24|1|La Victoria": {
+    "mean_minutes": 85,
+    "mean_km": 21.6,
+    "avg_kmh": 15.3,
+    "samples": 11
+  },
+  "I01|0|Hospital Borja Arriarán": {
+    "mean_minutes": 77,
+    "mean_km": 21.6,
+    "avg_kmh": 16.8,
+    "samples": 11
+  },
+  "I01|1|Villa Los Heroes": {
+    "mean_minutes": 90,
+    "mean_km": 25.3,
+    "avg_kmh": 16.8,
+    "samples": 11
+  },
+  "I02|0|(M) Laguna Sur": {
+    "mean_minutes": 79,
+    "mean_km": 20.5,
+    "avg_kmh": 15.6,
+    "samples": 11
+  },
+  "I02|1|Rinconada": {
+    "mean_minutes": 76,
+    "mean_km": 19.9,
+    "avg_kmh": 15.8,
+    "samples": 10
+  },
+  "I03|0|(M) Quinta Normal": {
+    "mean_minutes": 84,
+    "mean_km": 24,
+    "avg_kmh": 17.2,
+    "samples": 11
+  },
+  "I03|1|Villa Los Heroes": {
+    "mean_minutes": 88,
+    "mean_km": 23.4,
+    "avg_kmh": 16,
+    "samples": 10
+  },
+  "I03c|1|Valle Verde": {
+    "mean_minutes": 34,
+    "mean_km": 8.7,
+    "avg_kmh": 15.2,
+    "samples": 2
+  },
+  "I03c|0|(M) San Alberto Hurtado": {
+    "mean_minutes": 34,
+    "mean_km": 9.2,
+    "avg_kmh": 16.2,
+    "samples": 2
+  },
+  "I04|1|Villa El Abraz": {
+    "mean_minutes": 90,
+    "mean_km": 25.2,
+    "avg_kmh": 16.8,
+    "samples": 11
+  },
+  "I04|0|(M) San Alberto Hur": {
+    "mean_minutes": 81,
+    "mean_km": 23.7,
+    "avg_kmh": 17.6,
+    "samples": 11
+  },
+  "I04c|0|(M) Plaza Maipu": {
+    "mean_minutes": 32,
+    "mean_km": 9.2,
+    "avg_kmh": 17.5,
+    "samples": 4
+  },
+  "I04c|1|Villa El Abrazo": {
+    "mean_minutes": 31,
+    "mean_km": 8.5,
+    "avg_kmh": 16.7,
+    "samples": 4
+  },
+  "I04e|0|(M) Plaza Maipu": {
+    "mean_minutes": 13,
+    "mean_km": 4.5,
+    "avg_kmh": 20.3,
+    "samples": 2
+  },
+  "I05|0|(M) Lo Ovalle": {
+    "mean_minutes": 67,
+    "mean_km": 18.7,
+    "avg_kmh": 16.8,
+    "samples": 11
+  },
+  "I05|1|Rinconada": {
+    "mean_minutes": 67,
+    "mean_km": 18.3,
+    "avg_kmh": 16.4,
+    "samples": 10
+  },
+  "I07|0|Mall Arauco Maipu": {
+    "mean_minutes": 70,
+    "mean_km": 14.3,
+    "avg_kmh": 12.2,
+    "samples": 10
+  },
+  "I07|1|Rinconada": {
+    "mean_minutes": 51,
+    "mean_km": 13,
+    "avg_kmh": 15.3,
+    "samples": 10
+  },
+  "I08|1|Mall Arauco": {
+    "mean_minutes": 50,
+    "mean_km": 15.2,
+    "avg_kmh": 18.1,
+    "samples": 10
+  },
+  "I08|0|(M) San Alberto H": {
+    "mean_minutes": 47,
+    "mean_km": 14.5,
+    "avg_kmh": 18.3,
+    "samples": 10
+  },
+  "I08N|0|Alameda": {
+    "mean_minutes": 45,
+    "mean_km": 22.2,
+    "avg_kmh": 29.8,
+    "samples": 2
+  },
+  "I08N|1|La Farfana": {
+    "mean_minutes": 46,
+    "mean_km": 19.1,
+    "avg_kmh": 25.2,
+    "samples": 2
+  },
+  "I08c|0|(M) Del Sol": {
+    "mean_minutes": 8,
+    "mean_km": 2.3,
+    "avg_kmh": 16.8,
+    "samples": 2
+  },
+  "I09|0|(M) U. De Chile": {
+    "mean_minutes": 70,
+    "mean_km": 19.4,
+    "avg_kmh": 16.7,
+    "samples": 11
+  },
+  "I09|1|Rinconada": {
+    "mean_minutes": 68,
+    "mean_km": 18.9,
+    "avg_kmh": 16.5,
+    "samples": 10
+  },
+  "I09c|1|Rinconada": {
+    "mean_minutes": 49,
+    "mean_km": 13,
+    "avg_kmh": 15.8,
+    "samples": 4
+  },
+  "I09c|0|(M) Las Rejas": {
+    "mean_minutes": 49,
+    "mean_km": 13.2,
+    "avg_kmh": 16,
+    "samples": 4
+  },
+  "I09e|1|Rinconada": {
+    "mean_minutes": 70,
+    "mean_km": 19.1,
+    "avg_kmh": 16.4,
+    "samples": 4
+  },
+  "I09e|0|(M) U. De Chile": {
+    "mean_minutes": 77,
+    "mean_km": 20,
+    "avg_kmh": 15.7,
+    "samples": 5
+  },
+  "I10|0|(M) Quinta Normal": {
+    "mean_minutes": 82,
+    "mean_km": 22.4,
+    "avg_kmh": 16.4,
+    "samples": 10
+  },
+  "I10|1|Villa Los Heroes": {
+    "mean_minutes": 84,
+    "mean_km": 20.9,
+    "avg_kmh": 15,
+    "samples": 10
+  },
+  "I10N|0|Alameda": {
+    "mean_minutes": 58,
+    "mean_km": 24.4,
+    "avg_kmh": 25.4,
+    "samples": 2
+  },
+  "I10N|1|Villa Los Heroes": {
+    "mean_minutes": 59,
+    "mean_km": 22.8,
+    "avg_kmh": 23.4,
+    "samples": 2
+  },
+  "I11|1|Ciudad Satelite": {
+    "mean_minutes": 56,
+    "mean_km": 15.5,
+    "avg_kmh": 16.6,
+    "samples": 11
+  },
+  "I11|0|Rinconada": {
+    "mean_minutes": 56,
+    "mean_km": 16.2,
+    "avg_kmh": 17.5,
+    "samples": 11
+  },
+  "I11N|1|Ciudad Satelite": {
+    "mean_minutes": 31,
+    "mean_km": 13.9,
+    "avg_kmh": 27.2,
+    "samples": 2
+  },
+  "I11N|0|(M) Plaza Maipu": {
+    "mean_minutes": 30,
+    "mean_km": 14.3,
+    "avg_kmh": 28.8,
+    "samples": 2
+  },
+  "I12|1|Pueblito La Farfan": {
+    "mean_minutes": 60,
+    "mean_km": 17.4,
+    "avg_kmh": 17.5,
+    "samples": 10
+  },
+  "I12|0|Mall Plaza Oeste": {
+    "mean_minutes": 63,
+    "mean_km": 18.1,
+    "avg_kmh": 17.2,
+    "samples": 11
+  },
+  "I13|0|(M) San Alberto Hurtado": {
+    "mean_minutes": 47,
+    "mean_km": 12.5,
+    "avg_kmh": 15.8,
+    "samples": 11
+  },
+  "I13|1|(M) Del Sol": {
+    "mean_minutes": 43,
+    "mean_km": 11.8,
+    "avg_kmh": 16.7,
+    "samples": 10
+  },
+  "I14|0|Estacion Central": {
+    "mean_minutes": 48,
+    "mean_km": 13.9,
+    "avg_kmh": 17.5,
+    "samples": 10
+  },
+  "I14|1|Mall Plaza Oeste": {
+    "mean_minutes": 65,
+    "mean_km": 15.9,
+    "avg_kmh": 14.8,
+    "samples": 10
+  },
+  "I14N|1|Mall Plaza Oeste": {
+    "mean_minutes": 40,
+    "mean_km": 17.2,
+    "avg_kmh": 25.5,
+    "samples": 2
+  },
+  "I14N|0|Centro": {
+    "mean_minutes": 43,
+    "mean_km": 18.9,
+    "avg_kmh": 26.2,
+    "samples": 2
+  },
+  "I16|1|Poblacion Santiago": {
+    "mean_minutes": 38,
+    "mean_km": 10.3,
+    "avg_kmh": 16.4,
+    "samples": 11
+  },
+  "I16|0|Ferrocarril": {
+    "mean_minutes": 42,
+    "mean_km": 10.8,
+    "avg_kmh": 15.3,
+    "samples": 11
+  },
+  "I17|0|Hospital San Juan De Dios": {
+    "mean_minutes": 41,
+    "mean_km": 9.8,
+    "avg_kmh": 14.5,
+    "samples": 10
+  },
+  "I17|1|Villa Francia": {
+    "mean_minutes": 39,
+    "mean_km": 9.8,
+    "avg_kmh": 15.2,
+    "samples": 10
+  },
+  "I18|1|Rinconada": {
+    "mean_minutes": 78,
+    "mean_km": 22.3,
+    "avg_kmh": 17.2,
+    "samples": 10
+  },
+  "I18|0|(M) Ula": {
+    "mean_minutes": 75,
+    "mean_km": 21.4,
+    "avg_kmh": 17.2,
+    "samples": 10
+  },
+  "I20|0|Marta Ossa Ruiz": {
+    "mean_minutes": 38,
+    "mean_km": 11.6,
+    "avg_kmh": 18.3,
+    "samples": 10
+  },
+  "I20|1|Valle Verde": {
+    "mean_minutes": 29,
+    "mean_km": 10.7,
+    "avg_kmh": 22.5,
+    "samples": 10
+  },
+  "I21|1|Villa Hernan Diaz": {
+    "mean_minutes": 33,
+    "mean_km": 9.9,
+    "avg_kmh": 17.8,
+    "samples": 10
+  },
+  "I21|0|(M) Plaza Maipu": {
+    "mean_minutes": 33,
+    "mean_km": 9.5,
+    "avg_kmh": 17.4,
+    "samples": 10
+  },
+  "I22|1|La Farfana": {
+    "mean_minutes": 17,
+    "mean_km": 5.3,
+    "avg_kmh": 19.3,
+    "samples": 10
+  },
+  "I22|0|(M) Del Sol": {
+    "mean_minutes": 18,
+    "mean_km": 5.1,
+    "avg_kmh": 17,
+    "samples": 10
+  },
+  "I24|0|Plaza Oeste": {
+    "mean_minutes": 61,
+    "mean_km": 18.5,
+    "avg_kmh": 18.3,
+    "samples": 10
+  },
+  "I24|1|Villa Los Maitenes": {
+    "mean_minutes": 57,
+    "mean_km": 18.3,
+    "avg_kmh": 19.3,
+    "samples": 10
+  },
+  "I25|0|© Villa S. Henriquez - Portal Oeste": {
+    "mean_minutes": 90,
+    "mean_km": 31.1,
+    "avg_kmh": 20.8,
+    "samples": 11
+  },
+  "I26|0|© Avenida Portales - (M) Cerrillos": {
+    "mean_minutes": 110,
+    "mean_km": 30.4,
+    "avg_kmh": 16.6,
+    "samples": 11
+  },
+  "I35|0|Padre Hurtado": {
+    "mean_minutes": 69,
+    "mean_km": 17.3,
+    "avg_kmh": 15,
+    "samples": 10
+  },
+  "I35|1|(M) Del Sol": {
+    "mean_minutes": 62,
+    "mean_km": 17,
+    "avg_kmh": 16.5,
+    "samples": 11
+  },
+  "I39|0|© Villa San Alberto - (M) Cerrillos": {
+    "mean_minutes": 20,
+    "mean_km": 6.4,
+    "avg_kmh": 19.3,
+    "samples": 10
+  },
+  "J01|1|Pudahuel Sur": {
+    "mean_minutes": 68,
+    "mean_km": 18.5,
+    "avg_kmh": 16.3,
+    "samples": 10
+  },
+  "J01|0|(M) Quinta Normal": {
+    "mean_minutes": 68,
+    "mean_km": 23.2,
+    "avg_kmh": 20.6,
+    "samples": 11
+  },
+  "J01c|1|Carrascal": {
+    "mean_minutes": 16,
+    "mean_km": 3.7,
+    "avg_kmh": 13.9,
+    "samples": 2
+  },
+  "J01c|0|(M) San Pablo": {
+    "mean_minutes": 18,
+    "mean_km": 4.4,
+    "avg_kmh": 14.4,
+    "samples": 2
+  },
+  "J02|0|© Enea - (M) Ula": {
+    "mean_minutes": 97,
+    "mean_km": 26.5,
+    "avg_kmh": 16.3,
+    "samples": 10
+  },
+  "J03|0|© El Montijo - (M) Republica": {
+    "mean_minutes": 98,
+    "mean_km": 26.4,
+    "avg_kmh": 16.1,
+    "samples": 10
+  },
+  "J04|1|(M) Neptuno": {
+    "mean_minutes": 34,
+    "mean_km": 9.4,
+    "avg_kmh": 16.6,
+    "samples": 10
+  },
+  "J04|0|La Alianza": {
+    "mean_minutes": 34,
+    "mean_km": 10.1,
+    "avg_kmh": 18.1,
+    "samples": 10
+  },
+  "J05|0|© El Montijo - (M) Ula": {
+    "mean_minutes": 107,
+    "mean_km": 28.8,
+    "avg_kmh": 16.1,
+    "samples": 10
+  },
+  "J06|1|(M) Pudahuel": {
+    "mean_minutes": 25,
+    "mean_km": 8.1,
+    "avg_kmh": 19.4,
+    "samples": 10
+  },
+  "J06|0|(M) Pajaritos": {
+    "mean_minutes": 31,
+    "mean_km": 9.4,
+    "avg_kmh": 18.5,
+    "samples": 10
+  },
+  "J07|0|© Noviciado - (M) Pudahuel": {
+    "mean_minutes": 142,
+    "mean_km": 57.6,
+    "avg_kmh": 24.3,
+    "samples": 11
+  },
+  "J07c|0|Lo Boza": {
+    "mean_minutes": 46,
+    "mean_km": 13.9,
+    "avg_kmh": 18.3,
+    "samples": 2
+  },
+  "J07e|0|© Noviciado - (M) Pudahuel": {
+    "mean_minutes": 142,
+    "mean_km": 54.1,
+    "avg_kmh": 22.9,
+    "samples": 11
+  },
+  "J08|1|Pudahuel Sur": {
+    "mean_minutes": 67,
+    "mean_km": 18.9,
+    "avg_kmh": 17,
+    "samples": 12
+  },
+  "J08|0|Lo Franco": {
+    "mean_minutes": 62,
+    "mean_km": 19.7,
+    "avg_kmh": 19.1,
+    "samples": 12
+  },
+  "J10|0|Parque De Los Reyes": {
+    "mean_minutes": 69,
+    "mean_km": 17,
+    "avg_kmh": 14.8,
+    "samples": 10
+  },
+  "J10|1|San Daniel": {
+    "mean_minutes": 63,
+    "mean_km": 16.2,
+    "avg_kmh": 15.3,
+    "samples": 10
+  },
+  "J11|0|(M) Pajaritos": {
+    "mean_minutes": 29,
+    "mean_km": 14.1,
+    "avg_kmh": 29.7,
+    "samples": 10
+  },
+  "J11|1|Lomas De Lo Aguirre": {
+    "mean_minutes": 27,
+    "mean_km": 15.6,
+    "avg_kmh": 35.2,
+    "samples": 10
+  },
+  "J12|0|Ciudad De Los Valles": {
+    "mean_minutes": 45,
+    "mean_km": 21.4,
+    "avg_kmh": 28.9,
+    "samples": 10
+  },
+  "J12|1|(M) Pajaritos": {
+    "mean_minutes": 47,
+    "mean_km": 20.2,
+    "avg_kmh": 25.7,
+    "samples": 10
+  },
+  "J13|0|El Monitjo": {
+    "mean_minutes": 55,
+    "mean_km": 14.3,
+    "avg_kmh": 15.6,
+    "samples": 11
+  },
+  "J13|1|(M) Estacion Central": {
+    "mean_minutes": 60,
+    "mean_km": 15.5,
+    "avg_kmh": 15.5,
+    "samples": 10
+  },
+  "J13c|1|(M) San Pablo": {
+    "mean_minutes": 29,
+    "mean_km": 8.2,
+    "avg_kmh": 16.8,
+    "samples": 10
+  },
+  "J13c|0|El Montijo": {
+    "mean_minutes": 32,
+    "mean_km": 8.6,
+    "avg_kmh": 16.3,
+    "samples": 10
+  },
+  "J15c|1|La Alianza": {
+    "mean_minutes": 33,
+    "mean_km": 9.3,
+    "avg_kmh": 16.8,
+    "samples": 10
+  },
+  "J15c|0|(M) Neptuno": {
+    "mean_minutes": 34,
+    "mean_km": 9,
+    "avg_kmh": 16,
+    "samples": 10
+  },
+  "J16|0|© Cerro Navia - (M) Estacion Central": {
+    "mean_minutes": 114,
+    "mean_km": 31.7,
+    "avg_kmh": 16.6,
+    "samples": 10
+  },
+  "J17|0|Puerto Santiago": {
+    "mean_minutes": 28,
+    "mean_km": 9.1,
+    "avg_kmh": 19.9,
+    "samples": 9
+  },
+  "J17|1|(M) Pajaritos": {
+    "mean_minutes": 23,
+    "mean_km": 7.9,
+    "avg_kmh": 20.2,
+    "samples": 9
+  },
+  "J18|0|(M) San Pablo": {
+    "mean_minutes": 31,
+    "mean_km": 9.5,
+    "avg_kmh": 18.5,
+    "samples": 11
+  },
+  "J18|1|Enea": {
+    "mean_minutes": 36,
+    "mean_km": 11.2,
+    "avg_kmh": 18.8,
+    "samples": 10
+  },
+  "J18c|0|(M) San Pablo": {
+    "mean_minutes": 26,
+    "mean_km": 6.5,
+    "avg_kmh": 15,
+    "samples": 2
+  },
+  "J18c|1|El Tranque": {
+    "mean_minutes": 29,
+    "mean_km": 7.6,
+    "avg_kmh": 15.8,
+    "samples": 3
+  },
+  "J19|1|Pudahuel Sur": {
+    "mean_minutes": 46,
+    "mean_km": 12.5,
+    "avg_kmh": 16.4,
+    "samples": 10
+  },
+  "J19|0|(M) Quinta Normal": {
+    "mean_minutes": 41,
+    "mean_km": 16,
+    "avg_kmh": 23.7,
+    "samples": 10
+  },
+  "J20|0|© El Montijo - (M) Pudahuel": {
+    "mean_minutes": 52,
+    "mean_km": 13,
+    "avg_kmh": 15,
+    "samples": 10
+  },
+  "J22|1|(M) Pajaritos": {
+    "mean_minutes": 48,
+    "mean_km": 21.3,
+    "avg_kmh": 26.7,
+    "samples": 9
+  },
+  "J22|0|Praderas De Lo Aguirre": {
+    "mean_minutes": 46,
+    "mean_km": 22.5,
+    "avg_kmh": 29.3,
+    "samples": 10
+  },
+  "L1": {
+    "mean_minutes": 35,
+    "mean_km": 19.1,
+    "avg_kmh": 32.5,
+    "samples": 1827
+  },
+  "L2": {
+    "mean_minutes": 41,
+    "mean_km": 24.7,
+    "avg_kmh": 36.5,
+    "samples": 1206
+  },
+  "L3": {
+    "mean_minutes": 39,
+    "mean_km": 23.8,
+    "avg_kmh": 36.7,
+    "samples": 457
+  },
+  "L4": {
+    "mean_minutes": 38,
+    "mean_km": 23.2,
+    "avg_kmh": 37,
+    "samples": 1052
+  },
+  "L4A": {
+    "mean_minutes": 11,
+    "mean_km": 7.7,
+    "avg_kmh": 44.2,
+    "samples": 378
+  },
+  "L5": {
+    "mean_minutes": 48,
+    "mean_km": 28.8,
+    "avg_kmh": 36.3,
+    "samples": 1263
+  },
+  "L6": {
+    "mean_minutes": 22,
+    "mean_km": 14.4,
+    "avg_kmh": 38.7,
+    "samples": 395
+  },
+  "MTN": {
+    "mean_minutes": 22,
+    "mean_km": 20.5,
+    "avg_kmh": 56,
+    "samples": 24
+  },
+  "MTR": {
+    "mean_minutes": 70,
+    "mean_km": 82.3,
+    "avg_kmh": 70.9,
+    "samples": 34
+  },
+  "BA|0|Acercamiento Aeropuerto": {
+    "mean_minutes": 12,
+    "mean_km": 6,
+    "avg_kmh": 30.8,
+    "samples": 9
+  }
+}
