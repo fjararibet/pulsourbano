@@ -1,11 +1,25 @@
+import { env } from "cloudflare:workers";
 import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 
+type Row = {
+	comuna_origen: string | null;
+	comuna_destino: string | null;
+	n_viajes: number;
+};
+
 const getViajesOD = createServerFn({ method: "GET" }).handler(async () => {
-	console.log("[eod] handler start (stub)");
-	return [
-		{ comuna_origen: "TEST", comuna_destino: "TEST", num_viajes_diarios: 1 },
-	];
+	const { results } = await env.DB.prepare(
+		`SELECT co.comuna AS comuna_origen,
+		        cd.comuna AS comuna_destino,
+		        COUNT(*)  AS n_viajes
+		 FROM viaje v
+		 LEFT JOIN comuna co ON co.id = v.comunaOrigen
+		 LEFT JOIN comuna cd ON cd.id = v.comunaDestino
+		 GROUP BY v.comunaOrigen, v.comunaDestino
+		 ORDER BY n_viajes DESC`,
+	).all<Row>();
+	return results;
 });
 
 export const Route = createFileRoute("/eod")({
@@ -23,19 +37,19 @@ function EodPage() {
 					<tr className="border-b text-left">
 						<th className="py-2 pr-4">comuna_origen</th>
 						<th className="py-2 pr-4">comuna_destino</th>
-						<th className="py-2 pr-4 text-right">num_viajes_diarios</th>
+						<th className="py-2 pr-4 text-right">n_viajes</th>
 					</tr>
 				</thead>
 				<tbody>
-					{rows.map((r, i) => (
+					{rows.map((r) => (
 						<tr
-							key={`${r.comuna_origen ?? "∅"}-${r.comuna_destino ?? "∅"}-${i}`}
+							key={`${r.comuna_origen ?? "∅"}→${r.comuna_destino ?? "∅"}`}
 							className="border-b border-[var(--line)]"
 						>
 							<td className="py-1 pr-4">{r.comuna_origen ?? "—"}</td>
 							<td className="py-1 pr-4">{r.comuna_destino ?? "—"}</td>
 							<td className="py-1 pr-4 text-right tabular-nums">
-								{r.num_viajes_diarios.toLocaleString("es-CL")}
+								{r.n_viajes.toLocaleString("es-CL")}
 							</td>
 						</tr>
 					))}
