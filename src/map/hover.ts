@@ -8,6 +8,8 @@ import type {
 import {
 	BUS_COLOR,
 	COMUNA_COLOR,
+	COMUNA_HOVER_LAYER_IDS,
+	COMUNA_INTERACTION_LAYER_ID,
 	EMPTY_BUS_HOVER_FILTER,
 	EMPTY_COMUNA_HOVER_FILTER,
 } from "./config";
@@ -36,14 +38,15 @@ export type HoverPinController = {
 	) => void;
 };
 
-const COMUNA_HOVER_LAYERS = ["comunas-hover-fill", "comunas-hover-outline"];
-const COMUNA_PRIORITY_LAYERS = [
-	"bus-routes",
-	"bus-stops",
-	"metro-lines",
-	"metro-stations",
-	"cycleway-lines",
-];
+type HoverLayerClickPayload = {
+	event: MapLayerMouseEvent;
+	feature: MapGeoJSONFeature;
+	info: Exclude<HoverInfo, null>;
+};
+
+type HoverLayerOptions = {
+	onClick?: (payload: HoverLayerClickPayload) => void;
+};
 
 /**
  * Wire básico: mientras el cursor esté sobre `layerId`, mostrar popup +
@@ -57,6 +60,7 @@ export function setupHoverLayer(
 	setHoverInfo: (info: HoverInfo) => void,
 	formatFeature: (feature: MapGeoJSONFeature) => Exclude<HoverInfo, null>,
 	pinController: HoverPinController,
+	options?: HoverLayerOptions,
 ) {
 	const onMove = (event: MapLayerMouseEvent) => {
 		if (pinController.isPinned()) return;
@@ -78,13 +82,22 @@ export function setupHoverLayer(
 	const onClick = (event: MapLayerMouseEvent) => {
 		const feature = event.features?.[0];
 		if (!feature) return;
-		const info = { ...formatFeature(feature), pinned: true };
-		pinController.pin(info, () => {
+		const info = formatFeature(feature);
+		if (options?.onClick) {
+			options.onClick({ event, feature, info });
+			return;
+		}
+
+		const pinnedInfo = { ...info, pinned: true };
+		pinController.pin(pinnedInfo, () => {
 			map.getCanvas().style.cursor = "";
 			popup.remove();
 		});
 		map.getCanvas().style.cursor = "pointer";
-		popup.setLngLat(event.lngLat).setHTML(createPopupHtml(info)).addTo(map);
+		popup
+			.setLngLat(event.lngLat)
+			.setHTML(createPopupHtml(pinnedInfo))
+			.addTo(map);
 	};
 
 	map.on("mousemove", layerId, onMove);
@@ -99,8 +112,8 @@ export function setupHoverLayer(
 }
 
 /**
- * Hover/click de comunas. Tiene prioridad baja para no tapar las capas de
- * transporte, ya que el polígono comunal cubre prácticamente todo el mapa.
+ * Hover/click de comunas desde una capa invisible, para que el resaltado
+ * funcione aunque la capa visual de límites esté apagada.
  */
 export function setupComunaHover(
 	map: MapLibreMap,
@@ -117,7 +130,7 @@ export function setupComunaHover(
 			? ["==", ["get", "cod_comuna"], comunaCode]
 			: EMPTY_COMUNA_HOVER_FILTER;
 
-		for (const layerId of COMUNA_HOVER_LAYERS) {
+		for (const layerId of COMUNA_HOVER_LAYER_IDS) {
 			if (map.getLayer(layerId)) map.setFilter(layerId, filter);
 		}
 	};
@@ -134,29 +147,8 @@ export function setupComunaHover(
 		if (!pinController.isPinned()) setHoverInfo(null);
 	};
 
-	const shouldYieldToTransport = (point: MapLayerMouseEvent["point"]) => {
-		const layers = COMUNA_PRIORITY_LAYERS.filter((layerId) =>
-			map.getLayer(layerId),
-		);
-		if (layers.length === 0) return false;
-		const padding = 5;
-		const features = map.queryRenderedFeatures(
-			[
-				[point.x - padding, point.y - padding],
-				[point.x + padding, point.y + padding],
-			],
-			{ layers },
-		);
-		return features.length > 0;
-	};
-
 	const onMove = (event: MapLayerMouseEvent) => {
 		if (pinController.isPinned()) return;
-		if (shouldYieldToTransport(event.point)) {
-			clearHover();
-			return;
-		}
-
 		const feature = event.features?.[0];
 		if (!feature) return;
 		const info = formatComunaHover(feature, false);
@@ -167,7 +159,6 @@ export function setupComunaHover(
 	};
 
 	const onClick = (event: MapLayerMouseEvent) => {
-		if (shouldYieldToTransport(event.point)) return;
 		const feature = event.features?.[0];
 		if (!feature) return;
 		const info = formatComunaHover(feature, true);
@@ -177,14 +168,14 @@ export function setupComunaHover(
 		popup.setLngLat(event.lngLat).setHTML(createPopupHtml(info)).addTo(map);
 	};
 
-	map.on("mousemove", "comunas-fill", onMove);
-	map.on("mouseleave", "comunas-fill", clearHover);
-	map.on("click", "comunas-fill", onClick);
+	map.on("mousemove", COMUNA_INTERACTION_LAYER_ID, onMove);
+	map.on("mouseleave", COMUNA_INTERACTION_LAYER_ID, clearHover);
+	map.on("click", COMUNA_INTERACTION_LAYER_ID, onClick);
 
 	return () => {
-		map.off("mousemove", "comunas-fill", onMove);
-		map.off("mouseleave", "comunas-fill", clearHover);
-		map.off("click", "comunas-fill", onClick);
+		map.off("mousemove", COMUNA_INTERACTION_LAYER_ID, onMove);
+		map.off("mouseleave", COMUNA_INTERACTION_LAYER_ID, clearHover);
+		map.off("click", COMUNA_INTERACTION_LAYER_ID, onClick);
 		clearComunaEffects();
 	};
 }
@@ -209,6 +200,19 @@ export function setupBusRouteHover(
 		popup.remove();
 		if (!pinController.isPinned()) setHoverInfo(null);
 	};
+	const shouldYieldToMetroStation = (point: MapLayerMouseEvent["point"]) => {
+		if (!map.getLayer("metro-stations")) return false;
+		const padding = 8;
+		return (
+			map.queryRenderedFeatures(
+				[
+					[point.x - padding, point.y - padding],
+					[point.x + padding, point.y + padding],
+				],
+				{ layers: ["metro-stations"] },
+			).length > 0
+		);
+	};
 
 	const setHoveredRoutes = (busRoutes: MapGeoJSONFeature[]) => {
 		const routeKeys = busRoutes
@@ -227,6 +231,11 @@ export function setupBusRouteHover(
 
 	const onMove = (event: MapLayerMouseEvent) => {
 		if (pinController.isPinned()) return;
+		if (shouldYieldToMetroStation(event.point)) {
+			clearHover();
+			return;
+		}
+
 		const padding = 6;
 		const features = map.queryRenderedFeatures(
 			[
@@ -256,6 +265,8 @@ export function setupBusRouteHover(
 	};
 
 	const onClick = (event: MapLayerMouseEvent) => {
+		if (shouldYieldToMetroStation(event.point)) return;
+
 		const padding = 6;
 		const features = map.queryRenderedFeatures(
 			[

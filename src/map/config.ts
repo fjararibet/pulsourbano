@@ -14,6 +14,15 @@ export const BUS_ARROW_ICON_ID = "bus-route-arrow";
 /** Color base de la capa de comunas RM. */
 export const COMUNA_COLOR = "#6f5bd5";
 
+/** Capa invisible que mantiene el hover de comunas siempre disponible. */
+export const COMUNA_INTERACTION_LAYER_ID = "comunas-hitbox";
+
+/** Capas visuales que resaltan la comuna bajo el cursor. */
+export const COMUNA_HOVER_LAYER_IDS = [
+	"comunas-hover-fill",
+	"comunas-hover-outline",
+] as const;
+
 /**
  * Filtro neutro que oculta la capa "hover" de buses cuando no hay
  * ningún recorrido seleccionado bajo el cursor.
@@ -92,12 +101,7 @@ export const DEFAULT_VISIBLE_LAYERS: LayerVisibility = {
  * Una capa lógica puede empujar varias capas físicas (halo + línea, etc.).
  */
 export const LOGICAL_LAYERS = {
-	comunas: [
-		"comunas-fill",
-		"comunas-outline",
-		"comunas-hover-fill",
-		"comunas-hover-outline",
-	],
+	comunas: ["comunas-fill", "comunas-outline"],
 	metro: ["metro-line-halo", "metro-lines"],
 	stations: ["metro-stations"],
 	buses: [

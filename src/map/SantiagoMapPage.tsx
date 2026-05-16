@@ -1,5 +1,7 @@
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useState } from "react";
+import { QuickSimulationPanel } from "#/simulation/QuickSimulationPanel";
+import { DEFAULT_QUICK_SIMULATION_INPUT } from "#/simulation/quick-simulation";
 import { DEFAULT_VISIBLE_LAYERS, LAYER_TOGGLES } from "./config";
 import { MapLegend } from "./Legend";
 import type { HoverInfo, LayerVisibility } from "./types";
@@ -14,9 +16,13 @@ export function SantiagoMapPage() {
 		DEFAULT_VISIBLE_LAYERS,
 	);
 	const [hoverInfo, setHoverInfo] = useState<HoverInfo>(null);
+	const [simulationInput, setSimulationInput] = useState(
+		DEFAULT_QUICK_SIMULATION_INPUT,
+	);
 	const { containerRef, resetView, clearPinned } = useSantiagoMap(
 		visibleLayers,
 		setHoverInfo,
+		simulationInput,
 	);
 
 	const activeLayerCount = Object.values(visibleLayers).filter(Boolean).length;
@@ -105,6 +111,11 @@ export function SantiagoMapPage() {
 							);
 						})}
 					</div>
+
+					<QuickSimulationPanel
+						input={simulationInput}
+						onInputChange={setSimulationInput}
+					/>
 
 					<div className="mt-4 rounded-2xl border border-[#d9e7e4] bg-white/72 p-3">
 						{showInfo ? (

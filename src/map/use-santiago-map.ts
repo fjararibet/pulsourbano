@@ -1,7 +1,20 @@
-import type { Map as MapLibreMap } from "maplibre-gl";
+import type { MapGeoJSONFeature, Map as MapLibreMap } from "maplibre-gl";
 import { useCallback, useEffect, useRef } from "react";
+import {
+	calculateQuickSimulation,
+	type QuickSimulationInput,
+	type QuickSimulationResult,
+} from "#/simulation/quick-simulation";
+import {
+	createStationImpact,
+	createStationImpactFeatureCollection,
+	DEFAULT_STATION_IMPACT_RADIUS_METERS,
+	type LonLat,
+	type StationImpact,
+} from "#/simulation/station-impact";
 import { BASE_STYLE, INITIAL_ZOOM, SANTIAGO_CENTER } from "./config";
 import {
+	createPopupHtml,
 	type HoverPinController,
 	setupBusRouteHover,
 	setupComunaHover,
@@ -12,7 +25,12 @@ import {
 	addComunaLayers,
 	addCyclewayLayers,
 	addMetroLayers,
+	addSimulationImpactLayers,
 	applyLayerVisibility,
+	bringComunaHoverToFront,
+	clearSimulationImpact,
+	setSimulationImpactData,
+	startSimulationImpactAnimation,
 } from "./layers";
 import type {
 	FrequencyMap,
@@ -36,10 +54,12 @@ import {
 export function useSantiagoMap(
 	visibleLayers: LayerVisibility,
 	setHoverInfo: (info: HoverInfo) => void,
+	simulationInput: QuickSimulationInput,
 ) {
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const mapRef = useRef<MapLibreMap | null>(null);
 	const visibleLayersRef = useRef(visibleLayers);
+	const simulationInputRef = useRef(simulationInput);
 	const pinnedInfoRef = useRef<HoverInfo>(null);
 	const clearPinnedEffectsRef = useRef<(() => void) | null>(null);
 
@@ -56,6 +76,10 @@ export function useSantiagoMap(
 		visibleLayersRef.current = visibleLayers;
 		applyLayerVisibility(mapRef.current, visibleLayers);
 	}, [visibleLayers]);
+
+	useEffect(() => {
+		simulationInputRef.current = simulationInput;
+	}, [simulationInput]);
 
 	useEffect(() => {
 		let cancelled = false;
@@ -142,8 +166,18 @@ export function useSantiagoMap(
 				if (buses) addBusLayers(map, buses);
 				if (cycleways) addCyclewayLayers(map, cycleways);
 				if (metro) addMetroLayers(map, metro);
+				addSimulationImpactLayers(map);
+				if (comunas) bringComunaHoverToFront(map);
 
 				applyLayerVisibility(map, visibleLayersRef.current);
+				let stopStationImpactAnimation: (() => void) | null = null;
+				const clearStationImpactEffects = () => {
+					stopStationImpactAnimation?.();
+					stopStationImpactAnimation = null;
+					clearSimulationImpact(map);
+					map.getCanvas().style.cursor = "";
+					popup.remove();
+				};
 
 				if (comunas) {
 					hoverCleanup.push(
@@ -186,6 +220,52 @@ export function useSantiagoMap(
 							};
 						},
 						pinController,
+						{
+							onClick: ({ feature, info }) => {
+								const center = getPointCoordinates(feature);
+								if (!center || !metro) return;
+
+								const currentInput = simulationInputRef.current;
+								const result = calculateQuickSimulation(currentInput);
+								const accent = getSimulationAccent(currentInput);
+								const stationId =
+									getFeatureString(feature, "stop_id") || info.title;
+								const impact = createStationImpact({
+									stationId,
+									stationName: info.title,
+									center,
+									radiusMeters: DEFAULT_STATION_IMPACT_RADIUS_METERS,
+									metroData: metro,
+									busesData: buses,
+								});
+								const impactInfo = formatStationImpactInfo(
+									impact,
+									result,
+									currentInput,
+									accent,
+								);
+
+								pinController.pin(impactInfo, clearStationImpactEffects);
+								setSimulationImpactData(
+									map,
+									createStationImpactFeatureCollection(impact, accent),
+								);
+								stopStationImpactAnimation = startSimulationImpactAnimation(
+									map,
+									accent,
+								);
+								map.getCanvas().style.cursor = "pointer";
+								popup
+									.setLngLat(center)
+									.setHTML(createPopupHtml(impactInfo))
+									.addTo(map);
+								map.easeTo({
+									center,
+									zoom: Math.max(map.getZoom(), 14.2),
+									duration: 700,
+								});
+							},
+						},
 					),
 					setupBusRouteHover(
 						map,
@@ -255,4 +335,78 @@ export function useSantiagoMap(
 	};
 
 	return { containerRef, resetView, clearPinned };
+}
+
+const integerFormatter = new Intl.NumberFormat("es-CL", {
+	maximumFractionDigits: 0,
+});
+
+const decimalFormatter = new Intl.NumberFormat("es-CL", {
+	maximumFractionDigits: 1,
+});
+
+function formatStationImpactInfo(
+	impact: StationImpact,
+	result: QuickSimulationResult,
+	input: QuickSimulationInput,
+	accent: string,
+): Exclude<HoverInfo, null> {
+	const isOpening = input.direction === "opening";
+	const impactWord = isOpening ? "evitados" : "extra";
+	const kind = isOpening ? "Apertura estación" : "Cierre estación";
+	const description = `${formatMeters(
+		impact.radiusMeters,
+	)} de influencia · ${impact.nearbyStations.length} estaciones alternativas · ${
+		impact.nearbyBusStops.length
+	} paraderos RED`;
+
+	return {
+		kind,
+		title: impact.stationName,
+		description,
+		popupTitle: `${kind}: ${impact.stationName}`,
+		popupDescription: `${formatSigned(
+			result.kgCo2PerDay,
+			"integer",
+		)} kg CO2/día ${impactWord}`,
+		details: [
+			`Radio de influencia: ${formatMeters(impact.radiusMeters)}`,
+			`Estaciones Metro cercanas: ${integerFormatter.format(
+				impact.nearbyStations.length,
+			)}`,
+			`Paraderos RED cercanos: ${integerFormatter.format(
+				impact.nearbyBusStops.length,
+			)}`,
+			`${formatSigned(result.carTrips, "integer")} viajes-auto/día`,
+			`${formatSigned(result.vehicleKmPerDay, "integer")} veh-km/día`,
+			`${formatSigned(result.kgCo2PerDay, "integer")} kg CO2/día`,
+			`${formatSigned(result.tonCo2PerYear, "decimal")} ton CO2/año`,
+		],
+		note: "Impacto exploratorio sin EOD: área y alternativas reales; demanda por supuestos.",
+		pinned: true,
+		accent,
+	};
+}
+
+function getPointCoordinates(feature: MapGeoJSONFeature): LonLat | null {
+	if (feature.geometry.type !== "Point") return null;
+	const [longitude, latitude] = feature.geometry.coordinates;
+	if (typeof longitude !== "number" || typeof latitude !== "number")
+		return null;
+	return [longitude, latitude];
+}
+
+function getSimulationAccent(input: QuickSimulationInput) {
+	return input.direction === "opening" ? "#168a76" : "#d75235";
+}
+
+function formatMeters(value: number) {
+	return `${integerFormatter.format(value)} m`;
+}
+
+function formatSigned(value: number, precision: "integer" | "decimal") {
+	const formatter =
+		precision === "integer" ? integerFormatter : decimalFormatter;
+	const prefix = value > 0 ? "+" : value < 0 ? "-" : "";
+	return `${prefix}${formatter.format(Math.abs(value))}`;
 }
