@@ -28,12 +28,7 @@ export const FIELD_PARAMS = {
 
 export const fieldConfig = {
 	enabled: true as boolean,
-	bounds: null as {
-		south: number;
-		north: number;
-		west: number;
-		east: number;
-	} | null,
+	selectedComunas: [] as string[],
 };
 
 export function computeAqiAt(lat: number, lng: number): number {

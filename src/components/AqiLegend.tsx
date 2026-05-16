@@ -1,4 +1,6 @@
+import { useMemo, useState } from "react";
 import { getAqiColor } from "#/lib/air-quality-types";
+import { comunasRM } from "#/lib/comunas-rm";
 
 interface AqiLegendProps {
 	showStations: boolean;
@@ -9,8 +11,9 @@ interface AqiLegendProps {
 	onToggleHeatmap: () => void;
 	isSelectingRegion: boolean;
 	onToggleSelectRegion: () => void;
-	hasSelectedRegion: boolean;
-	onClearRegion: () => void;
+	selectedComunas: string[];
+	onToggleComuna: (name: string) => void;
+	onClearComunas: () => void;
 }
 
 const LEVELS = [
@@ -31,9 +34,21 @@ export default function AqiLegend({
 	onToggleHeatmap,
 	isSelectingRegion,
 	onToggleSelectRegion,
-	hasSelectedRegion,
-	onClearRegion,
+	selectedComunas,
+	onToggleComuna,
+	onClearComunas,
 }: AqiLegendProps) {
+	const [search, setSearch] = useState("");
+
+	const suggestions = useMemo(() => {
+		if (!search.trim()) return [];
+		const q = search.toLowerCase();
+		return comunasRM
+			.map((c) => c.name)
+			.filter((name) => name.toLowerCase().includes(q))
+			.slice(0, 6);
+	}, [search]);
+
 	return (
 		<div className="pointer-events-auto absolute bottom-5 left-5 z-20 flex flex-col gap-2">
 			<div className="rounded-xl border border-white/15 bg-black/35 px-4 py-3 shadow-lg backdrop-blur-md">
@@ -71,7 +86,8 @@ export default function AqiLegend({
 						)}
 					</div>
 				</div>
-				<div className="mb-2 flex gap-1.5">
+
+				<div className="mb-2 flex items-center gap-1.5">
 					<button
 						onClick={onToggleSelectRegion}
 						className={`rounded-md px-2 py-1 text-[10px] font-semibold transition ${
@@ -81,18 +97,69 @@ export default function AqiLegend({
 						}`}
 						type="button"
 					>
-						{isSelectingRegion ? "Seleccionando…" : "Seleccionar área"}
+						{isSelectingRegion ? "Seleccionando…" : "Seleccionar comunas"}
 					</button>
-					{hasSelectedRegion && (
+					{selectedComunas.length > 0 && (
 						<button
-							onClick={onClearRegion}
+							onClick={onClearComunas}
 							className="rounded-md bg-white/15 px-2 py-1 text-[10px] font-semibold text-white/90 transition hover:bg-white/25"
 							type="button"
 						>
-							Limpiar área
+							Limpiar
 						</button>
 					)}
 				</div>
+
+				<div className="relative mb-2">
+					<input
+						type="text"
+						value={search}
+						onChange={(e) => setSearch(e.target.value)}
+						placeholder="Buscar comuna…"
+						className="w-full rounded-md bg-white/10 px-2 py-1 text-[11px] text-white placeholder:text-white/40 outline-none ring-0 focus:bg-white/20"
+					/>
+					{suggestions.length > 0 && (
+						<div className="absolute bottom-full left-0 z-30 mb-1 w-full overflow-hidden rounded-md border border-white/10 bg-black/70 shadow-lg backdrop-blur-md">
+							{suggestions.map((name) => (
+								<button
+									key={name}
+									onClick={() => {
+										onToggleComuna(name);
+										setSearch("");
+									}}
+									className={`w-full px-2 py-1 text-left text-[11px] transition ${
+										selectedComunas.includes(name)
+											? "bg-lime-500/40 text-white"
+											: "text-white/90 hover:bg-white/15"
+									}`}
+									type="button"
+								>
+									{name}
+									{selectedComunas.includes(name) && (
+										<span className="ml-1 text-[9px]">✓</span>
+									)}
+								</button>
+							))}
+						</div>
+					)}
+				</div>
+
+				{selectedComunas.length > 0 && (
+					<div className="mb-2 flex flex-wrap gap-1">
+						{selectedComunas.map((name) => (
+							<button
+								key={name}
+								onClick={() => onToggleComuna(name)}
+								className="flex items-center gap-1 rounded-full bg-lime-500/30 px-2 py-0.5 text-[10px] text-white transition hover:bg-lime-500/50"
+								type="button"
+							>
+								{name}
+								<span className="text-white/70">×</span>
+							</button>
+						))}
+					</div>
+				)}
+
 				<div className="flex h-2 overflow-hidden rounded-full">
 					{LEVELS.map((level) => (
 						<div

@@ -6,6 +6,7 @@ import maplibregl from "maplibre-gl";
 import { mockStations } from "#/lib/air-quality-mock";
 import { getAqiColor } from "#/lib/air-quality-types";
 import { computeAqiAt, fieldConfig, fieldStations } from "#/lib/aqi-field";
+import { comunasRM } from "#/lib/comunas-rm";
 import { fetchCustomStyle } from "#/lib/map-style";
 import { createAqiFieldLayer } from "./AqiFieldLayer";
 
@@ -21,15 +22,8 @@ interface CityMapProps {
 	isEditMode: boolean;
 	showHeatmap: boolean;
 	isSelectingRegion: boolean;
-	selectedBounds: {
-		south: number;
-		north: number;
-		west: number;
-		east: number;
-	} | null;
-	onSelectRegion: (
-		bounds: { south: number; north: number; west: number; east: number } | null,
-	) => void;
+	selectedComunas: string[];
+	onToggleComuna: (name: string) => void;
 }
 
 interface TooltipData {
@@ -38,29 +32,21 @@ interface TooltipData {
 	aqi: number;
 }
 
-interface Rect {
-	start: { x: number; y: number };
-	end: { x: number; y: number };
-}
-
 export default function CityMap({
 	showStations,
 	isEditMode,
 	showHeatmap,
 	isSelectingRegion,
-	selectedBounds,
-	onSelectRegion,
+	selectedComunas,
+	onToggleComuna,
 }: CityMapProps) {
 	const [isClient, setIsClient] = useState(false);
 	// biome-ignore lint/suspicious/noExplicitAny: style JSON is dynamic
 	const [mapStyle, setMapStyle] = useState<any>(null);
 	const [mapReady, setMapReady] = useState(false);
 	const [tooltip, setTooltip] = useState<TooltipData | null>(null);
-	const [selectionRect, setSelectionRect] = useState<Rect | null>(null);
 	const mapRef = useRef<MapRef | null>(null);
 	const markersRef = useRef<maplibregl.Marker[]>([]);
-	const isDraggingRef = useRef(false);
-	const selectionRef = useRef<Rect | null>(null);
 
 	useEffect(() => {
 		setIsClient(true);
@@ -71,30 +57,123 @@ export default function CityMap({
 		const map = mapRef.current?.getMap();
 		if (!map) return;
 		setMapReady(true);
+
+		// Add comuna GeoJSON source
+		if (!map.getSource("comunas-rm")) {
+			map.addSource("comunas-rm", {
+				type: "geojson",
+				data: {
+					type: "FeatureCollection",
+					features: comunasRM.map((c) => ({
+						type: "Feature" as const,
+						properties: { Comuna: c.name },
+						geometry: {
+							type: "Polygon" as const,
+							coordinates: c.coords,
+						},
+					})),
+				},
+			});
+		}
+
+		// Comuna boundary line (always visible but subtle)
+		if (!map.getLayer("comunas-line")) {
+			map.addLayer({
+				id: "comunas-line",
+				type: "line",
+				source: "comunas-rm",
+				paint: {
+					"line-color": "#ffffff",
+					"line-width": 1,
+					"line-opacity": 0.15,
+				},
+			});
+		}
+
+		// Comuna fill for selected comunas
+		if (!map.getLayer("comunas-fill")) {
+			map.addLayer({
+				id: "comunas-fill",
+				type: "fill",
+				source: "comunas-rm",
+				paint: {
+					"fill-color": "#ffffff",
+					"fill-opacity": [
+						"case",
+						["in", ["get", "Comuna"], ["literal", selectedComunas]],
+						0.12,
+						0,
+					],
+				},
+			});
+		}
+
 		if (fieldConfig.enabled && !map.getLayer("aqi-field")) {
 			map.addLayer(createAqiFieldLayer());
 		}
-	}, []);
+	}, [selectedComunas]);
 
-	// Re-add custom AQI field layer whenever style changes (after map is ready)
+	// Re-add layers after style changes
 	useEffect(() => {
 		if (!mapReady) return;
 		const map = mapRef.current?.getMap();
 		if (!map) return;
 
 		const handleStyleData = () => {
-			if (!fieldConfig.enabled) return;
-			if (!map.getLayer("aqi-field")) {
+			if (!map.getSource("comunas-rm")) {
+				map.addSource("comunas-rm", {
+					type: "geojson",
+					data: {
+						type: "FeatureCollection",
+						features: comunasRM.map((c) => ({
+							type: "Feature" as const,
+							properties: { Comuna: c.name },
+							geometry: {
+								type: "Polygon" as const,
+								coordinates: c.coords,
+							},
+						})),
+					},
+				});
+			}
+			if (!map.getLayer("comunas-line")) {
+				map.addLayer({
+					id: "comunas-line",
+					type: "line",
+					source: "comunas-rm",
+					paint: {
+						"line-color": "#ffffff",
+						"line-width": 1,
+						"line-opacity": 0.15,
+					},
+				});
+			}
+			if (!map.getLayer("comunas-fill")) {
+				map.addLayer({
+					id: "comunas-fill",
+					type: "fill",
+					source: "comunas-rm",
+					paint: {
+						"fill-color": "#ffffff",
+						"fill-opacity": [
+							"case",
+							["in", ["get", "Comuna"], ["literal", selectedComunas]],
+							0.12,
+							0,
+						],
+					},
+				});
+			}
+			if (fieldConfig.enabled && !map.getLayer("aqi-field")) {
 				map.addLayer(createAqiFieldLayer());
 			}
 		};
 
 		map.on("styledata", handleStyleData);
-
 		return () => {
 			map.off("styledata", handleStyleData);
 		};
-	}, [mapReady]);
+	}, [mapReady, selectedComunas]);
 
 	// Sync heatmap visibility
 	useEffect(() => {
@@ -114,26 +193,52 @@ export default function CityMap({
 		map.triggerRepaint();
 	}, [showHeatmap, mapReady]);
 
-	// Sync selected bounds
+	// Sync selected comunas to custom layer + map fill layer
 	useEffect(() => {
-		fieldConfig.bounds = selectedBounds;
+		fieldConfig.selectedComunas = selectedComunas;
 		if (!mapReady) return;
 		const map = mapRef.current?.getMap();
-		if (map) map.triggerRepaint();
-	}, [selectedBounds, mapReady]);
+		if (!map) return;
+		if (map.getLayer("comunas-fill")) {
+			map.setPaintProperty("comunas-fill", "fill-opacity", [
+				"case",
+				["in", ["get", "Comuna"], ["literal", selectedComunas]],
+				0.12,
+				0,
+			]);
+		}
+		map.triggerRepaint();
+	}, [selectedComunas, mapReady]);
 
-	// Manage selection mode (disable pan)
+	// Click to select comuna
 	useEffect(() => {
 		const map = mapRef.current?.getMap();
 		if (!map) return;
-		if (isSelectingRegion) {
-			map.dragPan.disable();
-		} else {
-			map.dragPan.enable();
-			isDraggingRef.current = false;
-			selectionRef.current = null;
-			setSelectionRect(null);
-		}
+
+		const handleClick = (e: maplibregl.MapMouseEvent) => {
+			if (!isSelectingRegion) return;
+			const features = map.queryRenderedFeatures(e.point, {
+				layers: ["comunas-fill"],
+			});
+			const first = features[0];
+			if (first) {
+				// biome-ignore lint/suspicious/noExplicitAny: GeoJSON property is dynamic
+				const name = (first.properties as any).Comuna as string;
+				if (name) onToggleComuna(name);
+			}
+		};
+
+		map.on("click", handleClick);
+		return () => {
+			map.off("click", handleClick);
+		};
+	}, [isSelectingRegion, onToggleComuna]);
+
+	// Cursor when selecting
+	useEffect(() => {
+		const map = mapRef.current?.getMap();
+		if (!map) return;
+		map.getCanvas().style.cursor = isSelectingRegion ? "pointer" : "";
 	}, [isSelectingRegion]);
 
 	// Manage station markers
@@ -220,68 +325,6 @@ export default function CityMap({
 		};
 	}, []);
 
-	const handlePointerDown = useCallback(
-		(e: React.PointerEvent<HTMLDivElement>) => {
-			if (!isSelectingRegion) return;
-			e.currentTarget.setPointerCapture(e.pointerId);
-			isDraggingRef.current = true;
-			const rect = {
-				start: { x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY },
-				end: { x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY },
-			};
-			selectionRef.current = rect;
-			setSelectionRect(rect);
-		},
-		[isSelectingRegion],
-	);
-
-	const handlePointerMove = useCallback(
-		(e: React.PointerEvent<HTMLDivElement>) => {
-			if (!isDraggingRef.current) return;
-			const rect = selectionRef.current;
-			if (!rect) return;
-			const updated = {
-				...rect,
-				end: { x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY },
-			};
-			selectionRef.current = updated;
-			setSelectionRect(updated);
-		},
-		[],
-	);
-
-	const handlePointerUp = useCallback(() => {
-		if (!isDraggingRef.current) return;
-		isDraggingRef.current = false;
-		const rect = selectionRef.current;
-		selectionRef.current = null;
-		setSelectionRect(null);
-
-		const map = mapRef.current?.getMap();
-		if (!map || !rect) return;
-
-		const x1 = Math.min(rect.start.x, rect.end.x);
-		const y1 = Math.min(rect.start.y, rect.end.y);
-		const x2 = Math.max(rect.start.x, rect.end.x);
-		const y2 = Math.max(rect.start.y, rect.end.y);
-
-		const nw = map.unproject([x1, y1]);
-		const se = map.unproject([x2, y2]);
-
-		onSelectRegion({
-			south: se.lat,
-			north: nw.lat,
-			west: nw.lng,
-			east: se.lng,
-		});
-	}, [onSelectRegion]);
-
-	const handlePointerCancel = useCallback(() => {
-		isDraggingRef.current = false;
-		selectionRef.current = null;
-		setSelectionRect(null);
-	}, []);
-
 	if (!isClient || !mapStyle) {
 		return (
 			<div className="flex h-full w-full items-center justify-center bg-gray-100">
@@ -307,26 +350,6 @@ export default function CityMap({
 				dragRotate={false}
 				touchPitch={false}
 			/>
-			{isSelectingRegion && (
-				<div
-					className="absolute inset-0 z-10 cursor-crosshair"
-					onPointerDown={handlePointerDown}
-					onPointerMove={handlePointerMove}
-					onPointerUp={handlePointerUp}
-					onPointerCancel={handlePointerCancel}
-				/>
-			)}
-			{selectionRect && (
-				<div
-					className="pointer-events-none absolute z-10 border-2 border-dashed border-white bg-white/10"
-					style={{
-						left: Math.min(selectionRect.start.x, selectionRect.end.x),
-						top: Math.min(selectionRect.start.y, selectionRect.end.y),
-						width: Math.abs(selectionRect.end.x - selectionRect.start.x),
-						height: Math.abs(selectionRect.end.y - selectionRect.start.y),
-					}}
-				/>
-			)}
 			{tooltip && (
 				<div
 					className="pointer-events-none absolute z-30 rounded-lg border border-white/20 bg-black/60 px-2.5 py-1.5 text-xs font-medium text-white shadow-lg backdrop-blur-sm"
