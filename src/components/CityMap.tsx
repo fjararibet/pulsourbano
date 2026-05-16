@@ -347,7 +347,12 @@ export default function CityMap({
 				mapStyle={mapStyle}
 				maxBounds={SANTIAGO.bounds}
 				minZoom={SANTIAGO.minZoom}
+				dragPan={false}
+				scrollZoom={false}
+				doubleClickZoom={false}
+				touchZoomRotate={false}
 				dragRotate={false}
+				keyboard={false}
 				touchPitch={false}
 			/>
 			{tooltip && (

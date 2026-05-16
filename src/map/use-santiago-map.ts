@@ -108,14 +108,18 @@ export function useSantiagoMap(
 				center: SANTIAGO_CENTER,
 				zoom: INITIAL_ZOOM,
 				attributionControl: { compact: true },
+				dragPan: false,
+				scrollZoom: false,
+				doubleClickZoom: false,
+				touchZoomRotate: false,
+				dragRotate: false,
+				keyboard: false,
 			});
+			mapRef.current = map;
 
 			map.on("error", (event) => {
 				console.error("MapLibre error", event.error ?? event);
 			});
-
-			map.addControl(new maplibregl.NavigationControl(), "top-right");
-			mapRef.current = map;
 
 			// Exponer el mapa al window en dev para debug desde la consola.
 			let debugWindow: (typeof window & { __simMap?: MapLibreMap }) | undefined;
@@ -169,6 +173,9 @@ export function useSantiagoMap(
 				if (metro) addMetroLayers(map, metro);
 				addSimulationImpactLayers(map);
 				if (comunas) bringComunaHoverToFront(map);
+
+				map.setCenter(SANTIAGO_CENTER);
+				map.setZoom(INITIAL_ZOOM);
 
 				applyLayerVisibility(map, visibleLayersRef.current);
 				let stopStationImpactAnimation: (() => void) | null = null;
@@ -325,17 +332,7 @@ export function useSantiagoMap(
 		};
 	}, [setHoverInfo]);
 
-	const resetView = () => {
-		mapRef.current?.easeTo({
-			center: SANTIAGO_CENTER,
-			zoom: INITIAL_ZOOM,
-			bearing: 0,
-			pitch: 0,
-			duration: 700,
-		});
-	};
-
-	return { containerRef, resetView, clearPinned };
+	return { containerRef, clearPinned };
 }
 
 const integerFormatter = new Intl.NumberFormat("es-CL", {

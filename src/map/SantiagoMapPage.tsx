@@ -19,7 +19,7 @@ export function SantiagoMapPage() {
 	const [simulationInput, setSimulationInput] = useState(
 		DEFAULT_QUICK_SIMULATION_INPUT,
 	);
-	const { containerRef, resetView, clearPinned } = useSantiagoMap(
+	const { containerRef, clearPinned } = useSantiagoMap(
 		visibleLayers,
 		setHoverInfo,
 		simulationInput,
@@ -62,13 +62,6 @@ export function SantiagoMapPage() {
 								SimSantiago
 							</h1>
 						</div>
-						<button
-							type="button"
-							onClick={resetView}
-							className="rounded-full border border-[#b9d7d1] bg-white/80 px-3 py-1.5 text-xs font-bold text-[#24525b] shadow-sm transition hover:-translate-y-0.5 hover:border-[#5bb6a6] hover:bg-white"
-						>
-							Reset vista
-						</button>
 					</header>
 
 					<p className="mb-4 text-sm leading-5 text-[#42656b]">
