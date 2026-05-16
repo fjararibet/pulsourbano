@@ -159,25 +159,28 @@ npm run preview      # Vite preview server
 
 ### Local Development
 
-Local development uses **D1 via Wrangler**. The `DATABASE_URL` env var points to a local D1 database file.
+Both local and production runtimes use **D1 via Wrangler**. There is no local file-backed SQLite; the app talks only to the D1 binding (miniflare-backed locally, Cloudflare D1 in production). No SQLite driver (`better-sqlite3`, `@libsql/client`) is installed — `drizzle-kit` is only used to generate migration SQL from the schema.
 
 ```bash
-# Generate a migration from schema changes
+# Generate a migration from schema changes (writes to ./drizzle)
 npm run db:generate
 
-# Push schema changes directly (useful in dev, no migration files)
-npm run db:push
+# Apply migrations to the local D1 (miniflare)
+npm run db:apply:local
 
-# Pull existing DB state into schema
-npm run db:pull
-
-# Open Drizzle Studio (visual DB explorer)
-npm run db:studio
+# Apply migrations to the remote D1 (Cloudflare)
+npm run db:apply:remote
 ```
 
-> **Development note**: If migrations fail or the schema gets out of sync, don't worry—just delete the `drizzle/migrations` folder and run `npm run db:push` again to reset everything.
+Ad-hoc queries against the local D1 go through wrangler:
 
-Schema lives in `src/db/schema.ts` and `src/db/eod-schema.ts`. At runtime the app uses **D1 via Wrangler** (Cloudflare Workers binding); there is no singleton Drizzle client file because the D1 binding is passed per-request. `better-sqlite3` is present only because `drizzle-kit` requires a SQLite driver (`better-sqlite3` or `@libsql/client`) to connect to the local SQLite file during schema operations (`db:generate`, `db:push`, `db:studio`, etc.).
+```bash
+npx wrangler d1 execute esgrima --local --command "SELECT COUNT(*) FROM viaje"
+npx wrangler d1 execute esgrima --local --file=path/to/script.sql
+npx wrangler d1 export esgrima --local --output=snapshot.sql   # dump for backup / replay
+```
+
+Schema lives in `src/db/schema.ts` and `src/db/eod-schema.ts`. The runtime uses the D1 binding directly (`DB`), passed per-request; there is no singleton Drizzle client file.
 
 ### Cloudflare D1
 

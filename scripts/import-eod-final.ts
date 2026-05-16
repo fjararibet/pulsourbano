@@ -1,8 +1,25 @@
-import Database from "better-sqlite3";
-import { readFileSync } from "node:fs";
+/**
+ * Reads CSVs in ./csv_export and emits a SQL dump (INSERT statements only) to
+ * stdout. The dump is meant to be piped into wrangler:
+ *
+ *   npx tsx scripts/import-eod-final.ts > csv_export/dump.sql
+ *   npx wrangler d1 execute esgrima --local --file=csv_export/dump.sql
+ *
+ * The destination tables must already exist (apply the drizzle migration
+ * first: `wrangler d1 execute esgrima --local --file=drizzle/0000_legal_nick_fury.sql`).
+ */
+import { readFileSync, createWriteStream } from "node:fs";
 import { resolve } from "node:path";
 
-const db = new Database("dev.db");
+const outPath = process.argv[2];
+const out = outPath ? createWriteStream(outPath) : process.stdout;
+const log = (msg: string) => process.stderr.write(`${msg}\n`);
+
+function sqlEscape(v: unknown): string {
+	if (v === null || v === undefined) return "NULL";
+	if (typeof v === "number") return Number.isFinite(v) ? String(v) : "NULL";
+	return `'${String(v).replace(/'/g, "''")}'`;
+}
 
 function parseCSVLine(line: string): string[] {
 	const result: string[] = [];
@@ -446,20 +463,21 @@ const tables: [string, string, ColumnMapping[]][] = [
 
 const csvDir = resolve("csv_export");
 
-console.log("Starting EOD CSV import (camelCase mapping)...");
+out.write("PRAGMA foreign_keys = OFF;\nBEGIN TRANSACTION;\n");
+log("Starting EOD CSV → SQL dump (camelCase mapping)...");
 for (const [tableName, fileName, mappings] of tables) {
 	const csvPath = resolve(csvDir, `${fileName}.csv`);
 	const content = readFileSync(csvPath, "utf-8");
 	const lines = content.split("\n").filter((line) => line.trim() !== "");
 
 	if (lines.length < 2) {
-		console.log(`${tableName}: empty table, skipping`);
+		log(`${tableName}: empty table, skipping`);
 		continue;
 	}
 
 	const headerLine = lines[0];
 	if (headerLine === undefined) {
-		console.log(`${tableName}: empty table, skipping`);
+		log(`${tableName}: empty table, skipping`);
 		continue;
 	}
 	const csvHeaders = headerLine.split(",").map((h) => h.trim());
@@ -469,46 +487,29 @@ for (const [tableName, fileName, mappings] of tables) {
 	});
 
 	const dbCols = mappings.map((m) => `"${m.db}"`).join(",");
-	const placeholders = mappings.map(() => "?").join(",");
-	const insert = db.prepare(
-		`INSERT INTO "${tableName}" (${dbCols}) VALUES (${placeholders})`,
-	);
+	const insertPrefix = `INSERT INTO "${tableName}" (${dbCols}) VALUES `;
 
-	const insertMany = db.transaction((rows: string[]) => {
-		let success = 0;
-		let failed = 0;
-		for (const line of rows) {
+	const rows = lines.slice(1);
+	const batchSize = 500;
+	let written = 0;
+
+	for (let i = 0; i < rows.length; i += batchSize) {
+		const tuples: string[] = [];
+		for (const line of rows.slice(i, i + batchSize)) {
 			const values = parseCSVLine(line);
 			const parsed = mappings.map((m) => {
 				const idx = columnIndexMap[m.csv];
-				if (idx === undefined) {
-					return null;
-				}
+				if (idx === undefined) return null;
 				return parseValue(values[idx] ?? "", m.type);
 			});
-			try {
-				insert.run(...parsed);
-				success++;
-			} catch {
-				failed++;
-			}
+			tuples.push(`(${parsed.map(sqlEscape).join(",")})`);
 		}
-		return { success, failed };
-	});
-
-	const rows = lines.slice(1);
-	const batchSize = 5000;
-	let totalSuccess = 0;
-	let totalFailed = 0;
-
-	for (let i = 0; i < rows.length; i += batchSize) {
-		const batch = rows.slice(i, i + batchSize);
-		const result = insertMany(batch);
-		totalSuccess += result.success;
-		totalFailed += result.failed;
+		out.write(`${insertPrefix}${tuples.join(",")};\n`);
+		written += tuples.length;
 	}
 
-	console.log(`${tableName}: ${totalSuccess} rows inserted, ${totalFailed} failed`);
+	log(`${tableName}: ${written} rows`);
 }
-console.log("Done!");
-db.close();
+out.write("COMMIT;\n");
+log("Done!");
+if (out !== process.stdout) (out as ReturnType<typeof createWriteStream>).end();
