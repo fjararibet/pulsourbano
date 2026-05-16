@@ -1,34 +1,11 @@
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useState } from "react";
-import { QuickSimulationPanel } from "#/simulation/QuickSimulationPanel";
-import { DEFAULT_QUICK_SIMULATION_INPUT } from "#/simulation/quick-simulation";
-import { DEFAULT_VISIBLE_LAYERS, LAYER_TOGGLES } from "./config";
-import { MapLegend } from "./Legend";
-import type { HoverInfo, LayerVisibility } from "./types";
+import type { HoverInfo } from "./types";
 import { useSantiagoMap } from "./use-santiago-map";
 
-/**
- * Página principal: contenedor del mapa + panel lateral con toggles de capas,
- * info al hover y leyenda. Toda la lógica de MapLibre vive en `useSantiagoMap`.
- */
 export function SantiagoMapPage() {
-	const [visibleLayers, setVisibleLayers] = useState<LayerVisibility>(
-		DEFAULT_VISIBLE_LAYERS,
-	);
 	const [hoverInfo, setHoverInfo] = useState<HoverInfo>(null);
-	const [simulationInput, setSimulationInput] = useState(
-		DEFAULT_QUICK_SIMULATION_INPUT,
-	);
-	const { containerRef, clearPinned, resetView } = useSantiagoMap(
-		visibleLayers,
-		setHoverInfo,
-		simulationInput,
-	);
-
-	const activeLayerCount = Object.values(visibleLayers).filter(Boolean).length;
-
-	const toggleLayer = (id: keyof LayerVisibility) =>
-		setVisibleLayers((current) => ({ ...current, [id]: !current[id] }));
+	const { containerRef, clearPinned, resetView } = useSantiagoMap(setHoverInfo);
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
@@ -37,13 +14,6 @@ export function SantiagoMapPage() {
 		document.addEventListener("keydown", handleKeyDown);
 		return () => document.removeEventListener("keydown", handleKeyDown);
 	}, [clearPinned]);
-
-	const showInfo = hoverInfo;
-	const pinnedNote = showInfo?.pinned
-		? "Fijado"
-		: showInfo
-			? "Click para fijar"
-			: null;
 
 	return (
 		<main className="relative h-[100svh] w-full overflow-hidden bg-[#edf4e8] text-[#102f37]">
@@ -72,85 +42,41 @@ export function SantiagoMapPage() {
 					</header>
 
 					<p className="mb-4 text-sm leading-5 text-[#42656b]">
-						Prende o apaga capas para leer la red. Pasa el cursor sobre
-						estaciones, líneas y ciclovías para ver detalles sin llenar el mapa
-						de texto.
+						Selecciona una comuna para ver sus detalles.
 					</p>
 
-					<div className="grid gap-2">
-						{LAYER_TOGGLES.map((layer) => {
-							const active = visibleLayers[layer.id];
-							return (
-								<button
-									key={layer.id}
-									type="button"
-									aria-pressed={active}
-									onClick={() => toggleLayer(layer.id)}
-									className={
-										active
-											? "flex items-center gap-3 rounded-2xl border border-[#b7dcd4] bg-[#effaf5] px-3 py-2.5 text-left shadow-sm transition hover:-translate-y-0.5"
-											: "flex items-center gap-3 rounded-2xl border border-[#d9e7e4] bg-white/58 px-3 py-2.5 text-left opacity-60 transition hover:-translate-y-0.5 hover:opacity-90"
-									}
-								>
-									<span
-										className="h-4 w-4 shrink-0 rounded-full border-2 border-white shadow-[0_0_0_1px_rgba(16,47,55,0.14)]"
-										style={{ backgroundColor: layer.color }}
-									/>
-									<span className="min-w-0">
-										<span className="block text-sm font-black text-[#102f37]">
-											{layer.label}
-										</span>
-										<span className="block truncate text-xs text-[#5b777c]">
-											{layer.description}
-										</span>
-									</span>
-									<span className="ml-auto text-xs font-black uppercase tracking-[0.14em] text-[#2a7f72]">
-										{active ? "ON" : "OFF"}
-									</span>
-								</button>
-							);
-						})}
-					</div>
-
-					<QuickSimulationPanel
-						input={simulationInput}
-						onInputChange={setSimulationInput}
-					/>
-
 					<div className="mt-4 rounded-2xl border border-[#d9e7e4] bg-white/72 p-3">
-						{showInfo ? (
+						{hoverInfo ? (
 							<div className="flex gap-3">
 								<span
 									className="mt-1 h-3 w-3 shrink-0 rounded-full"
-									style={{ backgroundColor: showInfo.accent }}
+									style={{ backgroundColor: hoverInfo.accent }}
 								/>
 								<div className="min-w-0 flex-1">
 									<div className="flex items-start justify-between gap-2">
 										<div>
 											<p className="m-0 text-[10px] font-black uppercase tracking-[0.2em] text-[#5b777c]">
-												{showInfo.kind}
+												{hoverInfo.kind}
 											</p>
 											<p className="m-0 mt-0.5 text-sm font-black text-[#102f37]">
-												{showInfo.title}
+												{hoverInfo.title}
 											</p>
 											<p className="m-0 mt-1 break-words text-xs leading-4 text-[#5b777c]">
-												{showInfo.description}
+												{hoverInfo.description}
 											</p>
 										</div>
-										{showInfo.pinned && (
-											<button
-												type="button"
-												onClick={clearPinned}
-												className="ml-2 shrink-0 rounded-full border border-[#c2d5d8] bg-white/80 p-1.5 text-[10px] font-bold text-[#24525b] shadow-sm transition hover:-translate-y-0.5 hover:border-[#5bb6a6] hover:bg-white"
-												aria-label="Cerrar detalle"
-											>
-												✕
-											</button>
-										)}
+										<button
+											type="button"
+											onClick={clearPinned}
+											className="ml-2 shrink-0 rounded-full border border-[#c2d5d8] bg-white/80 p-1.5 text-[10px] font-bold text-[#24525b] shadow-sm transition hover:-translate-y-0.5 hover:border-[#5bb6a6] hover:bg-white"
+											aria-label="Cerrar"
+										>
+											✕
+										</button>
 									</div>
-									{showInfo.details?.length ? (
+									{hoverInfo.details?.length ? (
 										<div className="mt-2 grid gap-1.5">
-											{showInfo.details.map((detail) => (
+											{hoverInfo.details.map((detail) => (
 												<p
 													key={detail}
 													className="m-0 rounded-xl bg-[#f5faf7] px-2.5 py-1.5 text-xs font-semibold leading-4 break-words text-[#315a61]"
@@ -160,29 +86,16 @@ export function SantiagoMapPage() {
 											))}
 										</div>
 									) : null}
-									{showInfo.note ? (
-										<p className="m-0 mt-2 text-[11px] font-semibold leading-4 text-[#5b777c]">
-											{showInfo.note}
-										</p>
-									) : null}
-									{pinnedNote ? (
-										<p className="m-0 mt-2 text-[11px] font-semibold leading-4 text-[#789197]">
-											{pinnedNote}
-										</p>
-									) : null}
 								</div>
 							</div>
 						) : (
 							<p className="m-0 text-xs leading-4 text-[#5b777c]">
-								{activeLayerCount} de {LAYER_TOGGLES.length} capas activas.
-								Explora pasando el cursor sobre la red.
+								Sin selección
 							</p>
 						)}
 					</div>
 				</div>
 			</section>
-
-			<MapLegend />
 		</main>
 	);
 }

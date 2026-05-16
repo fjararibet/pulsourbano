@@ -9,6 +9,8 @@ import {
 	COMUNA_COLOR,
 	COMUNA_HOVER_LAYER_IDS,
 	COMUNA_INTERACTION_LAYER_ID,
+	COMUNA_SELECTED_COLOR,
+	COMUNA_SELECTED_LAYER_IDS,
 	EMPTY_BUS_HOVER_FILTER,
 	EMPTY_COMUNA_HOVER_FILTER,
 	LAYER_TOGGLES,
@@ -34,24 +36,8 @@ export function addComunaLayers(
 		type: "fill",
 		source: "comunas-rm",
 		paint: {
-			"fill-color": [
-				"match",
-				["get", "Provincia"],
-				"Santiago",
-				COMUNA_COLOR,
-				"Cordillera",
-				"#168a76",
-				"Chacabuco",
-				"#d75235",
-				"Maipo",
-				"#f2a900",
-				"Melipilla",
-				"#0f8f98",
-				"Talagante",
-				"#ba5bd5",
-				COMUNA_COLOR,
-			],
-			"fill-opacity": 0.1,
+			"fill-color": COMUNA_COLOR,
+			"fill-opacity": 0,
 		},
 	});
 	map.addLayer({
@@ -94,11 +80,35 @@ export function addComunaLayers(
 			"line-opacity": 1,
 		},
 	});
+	map.addLayer({
+		id: "comunas-selected-fill",
+		type: "fill",
+		source: "comunas-rm",
+		filter: EMPTY_COMUNA_HOVER_FILTER,
+		paint: {
+			"fill-color": COMUNA_SELECTED_COLOR,
+			"fill-opacity": 0.45,
+		},
+	});
+	map.addLayer({
+		id: "comunas-selected-outline",
+		type: "line",
+		source: "comunas-rm",
+		filter: EMPTY_COMUNA_HOVER_FILTER,
+		paint: {
+			"line-color": COMUNA_SELECTED_COLOR,
+			"line-width": ["interpolate", ["linear"], ["zoom"], 9, 3, 13, 5],
+			"line-opacity": 1,
+		},
+	});
 }
 
 /** Mantiene el resaltado de comuna por encima de las demás capas. */
 export function bringComunaHoverToFront(map: MapLibreMap) {
 	for (const layerId of COMUNA_HOVER_LAYER_IDS) {
+		if (map.getLayer(layerId)) map.moveLayer(layerId);
+	}
+	for (const layerId of COMUNA_SELECTED_LAYER_IDS) {
 		if (map.getLayer(layerId)) map.moveLayer(layerId);
 	}
 	if (map.getLayer(COMUNA_INTERACTION_LAYER_ID)) {

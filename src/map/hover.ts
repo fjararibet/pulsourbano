@@ -11,6 +11,7 @@ import {
 	COMUNA_COLOR,
 	COMUNA_HOVER_LAYER_IDS,
 	COMUNA_INTERACTION_LAYER_ID,
+	COMUNA_SELECTED_LAYER_IDS,
 	EMPTY_BUS_HOVER_FILTER,
 	EMPTY_COMUNA_HOVER_FILTER,
 } from "./config";
@@ -123,29 +124,40 @@ export function setupComunaHover(
 	pinController: HoverPinController,
 	comunaZoom: number,
 ) {
-	let activeCode: number | null = null;
+	let hoveredCode: number | null = null;
 
-	const setComunaFilter = (feature: MapGeoJSONFeature | null) => {
-		const comunaCode = feature ? getFeatureNumber(feature, "cod_comuna") : null;
-		activeCode = comunaCode;
-		const filter: FilterSpecification = comunaCode
-			? ["==", ["get", "cod_comuna"], comunaCode]
+	const setHoverFilter = (feature: MapGeoJSONFeature | null) => {
+		const code = feature ? getFeatureNumber(feature, "cod_comuna") : null;
+		hoveredCode = code;
+		const filter: FilterSpecification = code
+			? ["==", ["get", "cod_comuna"], code]
 			: EMPTY_COMUNA_HOVER_FILTER;
-
 		for (const layerId of COMUNA_HOVER_LAYER_IDS) {
 			if (map.getLayer(layerId)) map.setFilter(layerId, filter);
 		}
 	};
 
+	const setSelectedFilter = (feature: MapGeoJSONFeature | null) => {
+		const code = feature ? getFeatureNumber(feature, "cod_comuna") : null;
+		const filter: FilterSpecification = code
+			? ["==", ["get", "cod_comuna"], code]
+			: EMPTY_COMUNA_HOVER_FILTER;
+		for (const layerId of COMUNA_SELECTED_LAYER_IDS) {
+			if (map.getLayer(layerId)) map.setFilter(layerId, filter);
+		}
+	};
+
 	const clearComunaEffects = () => {
-		setComunaFilter(null);
+		setHoverFilter(null);
+		setSelectedFilter(null);
+		hoveredCode = null;
 		map.getCanvas().style.cursor = "";
 		popup.remove();
 	};
 
 	const clearHover = () => {
-		if (activeCode === null) return;
-		clearComunaEffects();
+		if (hoveredCode === null) return;
+		setHoverFilter(null);
 		if (!pinController.isPinned()) setHoverInfo(null);
 	};
 
@@ -154,7 +166,7 @@ export function setupComunaHover(
 		const feature = event.features?.[0];
 		if (!feature) return;
 		const info = formatComunaHover(feature, false);
-		setComunaFilter(feature);
+		setHoverFilter(feature);
 		map.getCanvas().style.cursor = "pointer";
 		popup.setLngLat(event.lngLat).setHTML(createPopupHtml(info)).addTo(map);
 		setHoverInfo(info);
@@ -172,9 +184,15 @@ export function setupComunaHover(
 			new maplibregl.LngLatBounds(coords[0], coords[0]),
 		);
 		map.fitBounds(bounds, { padding: 48, maxZoom: comunaZoom, duration: 500 });
+		setHoverFilter(null);
+		setSelectedFilter(feature);
 		const info = formatComunaHover(feature, true);
-		setComunaFilter(feature);
-		pinController.pin(info, clearComunaEffects);
+		pinController.pin(info, () => {
+			setSelectedFilter(null);
+			hoveredCode = null;
+			map.getCanvas().style.cursor = "";
+			popup.remove();
+		});
 		map.getCanvas().style.cursor = "pointer";
 		popup.setLngLat(event.lngLat).setHTML(createPopupHtml(info)).addTo(map);
 	};

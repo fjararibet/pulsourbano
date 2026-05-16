@@ -8,6 +8,12 @@ export const INITIAL_ZOOM = 11;
 /** Zoom al hacer click en una comuna. */
 export const COMUNA_ZOOM = 13;
 
+/** Color para hover de comuna. */
+export const COMUNA_HOVER_COLOR = "#6f5bd5";
+
+/** Color para comuna seleccionada (pin active). */
+export const COMUNA_SELECTED_COLOR = "#1e3a8a";
+
 /** Color base de la red de buses RED. */
 export const BUS_COLOR = "#d75235";
 
@@ -24,6 +30,12 @@ export const COMUNA_INTERACTION_LAYER_ID = "comunas-hitbox";
 export const COMUNA_HOVER_LAYER_IDS = [
 	"comunas-hover-fill",
 	"comunas-hover-outline",
+] as const;
+
+/** Capas visuales de la comuna seleccionada (pin active). */
+export const COMUNA_SELECTED_LAYER_IDS = [
+	"comunas-selected-fill",
+	"comunas-selected-outline",
 ] as const;
 
 /**
