@@ -13,6 +13,14 @@ __unconfig*
 todos.json
 .husky
 
+# generated
+src/routeTree.gen.ts
+
+# local dev artifacts
+.cache/
+.playwright-mcp/
+test-results/
+
 # data
 *.csv
 *.accdb
