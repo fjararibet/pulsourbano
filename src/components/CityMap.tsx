@@ -5,7 +5,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import maplibregl from "maplibre-gl";
 import { mockStations } from "#/lib/air-quality-mock";
 import { getAqiColor } from "#/lib/air-quality-types";
-import { computeAqiAt } from "#/lib/aqi-field";
+import { computeAqiAt, fieldStations } from "#/lib/aqi-field";
 import { fetchCustomStyle } from "#/lib/map-style";
 import { createAqiFieldLayer } from "./AqiFieldLayer";
 
@@ -18,6 +18,7 @@ const SANTIAGO = {
 
 interface CityMapProps {
 	showStations: boolean;
+	isEditMode: boolean;
 }
 
 interface TooltipData {
@@ -26,7 +27,7 @@ interface TooltipData {
 	aqi: number;
 }
 
-export default function CityMap({ showStations }: CityMapProps) {
+export default function CityMap({ showStations, isEditMode }: CityMapProps) {
 	const [isClient, setIsClient] = useState(false);
 	// biome-ignore lint/suspicious/noExplicitAny: style JSON is dynamic
 	const [mapStyle, setMapStyle] = useState<any>(null);
@@ -86,9 +87,14 @@ export default function CityMap({ showStations }: CityMapProps) {
 		markersRef.current = [];
 
 		if (showStations) {
-			for (const station of mockStations) {
+			for (let i = 0; i < mockStations.length; i++) {
+				const station = mockStations[i];
+				if (!station) continue;
 				const el = document.createElement("div");
 				const color = getAqiColor(station.aqi.value);
+				const editStyle = isEditMode
+					? "border-style: dashed; cursor: grab;"
+					: "cursor: pointer;";
 				el.style.cssText = `
 					width: 32px;
 					height: 32px;
@@ -102,22 +108,35 @@ export default function CityMap({ showStations }: CityMapProps) {
 					font-weight: 700;
 					border: 2px solid white;
 					box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-					cursor: pointer;
 					font-family: Manrope, sans-serif;
+					${editStyle}
 				`;
 				el.textContent = String(station.aqi.value);
 
 				const marker = new maplibregl.Marker({
 					element: el,
 					anchor: "center",
+					draggable: isEditMode,
 				})
 					.setLngLat([station.longitude, station.latitude])
 					.addTo(map);
 
+				if (isEditMode) {
+					marker.on("drag", () => {
+						const lngLat = marker.getLngLat();
+						// Update mutable fieldStations so shader picks it up
+						const fs = fieldStations[i];
+						if (!fs) return;
+						fs.lat = lngLat.lat;
+						fs.lng = lngLat.lng;
+						map.triggerRepaint();
+					});
+				}
+
 				markersRef.current.push(marker);
 			}
 		}
-	}, [showStations]);
+	}, [showStations, isEditMode]);
 
 	// Tooltip on mousemove
 	useEffect(() => {

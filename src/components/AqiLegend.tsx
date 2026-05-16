@@ -3,6 +3,8 @@ import { getAqiColor } from "#/lib/air-quality-types";
 interface AqiLegendProps {
 	showStations: boolean;
 	onToggleStations: () => void;
+	isEditMode: boolean;
+	onToggleEditMode: () => void;
 }
 
 const LEVELS = [
@@ -17,6 +19,8 @@ const LEVELS = [
 export default function AqiLegend({
 	showStations,
 	onToggleStations,
+	isEditMode,
+	onToggleEditMode,
 }: AqiLegendProps) {
 	return (
 		<div className="pointer-events-auto absolute bottom-5 left-5 z-20 flex flex-col gap-2">
@@ -25,13 +29,28 @@ export default function AqiLegend({
 					<p className="text-[11px] font-semibold uppercase tracking-wide text-white/90">
 						Calidad del Aire
 					</p>
-					<button
-						onClick={onToggleStations}
-						className="rounded-md bg-white/15 px-2 py-1 text-[10px] font-semibold text-white/90 transition hover:bg-white/25"
-						type="button"
-					>
-						Estaciones {showStations ? "ON" : "OFF"}
-					</button>
+					<div className="flex gap-1.5">
+						<button
+							onClick={onToggleStations}
+							className="rounded-md bg-white/15 px-2 py-1 text-[10px] font-semibold text-white/90 transition hover:bg-white/25"
+							type="button"
+						>
+							Estaciones {showStations ? "ON" : "OFF"}
+						</button>
+						{showStations && (
+							<button
+								onClick={onToggleEditMode}
+								className={`rounded-md px-2 py-1 text-[10px] font-semibold transition ${
+									isEditMode
+										? "bg-lime-500/80 text-white hover:bg-lime-500"
+										: "bg-white/15 text-white/90 hover:bg-white/25"
+								}`}
+								type="button"
+							>
+								{isEditMode ? "Editando" : "Editar"}
+							</button>
+						)}
+					</div>
 				</div>
 				<div className="flex h-2 overflow-hidden rounded-full">
 					{LEVELS.map((level) => (

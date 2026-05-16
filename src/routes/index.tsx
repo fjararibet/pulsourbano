@@ -5,13 +5,16 @@ import CityMap from "../components/CityMap";
 
 function App() {
 	const [showStations, setShowStations] = useState(false);
+	const [isEditMode, setIsEditMode] = useState(false);
 
 	return (
 		<div className="relative h-dvh w-full">
-			<CityMap showStations={showStations} />
+			<CityMap showStations={showStations} isEditMode={isEditMode} />
 			<AqiLegend
 				showStations={showStations}
 				onToggleStations={() => setShowStations((v) => !v)}
+				isEditMode={isEditMode}
+				onToggleEditMode={() => setIsEditMode((v) => !v)}
 			/>
 		</div>
 	);
