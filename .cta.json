@@ -25,7 +25,6 @@
     "shadcn",
     "t3env",
     "table",
-    "tRPC",
     "tanstack-query",
     "store"
   ]

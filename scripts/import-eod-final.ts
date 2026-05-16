@@ -457,7 +457,12 @@ for (const [tableName, fileName, mappings] of tables) {
 		continue;
 	}
 
-	const csvHeaders = lines[0].split(",").map((h) => h.trim());
+	const headerLine = lines[0];
+	if (headerLine === undefined) {
+		console.log(`${tableName}: empty table, skipping`);
+		continue;
+	}
+	const csvHeaders = headerLine.split(",").map((h) => h.trim());
 	const columnIndexMap: Record<string, number> = {};
 	csvHeaders.forEach((h, idx) => {
 		columnIndexMap[h] = idx;
