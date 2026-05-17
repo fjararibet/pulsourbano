@@ -134,10 +134,13 @@ export function useSantiagoMap(setHoverInfo: (info: HoverInfo) => void) {
 	}, [setHoverInfo]);
 
 	const resetView = () => {
-		mapRef.current?.setCenter(SANTIAGO_CENTER);
-		mapRef.current?.setZoom(INITIAL_ZOOM);
-		mapRef.current?.setBearing(0);
-		mapRef.current?.setPitch(0);
+		mapRef.current?.easeTo({
+			center: SANTIAGO_CENTER,
+			zoom: INITIAL_ZOOM,
+			bearing: 0,
+			pitch: 0,
+			duration: 200,
+		});
 	};
 
 	return { containerRef, clearPinned, resetView };

@@ -183,7 +183,7 @@ export function setupComunaHover(
 			(b, [lng, lat]) => b.extend([lng, lat]),
 			new maplibregl.LngLatBounds(coords[0], coords[0]),
 		);
-		map.fitBounds(bounds, { padding: 48, maxZoom: comunaZoom, duration: 500 });
+		map.fitBounds(bounds, { padding: 48, maxZoom: comunaZoom, duration: 200 });
 		setHoverFilter(null);
 		setSelectedFilter(feature);
 		const info = formatComunaHover(feature, true);
