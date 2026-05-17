@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
-import { getComparadorStats } from "./stats.fn";
+import { getComparadorStats } from "#/lib/comparador/stats.fn";
 
 const searchSchema = z.object({
 	origen: z.string().optional(),
@@ -20,7 +20,13 @@ export const Route = createFileRoute("/api/comparador/stats")({
 		const result = await getComparadorStats({
 			data: { origen: deps.origen, destino: deps.destino },
 		});
-		console.log("[api/comparador/stats]", deps.origen, "→", deps.destino, result);
+		console.log(
+			"[api/comparador/stats]",
+			deps.origen,
+			"→",
+			deps.destino,
+			result,
+		);
 		return result;
 	},
 });

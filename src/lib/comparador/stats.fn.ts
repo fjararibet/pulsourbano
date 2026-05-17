@@ -57,14 +57,20 @@ export const getComparadorStats = createServerFn({ method: "GET" })
 				env.EOD2012.prepare(statsQuery) as ReturnType<
 					typeof env.EOD2012.prepare
 				> & {
-					bind: (a: string, b: string) => {
+					bind: (
+						a: string,
+						b: string,
+					) => {
 						all(): Promise<{ results: ModoRow[] }>;
 					};
 				},
 				env.EOD2012.prepare(totalQuery) as ReturnType<
 					typeof env.EOD2012.prepare
 				> & {
-					bind: (a: string, b: string) => {
+					bind: (
+						a: string,
+						b: string,
+					) => {
 						all(): Promise<{ results: Array<{ total: number }> }>;
 					};
 				},
