@@ -183,9 +183,8 @@ export function setupComunaHover(
 			(b, [lng, lat]) => b.extend([lng, lat]),
 			new maplibregl.LngLatBounds(coords[0], coords[0]),
 		);
-		map.fitBounds(bounds, { padding: 48, maxZoom: comunaZoom, duration: 200 });
-		setHoverFilter(null);
-		setSelectedFilter(feature);
+		map.fitBounds(bounds, { padding: 48, maxZoom: comunaZoom, duration: 450 });
+
 		const info = formatComunaHover(feature, true);
 		pinController.pin(info, () => {
 			setSelectedFilter(null);
@@ -193,6 +192,9 @@ export function setupComunaHover(
 			map.getCanvas().style.cursor = "";
 			popup.remove();
 		});
+
+		setHoverFilter(null);
+		setSelectedFilter(feature);
 		map.getCanvas().style.cursor = "pointer";
 		popup.setLngLat(event.lngLat).setHTML(createPopupHtml(info)).addTo(map);
 	};
