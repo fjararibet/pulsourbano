@@ -30,6 +30,15 @@ export const BUS_COLOR = "#d75235";
 /** Identificador del ícono de flecha que se dibuja sobre los recorridos. */
 export const BUS_ARROW_ICON_ID = "bus-route-arrow";
 
+/** Color de la flecha de ruta origen-destino. */
+export const OD_COLOR = "#e67e22";
+
+/** Identificador del ícono de flecha para flujos OD. */
+export const OD_ARROW_ICON_ID = "od-flow-arrow";
+
+/** ID de la fuente GeoJSON de flujos OD. */
+export const OD_SOURCE_ID = "od-flows";
+
 /** Color base de la capa de comunas RM. */
 export const COMUNA_COLOR = "#6f5bd5";
 

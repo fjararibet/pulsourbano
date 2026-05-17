@@ -1,12 +1,14 @@
 import "maplibre-gl/dist/maplibre-gl.css";
+import type { Map as MapLibreMap } from "maplibre-gl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { DESTINO_COLOR, ORIGEN_COLOR } from "./config";
+import { clearODData, setODData } from "./layers";
+import { getComunaOD } from "./server-comunas";
 import type { HoverInfo, InteractionMode } from "./types";
 import { useSantiagoMap } from "./use-santiago-map";
 
 export function SantiagoMapPage() {
 	const [hoverInfo, setHoverInfo] = useState<HoverInfo>(null);
-	const [mapReady, setMapReady] = useState(false);
 	const [mode, setMode] = useState<InteractionMode>("comunas");
 	const modeRef = useRef<InteractionMode>("comunas");
 	modeRef.current = mode;
@@ -14,8 +16,18 @@ export function SantiagoMapPage() {
 		origen: string | null;
 		destino: string | null;
 	}>({ origen: null, destino: null });
+	const [showOD, setShowOD] = useState(false);
+	const mapRef = useRef<MapLibreMap | null>(null);
+	const savedViewRef = useRef<{
+		center: [number, number];
+		zoom: number;
+	} | null>(null);
 
 	const handleSelectComuna = useCallback((name: string) => {
+		if (showOD && mapRef.current) {
+			clearODData(mapRef.current);
+			setShowOD(false);
+		}
 		setSelections((prev) => {
 			if (prev.origen === name) return { origen: null, destino: null };
 			if (prev.destino === name) return { ...prev, destino: null };
@@ -23,7 +35,7 @@ export function SantiagoMapPage() {
 			if (name === prev.origen) return prev;
 			return { ...prev, destino: name };
 		});
-	}, []);
+	}, [showOD]);
 
 	const clearSelections = useCallback(() => {
 		setSelections({ origen: null, destino: null });
@@ -33,7 +45,6 @@ export function SantiagoMapPage() {
 		containerRef,
 		clearPinned,
 		resetView,
-		mapReadyRef,
 		applyModeVisibility,
 	} = useSantiagoMap(
 		setHoverInfo,
@@ -41,34 +52,97 @@ export function SantiagoMapPage() {
 			origen: selections.origen,
 			destino: selections.destino,
 			onSelectComuna: handleSelectComuna,
+			onMapReady: (map) => {
+				mapRef.current = map;
+			},
 		},
 		modeRef,
 	);
 
-	useEffect(() => {
-		const check = setInterval(() => {
-			if (mapReadyRef.current) {
-				setMapReady(true);
-				clearInterval(check);
+	const clearPinnedWithReset = useCallback(() => {
+		savedViewRef.current = null;
+		setShowOD(false);
+		clearPinned();
+	}, [clearPinned]);
+
+	const handleToggleOD = useCallback(() => {
+		setShowOD((v) => {
+			const next = !v;
+			if (!next && mapRef.current) {
+				clearODData(mapRef.current);
 			}
-		}, 50);
-		return () => clearInterval(check);
-	}, [mapReadyRef]);
+			return next;
+		});
+	}, []);
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
 			if (e.key === "Escape") {
+				savedViewRef.current = null;
+				if (showOD && mapRef.current) {
+					clearODData(mapRef.current);
+				}
+				setShowOD(false);
 				clearPinned();
 				clearSelections();
 			}
 		};
 		document.addEventListener("keydown", handleKeyDown);
 		return () => document.removeEventListener("keydown", handleKeyDown);
-	}, [clearPinned, clearSelections]);
+	}, [clearPinned, clearSelections, showOD]);
 
 	useEffect(() => {
 		applyModeVisibility(mode);
 	}, [mode, applyModeVisibility]);
+
+	useEffect(() => {
+		if (!showOD) return;
+		const nombreComuna = selections.origen || hoverInfo?.title;
+		if (!nombreComuna) return;
+		const map = mapRef.current;
+		if (!map) return;
+
+		savedViewRef.current = {
+			center: map.getCenter().toArray() as [number, number],
+			zoom: map.getZoom(),
+		};
+		map.flyTo({
+			center: [-70.6483, -33.4569],
+			zoom: 10.5,
+			duration: 800,
+		});
+
+		(
+			getComunaOD as (opts: {
+				data: { nombreComuna: string };
+			}) => Promise<GeoJSON.FeatureCollection>
+		)({
+			data: { nombreComuna },
+		})
+			.then((geojson) => {
+				if (mapRef.current) setODData(mapRef.current, geojson);
+			})
+			.catch(console.error);
+	}, [showOD, selections.origen, hoverInfo?.title]);
+
+	useEffect(() => {
+		if (!selections.origen && !selections.destino) {
+			if (mapRef.current) {
+				mapRef.current.flyTo({
+					center: [-70.6483, -33.4569],
+					zoom: 11,
+					bearing: 0,
+					pitch: 0,
+					duration: 650,
+				});
+			}
+			if (showOD) {
+				setShowOD(false);
+				if (mapRef.current) clearODData(mapRef.current);
+			}
+			return;
+		}
+	}, [selections.origen, selections.destino]);
 
 	const changeMode = (nextMode: InteractionMode) => {
 		modeRef.current = nextMode;
@@ -87,17 +161,6 @@ export function SantiagoMapPage() {
 			<div className="absolute inset-0 z-0">
 				<div ref={containerRef} className="h-full w-full" />
 			</div>
-
-			{!mapReady && (
-				<div className="absolute inset-0 z-20 flex items-center justify-center bg-[#edf4e8]">
-					<div className="flex flex-col items-center gap-3">
-						<div className="h-8 w-8 animate-spin rounded-full border-4 border-[#b9d7d1] border-t-[#24525b]" />
-						<span className="text-sm font-medium text-[#5b777c]">
-							Cargando mapa...
-						</span>
-					</div>
-				</div>
-			)}
 
 			<div className="absolute top-2 right-2 z-20 flex overflow-hidden rounded-full border border-white/70 bg-white/90 shadow-lg backdrop-blur-xl sm:top-4 sm:right-4">
 				<button
@@ -139,7 +202,7 @@ export function SantiagoMapPage() {
 				) : null}
 
 				<div className="pointer-events-auto w-full rounded-2xl border border-white/70 bg-white/90 px-4 py-3 shadow-[0_-12px_40px_rgba(16,47,55,0.16)] backdrop-blur-xl sm:rounded-none sm:border-0 sm:bg-transparent sm:shadow-none sm:backdrop-blur-none">
-					{hoverInfo ? (
+					{hoverInfo && !selections.origen ? (
 						<div className="flex gap-3">
 							<span
 								className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full"
@@ -155,14 +218,30 @@ export function SantiagoMapPage() {
 											{hoverInfo.title}
 										</p>
 									</div>
-									<button
-										type="button"
-										onClick={clearPinned}
-										className="-mr-1 -mt-1 shrink-0 rounded-full p-1.5 text-[10px] font-bold text-[#5b777c] transition hover:bg-[#eef4f1] hover:text-[#24525b]"
-										aria-label="Cerrar"
-									>
-										✕
-									</button>
+									<div className="flex items-center gap-2">
+										{hoverInfo.kind === "Comuna RM" &&
+											!selections.origen && (
+												<button
+													type="button"
+													onClick={handleToggleOD}
+													className={`shrink-0 rounded-full border px-2 py-0.5 text-sm font-bold transition ${
+														showOD
+															? "border-[#e67e22] bg-[#e67e22] text-white"
+															: "border-[#b9d7d1] text-[#24525b] hover:border-[#e67e22]"
+													}`}
+												>
+													Destinos regulares
+												</button>
+											)}
+										<button
+											type="button"
+											onClick={clearPinnedWithReset}
+											className="-mr-1 -mt-1 shrink-0 rounded-full p-1.5 text-[10px] font-bold text-[#5b777c] transition hover:bg-[#eef4f1] hover:text-[#24525b]"
+											aria-label="Cerrar"
+										>
+											✕
+										</button>
+									</div>
 								</div>
 								{hoverInfo.details?.length ? (
 									<div className="mt-2 flex flex-wrap gap-1">
@@ -182,65 +261,76 @@ export function SantiagoMapPage() {
 						<p className="m-0 text-center text-xs font-medium text-[#5b777c]">
 							Selecciona una estación de metro
 						</p>
+					) : mode === "comunas" && selections.origen && selections.destino ? (
+						<div className="flex flex-col gap-2">
+							<div className="flex items-center gap-2">
+								<span
+									className="h-3 w-3 shrink-0 rounded-full"
+									style={{ backgroundColor: ORIGEN_COLOR }}
+								/>
+								<span className="text-sm font-bold text-[#102f37]">
+									Origen: {selections.origen}
+								</span>
+							</div>
+							<div className="flex items-center gap-2">
+								<span
+									className="h-3 w-3 shrink-0 rounded-full"
+									style={{ backgroundColor: DESTINO_COLOR }}
+								/>
+								<span className="text-sm font-bold text-[#102f37]">
+									Destino: {selections.destino}
+								</span>
+							</div>
+						</div>
+					) : mode === "comunas" && selections.origen && !selections.destino ? (
+						<div className="flex flex-col gap-2">
+							<div className="flex items-center gap-2">
+								<span
+									className="h-3 w-3 shrink-0 rounded-full"
+									style={{ backgroundColor: ORIGEN_COLOR }}
+								/>
+								<span className="text-sm font-bold text-[#102f37]">
+									{selections.origen}
+								</span>
+								<button
+									type="button"
+									onClick={handleToggleOD}
+									className={`shrink-0 rounded-full border px-2 py-0.5 text-sm font-bold transition ${
+										showOD
+											? "border-[#e67e22] bg-[#e67e22] text-white"
+											: "border-[#b9d7d1] text-[#24525b] hover:border-[#e67e22]"
+									}`}
+								>
+									Destinos regulares
+								</button>
+								<button
+									type="button"
+									onClick={() =>
+										setSelections((p) => ({
+											...p,
+											origen: null,
+											destino: null,
+										}))
+									}
+									className="ml-auto shrink-0 rounded-full p-1 text-[10px] font-bold text-[#5b777c] transition hover:bg-[#eef4f1] hover:text-[#24525b]"
+									aria-label="Quitar origen"
+								>
+									✕
+								</button>
+							</div>
+							<p className="m-0 text-center text-xs font-medium text-[#5b777c]">
+								Selecciona una comuna de destino
+							</p>
+						</div>
 					) : (
 						<div className="flex flex-col gap-2">
-							{selections.origen ? (
-								<div className="flex items-center gap-2">
-									<span
-										className="h-3 w-3 shrink-0 rounded-full"
-										style={{ backgroundColor: ORIGEN_COLOR }}
-									/>
-									<span className="text-sm font-bold text-[#102f37]">
-										Origen: {selections.origen}
-									</span>
-									<button
-										type="button"
-										onClick={() =>
-											setSelections((p) => ({
-												...p,
-												origen: null,
-												destino: null,
-											}))
-										}
-										className="ml-auto shrink-0 rounded-full p-1 text-[10px] font-bold text-[#5b777c] transition hover:bg-[#eef4f1] hover:text-[#24525b]"
-										aria-label="Quitar origen"
-									>
-										✕
-									</button>
-								</div>
-							) : null}
-							{selections.destino ? (
-								<div className="flex items-center gap-2">
-									<span
-										className="h-3 w-3 shrink-0 rounded-full"
-										style={{ backgroundColor: DESTINO_COLOR }}
-									/>
-									<span className="text-sm font-bold text-[#102f37]">
-										Destino: {selections.destino}
-									</span>
-									<button
-										type="button"
-										onClick={() =>
-											setSelections((p) => ({ ...p, destino: null }))
-										}
-										className="ml-auto shrink-0 rounded-full p-1 text-[10px] font-bold text-[#5b777c] transition hover:bg-[#eef4f1] hover:text-[#24525b]"
-										aria-label="Quitar destino"
-									>
-										✕
-									</button>
-								</div>
-							) : null}
 							{!selections.origen ? (
 								<p className="m-0 text-center text-xs font-medium text-[#5b777c]">
 									Selecciona una comuna de origen
 								</p>
-							) : !selections.destino ? (
-								<p className="m-0 text-center text-xs font-medium text-[#5b777c]">
-									Selecciona una comuna de destino
-								</p>
 							) : (
 								<p className="m-0 text-center text-xs font-medium text-[#5b777c]">
-									Origen y destino seleccionados
+									Selecciona una comuna de destino
 								</p>
 							)}
 						</div>

@@ -19,6 +19,9 @@ import {
 	EMPTY_COMUNA_NAME_FILTER,
 	LAYER_TOGGLES,
 	LOGICAL_LAYERS,
+	OD_ARROW_ICON_ID,
+	OD_COLOR,
+	OD_SOURCE_ID,
 	ORIGEN_COLOR,
 	ROUTE_ARROW_COLOR,
 	ROUTE_ARROW_ICON_ID,
@@ -888,6 +891,97 @@ function hexToRgba(hex: string, alpha: number) {
 	const green = Number.parseInt(value.slice(2, 4), 16);
 	const blue = Number.parseInt(value.slice(4, 6), 16);
 	return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+}
+
+/** Dibuja el ícono de flecha naranja para flujos OD. */
+export function ensureODArrowIcon(map: MapLibreMap) {
+	if (map.hasImage(OD_ARROW_ICON_ID)) return;
+
+	const pixelRatio = 2;
+	const width = 32;
+	const height = 16;
+	const canvas = document.createElement("canvas");
+	canvas.width = width * pixelRatio;
+	canvas.height = height * pixelRatio;
+	const context = canvas.getContext("2d");
+	if (!context) return;
+
+	const cx = width / 2;
+	const cy = height / 2;
+
+	context.scale(pixelRatio, pixelRatio);
+	context.lineCap = "round";
+	context.lineJoin = "round";
+	context.lineWidth = 2.5;
+	context.strokeStyle = "rgba(255,255,255,0.9)";
+	context.beginPath();
+	context.moveTo(cx - 8, cy);
+	context.lineTo(cx + 12, cy);
+	context.moveTo(cx + 4, cy - 3.5);
+	context.lineTo(cx + 14, cy);
+	context.lineTo(cx + 4, cy + 3.5);
+	context.stroke();
+
+	context.strokeStyle = OD_COLOR;
+	context.lineWidth = 1.5;
+	context.beginPath();
+	context.moveTo(cx - 8, cy);
+	context.lineTo(cx + 12, cy);
+	context.moveTo(cx + 4, cy - 3.5);
+	context.lineTo(cx + 14, cy);
+	context.lineTo(cx + 4, cy + 3.5);
+	context.stroke();
+
+	map.addImage(
+		OD_ARROW_ICON_ID,
+		context.getImageData(0, 0, canvas.width, canvas.height),
+		{ pixelRatio },
+	);
+}
+
+/** Agrega source y capas para flujos origen-destino. */
+export function addODLayers(map: MapLibreMap) {
+	if (!map.getSource(OD_SOURCE_ID)) {
+		map.addSource(OD_SOURCE_ID, {
+			type: "geojson",
+			data: EMPTY_FEATURE_COLLECTION,
+			lineMetrics: true,
+		});
+	}
+
+	if (!map.getLayer("od-flow-lines")) {
+		map.addLayer({
+			id: "od-flow-lines",
+			type: "line",
+			source: OD_SOURCE_ID,
+			paint: {
+				"line-color": OD_COLOR,
+				"line-width": [
+					"interpolate",
+					["linear"],
+					["zoom"],
+					10,
+					0.4,
+					13,
+					1,
+					15,
+					1.8,
+				],
+				"line-opacity": 0.7,
+			},
+		});
+	}
+}
+
+export function setODData(map: MapLibreMap, data: GeoJSON.FeatureCollection) {
+	const source = map.getSource(OD_SOURCE_ID);
+	if (source && "setData" in source) {
+		(source as GeoJSONSource).setData(data);
+	}
+}
+
+export function clearODData(map: MapLibreMap) {
+	setODData(map, EMPTY_FEATURE_COLLECTION);
 }
 
 /**

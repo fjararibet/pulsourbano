@@ -28,6 +28,7 @@ import {
 import {
 	addComunaLayers,
 	addMetroLayers,
+	addODLayers,
 	addRouteArrowLayers,
 	bringComunaHoverToFront,
 	bringRouteArrowToFront,
@@ -43,6 +44,7 @@ type DualSelect = {
 	origen: string | null;
 	destino: string | null;
 	onSelectComuna: (name: string) => void;
+	onMapReady?: (map: MapLibreMap) => void;
 };
 
 interface RouteVariant {
@@ -201,6 +203,7 @@ export function useSantiagoMap(
 				if (comunas) addComunaLayers(map, comunas);
 				if (metro) addMetroLayers(map, metro);
 				if (comunas) bringComunaHoverToFront(map);
+				addODLayers(map);
 				addRouteArrowLayers(map);
 				bringRouteArrowToFront(map);
 				if (containerRef.current) {
@@ -241,6 +244,7 @@ export function useSantiagoMap(
 				}
 
 				mapReadyRef.current = true;
+				dualSelect?.onMapReady?.(map);
 			});
 		})();
 
