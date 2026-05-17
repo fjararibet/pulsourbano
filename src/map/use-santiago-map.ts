@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef } from "react";
 import {
 	type ArrowHandle,
 	type ArrowScene,
+	type ArrowStyle,
 	arcLineString,
 	createArrowScene,
 } from "./ArrowScene";
@@ -31,6 +32,36 @@ import {
 import type { HoverInfo } from "./types";
 import { getPolygonCentroid, loadGeoJSON } from "./utils";
 
+interface RouteVariant {
+	lateralOffset: number;
+	style: ArrowStyle;
+}
+
+const ROUTE_VARIANTS: RouteVariant[] = [
+	{
+		lateralOffset: 0.55,
+		style: { color: "#f59e0b", thickness: 4.5, highlightSpeed: 1.8 },
+	},
+	{
+		lateralOffset: -0.35,
+		style: {
+			color: "#3b82f6",
+			thickness: 3.2,
+			archHeight: 0.12,
+			highlightSpeed: 1.2,
+		},
+	},
+	{
+		lateralOffset: 0.15,
+		style: {
+			color: "#10b981",
+			thickness: 2.6,
+			archHeight: 0.08,
+			highlightSpeed: 2.6,
+		},
+	},
+];
+
 /**
  * Inicializa MapLibre, carga los GeoJSON de Metro/Buses/Ciclovías, monta las
  * capas y conecta los handlers de hover. Devuelve el ref del contenedor y
@@ -52,7 +83,7 @@ export function useSantiagoMap(
 	const comunasRef = useRef<GeoJSON.FeatureCollection | null>(null);
 	const routeArrowAnimCleanupRef = useRef<(() => void) | null>(null);
 	const arrowSceneRef = useRef<ArrowScene | null>(null);
-	const routeArrowHandleRef = useRef<ArrowHandle | null>(null);
+	const routeArrowHandlesRef = useRef<ArrowHandle[]>([]);
 	const mapReadyRef = useRef(false);
 	dualSelectRef.current = dualSelect;
 
@@ -124,7 +155,7 @@ export function useSantiagoMap(
 				clearPinnedEffectsRef.current = null;
 				routeArrowAnimCleanupRef.current?.();
 				routeArrowAnimCleanupRef.current = null;
-				routeArrowHandleRef.current = null;
+				routeArrowHandlesRef.current = [];
 				arrowSceneRef.current?.dispose();
 				arrowSceneRef.current = null;
 				for (const fn of hoverCleanup) fn();
@@ -238,13 +269,20 @@ export function useSantiagoMap(
 					duration: 650,
 				});
 
-				// Generar flecha de ruta origen-destino (canvas overlay 3D)
+				// Generar flechas de ruta origen-destino (3 rutas distintas)
 				const origenCentroid = getPolygonCentroid(origenFeature);
 				const destinoCentroid = getPolygonCentroid(destinoFeature);
-				if (origenCentroid && destinoCentroid && arrowSceneRef.current) {
-					const points = arcLineString(origenCentroid, destinoCentroid);
-					routeArrowHandleRef.current?.remove();
-					routeArrowHandleRef.current = arrowSceneRef.current.add({ points });
+				const scene = arrowSceneRef.current;
+				if (origenCentroid && destinoCentroid && scene) {
+					for (const handle of routeArrowHandlesRef.current) handle.remove();
+					routeArrowHandlesRef.current = ROUTE_VARIANTS.map((variant) =>
+						scene.add({
+							points: arcLineString(origenCentroid, destinoCentroid, {
+								lateralOffset: variant.lateralOffset,
+							}),
+							style: variant.style,
+						}),
+					);
 				}
 			}
 		}
@@ -256,8 +294,8 @@ export function useSantiagoMap(
 		) {
 			resetView();
 			clearRouteArrow(map);
-			routeArrowHandleRef.current?.remove();
-			routeArrowHandleRef.current = null;
+			for (const handle of routeArrowHandlesRef.current) handle.remove();
+			routeArrowHandlesRef.current = [];
 			routeArrowAnimCleanupRef.current?.();
 			routeArrowAnimCleanupRef.current = null;
 		}
@@ -265,8 +303,8 @@ export function useSantiagoMap(
 		if (origen && !destino && prevDestinoRef.current) {
 			// Se quitó el destino: limpiar flecha
 			clearRouteArrow(map);
-			routeArrowHandleRef.current?.remove();
-			routeArrowHandleRef.current = null;
+			for (const handle of routeArrowHandlesRef.current) handle.remove();
+			routeArrowHandlesRef.current = [];
 			routeArrowAnimCleanupRef.current?.();
 			routeArrowAnimCleanupRef.current = null;
 		}
