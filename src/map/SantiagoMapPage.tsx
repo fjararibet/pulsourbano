@@ -1,6 +1,13 @@
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { Map as MapLibreMap } from "maplibre-gl";
 import { useCallback, useEffect, useRef, useState } from "react";
+import {
+	getResumenViaje,
+	getStatsPorModo,
+	getTotalViajes,
+	type ModoRow,
+	type ResumenViaje,
+} from "#/lib/stats/stats.fn";
 import { DESTINO_COLOR, ORIGEN_COLOR } from "./config";
 import { MapLegend } from "./Legend";
 import { clearODData, setODData } from "./layers";
@@ -32,6 +39,12 @@ export function SantiagoMapPage() {
 		center: [number, number];
 		zoom: number;
 	} | null>(null);
+	const [statsData, setStatsData] = useState<{
+		total: number;
+		resumen: ResumenViaje;
+		statsModo: ModoRow[];
+	} | null>(null);
+	const [statsLoading, setStatsLoading] = useState(false);
 
 	const handleSelectComuna = useCallback(
 		(name: string) => {
@@ -154,17 +167,40 @@ export function SantiagoMapPage() {
 		}
 	}, [selections.origen, selections.destino, showOD]);
 
+	useEffect(() => {
+		if (mode !== "aire" || !selections.origen || !selections.destino) return;
+		setStatsLoading(true);
+		setStatsData(null);
+		Promise.all([
+			getTotalViajes({
+				data: { origen: selections.origen, destino: selections.destino },
+			}),
+			getResumenViaje({
+				data: { origen: selections.origen, destino: selections.destino },
+			}),
+			getStatsPorModo({
+				data: { origen: selections.origen, destino: selections.destino },
+			}),
+		])
+			.then(([total, resumen, statsModo]) => {
+				setStatsData({ total, resumen, statsModo });
+			})
+			.catch(console.error)
+			.finally(() => setStatsLoading(false));
+	}, [mode, selections.origen, selections.destino]);
+
 	const changeMode = (nextMode: InteractionMode) => {
 		modeRef.current = nextMode;
 		setMode(nextMode);
 		clearPinned();
-		if (nextMode !== "comunas") clearSelections();
+		if (nextMode !== "comunas" && nextMode !== "aire") clearSelections();
 		applyModeVisibility(nextMode);
 		resetView();
 	};
 
 	const hasSelection =
-		mode === "comunas" && (selections.origen || selections.destino);
+		(mode === "comunas" || mode === "aire") &&
+		(selections.origen || selections.destino);
 	const noiseDb = mode === "noise" ? (hoverInfo?.noiseDb ?? null) : null;
 
 	return (
@@ -217,6 +253,17 @@ export function SantiagoMapPage() {
 					}`}
 				>
 					Ruido
+				</button>
+				<button
+					type="button"
+					onClick={() => changeMode("aire")}
+					className={`px-3 py-1.5 text-xs font-bold transition ${
+						mode === "aire"
+							? "bg-[#f59e0b] text-white"
+							: "text-[#5b777c] hover:bg-[#f1f7f4]"
+					}`}
+				>
+					Aire
 				</button>
 			</div>
 
@@ -394,6 +441,181 @@ export function SantiagoMapPage() {
 								Selecciona una comuna de destino
 							</p>
 						</div>
+					) : mode === "aire" && selections.origen && selections.destino ? (
+						statsLoading ? (
+							<div className="flex flex-col items-center gap-2 py-4">
+								<div className="h-5 w-5 animate-spin rounded-full border-2 border-[#b9d7d1] border-t-[#f59e0b]" />
+								<p className="text-xs text-[#5b777c]">Cargando stats...</p>
+							</div>
+						) : statsData ? (
+							<div className="flex flex-col gap-3">
+								<div className="flex items-center gap-2">
+									<span
+										className="h-3 w-3 shrink-0 rounded-full"
+										style={{ backgroundColor: ORIGEN_COLOR }}
+									/>
+									<span className="text-sm font-bold text-[#102f37]">
+										{selections.origen}
+									</span>
+									<span className="text-xs text-[#5b777c]">→</span>
+									<span
+										className="h-3 w-3 shrink-0 rounded-full"
+										style={{ backgroundColor: DESTINO_COLOR }}
+									/>
+									<span className="text-sm font-bold text-[#102f37]">
+										{selections.destino}
+									</span>
+								</div>
+								<div className="grid grid-cols-2 gap-2">
+									<div className="rounded-xl border border-white/60 bg-white/70 p-3 text-center">
+										<p className="text-[9px] font-bold uppercase tracking-wider text-[#5b777c]">
+											Viajes
+										</p>
+										<p className="mt-0.5 text-lg font-black text-[#102f37]">
+											{statsData.total.toLocaleString("es-CL")}
+										</p>
+									</div>
+									<div className="rounded-xl border border-white/60 bg-white/70 p-3 text-center">
+										<p className="text-[9px] font-bold uppercase tracking-wider text-[#5b777c]">
+											Dist. Prom.
+										</p>
+										<p className="mt-0.5 text-lg font-black text-[#102f37]">
+											{statsData.resumen.distancia_promedio_km.toFixed(1)}{" "}
+											<span className="text-xs font-medium text-[#5b777c]">
+												km
+											</span>
+										</p>
+									</div>
+									<div className="rounded-xl border border-white/60 bg-white/70 p-3 text-center">
+										<p className="text-[9px] font-bold uppercase tracking-wider text-[#5b777c]">
+											Tiempo Prom.
+										</p>
+										<p className="mt-0.5 text-lg font-black text-[#102f37]">
+											{statsData.resumen.tiempo_promedio_min.toFixed(0)}{" "}
+											<span className="text-xs font-medium text-[#5b777c]">
+												min
+											</span>
+										</p>
+									</div>
+									<div className="rounded-xl border border-white/60 bg-white/70 p-3 text-center">
+										<p className="text-[9px] font-bold uppercase tracking-wider text-[#5b777c]">
+											Vel. Prom.
+										</p>
+										<p className="mt-0.5 text-lg font-black text-[#102f37]">
+											{(
+												statsData.resumen.velocidad_promedio_kmh / 1000
+											).toFixed(1)}{" "}
+											<span className="text-xs font-medium text-[#5b777c]">
+												km/h
+											</span>
+										</p>
+									</div>
+								</div>
+								<div className="flex flex-wrap gap-1.5 border-t border-[#dce8e3] pt-3">
+									{[
+										{
+											label: "Bici",
+											value: statsData.resumen.n_viajes_bicicleta,
+											color: "#10b981",
+										},
+										{
+											label: "Auto",
+											value: statsData.resumen.n_viajes_auto,
+											color: "#f59e0b",
+										},
+										{
+											label: "Bus",
+											value: statsData.resumen.n_viajes_micro,
+											color: "#3b82f6",
+										},
+										{
+											label: "Metro",
+											value: statsData.resumen.n_viajes_metro,
+											color: "#8b5cf6",
+										},
+										{
+											label: "Pie",
+											value: statsData.resumen.n_viajes_pie,
+											color: "#6f5bd5",
+										},
+									].map((m) => (
+										<span
+											key={m.label}
+											className="flex items-center gap-1 rounded-full bg-[#f1f7f4] px-2 py-0.5 text-[11px] font-semibold text-[#315a61]"
+										>
+											<span
+												className="h-1.5 w-1.5 shrink-0 rounded-full"
+												style={{ backgroundColor: m.color }}
+											/>
+											{m.label}: {m.value.toLocaleString("es-CL")}
+										</span>
+									))}
+								</div>
+								{statsData.statsModo.length > 0 ? (
+									<div className="mt-2 border-t border-[#dce8e3] pt-3">
+										<p className="m-0 mb-2 text-[9px] font-black uppercase tracking-[0.18em] text-[#5b777c]">
+											Por Modo
+										</p>
+										{statsData.statsModo.map((row) => (
+											<div
+												key={row.modo ?? "∅"}
+												className="mb-1.5 flex items-center gap-2"
+											>
+												<span className="w-20 text-xs font-medium text-[#102f37]">
+													{row.modo ?? "—"}
+												</span>
+												<div className="relative h-2 flex-1 rounded-full bg-[#eef4eb]">
+													<div
+														className="absolute top-0 left-0 h-full rounded-full bg-[#f59e0b]"
+														style={{ width: `${row.porcentaje}%` }}
+													/>
+												</div>
+												<span className="w-12 text-right text-xs font-bold text-[#102f37]">
+													{row.porcentaje}%
+												</span>
+											</div>
+										))}
+									</div>
+								) : null}
+							</div>
+						) : (
+							<p className="m-0 text-center text-xs text-[#5b777c]">
+								No hay datos para este par de comunas
+							</p>
+						)
+					) : mode === "aire" && selections.origen && !selections.destino ? (
+						<div className="flex flex-col gap-2">
+							<div className="flex items-center gap-2">
+								<span
+									className="h-3 w-3 shrink-0 rounded-full"
+									style={{ backgroundColor: ORIGEN_COLOR }}
+								/>
+								<span className="text-sm font-bold text-[#102f37]">
+									{selections.origen}
+								</span>
+								<button
+									type="button"
+									onClick={() =>
+										setSelections((p) => ({
+											...p,
+											origen: null,
+											destino: null,
+										}))
+									}
+									className="ml-auto shrink-0 rounded-full p-1 text-[10px] font-bold text-[#5b777c] transition hover:bg-[#eef4f1] hover:text-[#24525b]"
+									aria-label="Quitar origen"
+								>
+									✕
+								</button>
+							</div>
+							<p className="m-0 text-center text-xs font-medium text-[#5b777c]">
+								Selecciona una comuna de destino
+							</p>
+						</div>
+					) : mode === "aire" ? (
+						<p className="m-0 text-center text-xs font-medium text-[#5b777c]">
+							Selecciona origen y destino en el mapa
+						</p>
 					) : (
 						<p className="m-0 text-center text-xs font-medium text-[#5b777c]">
 							Selecciona una comuna de origen

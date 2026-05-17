@@ -2,7 +2,7 @@ import type { LayerId } from "./config";
 
 export type LayerVisibility = Record<LayerId, boolean>;
 
-export type InteractionMode = "comunas" | "metro" | "noise";
+export type InteractionMode = "comunas" | "metro" | "noise" | "aire";
 
 export type HoverInfo = {
 	kind: string;

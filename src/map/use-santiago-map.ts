@@ -103,7 +103,7 @@ const MODE_PROFILES: ModeProfile[] = [
 		costing: "pedestrian",
 		color: "#8b5cf6",
 		lateralOffset: -0.55,
-		routeUsage: 0.10,
+		routeUsage: 0.1,
 		transportSpeed: 0.12,
 	},
 ];
@@ -181,7 +181,11 @@ export function useSantiagoMap(
 			const map = mapRef.current;
 			if (!map) return;
 
-			setLayerGroupVisibility(map, COMUNA_ALL_LAYER_IDS, mode === "comunas");
+			setLayerGroupVisibility(
+				map,
+				COMUNA_ALL_LAYER_IDS,
+				mode === "comunas" || mode === "aire",
+			);
 			if (mode === "noise") {
 				setLayerGroupVisibility(map, COMUNA_BASE_LAYER_IDS, true);
 			}
