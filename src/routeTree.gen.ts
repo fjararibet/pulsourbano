@@ -13,6 +13,7 @@ import { Route as EodRouteImport } from './routes/eod'
 import { Route as ComparadorRouteImport } from './routes/comparador'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiTrpcSplatRouteImport } from './routes/api.trpc.$'
+import { Route as ApiComparadorStatsRouteRouteImport } from './routes/api/comparador/stats.route'
 
 const EodRoute = EodRouteImport.update({
   id: '/eod',
@@ -34,17 +35,24 @@ const ApiTrpcSplatRoute = ApiTrpcSplatRouteImport.update({
   path: '/api/trpc/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiComparadorStatsRouteRoute = ApiComparadorStatsRouteRouteImport.update({
+  id: '/api/comparador/stats',
+  path: '/api/comparador/stats',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/comparador': typeof ComparadorRoute
   '/eod': typeof EodRoute
+  '/api/comparador/stats': typeof ApiComparadorStatsRouteRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/comparador': typeof ComparadorRoute
   '/eod': typeof EodRoute
+  '/api/comparador/stats': typeof ApiComparadorStatsRouteRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
 }
 export interface FileRoutesById {
@@ -52,20 +60,33 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/comparador': typeof ComparadorRoute
   '/eod': typeof EodRoute
+  '/api/comparador/stats': typeof ApiComparadorStatsRouteRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/comparador' | '/eod' | '/api/trpc/$'
+  fullPaths:
+    | '/'
+    | '/comparador'
+    | '/eod'
+    | '/api/comparador/stats'
+    | '/api/trpc/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/comparador' | '/eod' | '/api/trpc/$'
-  id: '__root__' | '/' | '/comparador' | '/eod' | '/api/trpc/$'
+  to: '/' | '/comparador' | '/eod' | '/api/comparador/stats' | '/api/trpc/$'
+  id:
+    | '__root__'
+    | '/'
+    | '/comparador'
+    | '/eod'
+    | '/api/comparador/stats'
+    | '/api/trpc/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ComparadorRoute: typeof ComparadorRoute
   EodRoute: typeof EodRoute
+  ApiComparadorStatsRouteRoute: typeof ApiComparadorStatsRouteRoute
   ApiTrpcSplatRoute: typeof ApiTrpcSplatRoute
 }
 
@@ -99,6 +120,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiTrpcSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/comparador/stats': {
+      id: '/api/comparador/stats'
+      path: '/api/comparador/stats'
+      fullPath: '/api/comparador/stats'
+      preLoaderRoute: typeof ApiComparadorStatsRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -106,6 +134,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ComparadorRoute: ComparadorRoute,
   EodRoute: EodRoute,
+  ApiComparadorStatsRouteRoute: ApiComparadorStatsRouteRoute,
   ApiTrpcSplatRoute: ApiTrpcSplatRoute,
 }
 export const routeTree = rootRouteImport

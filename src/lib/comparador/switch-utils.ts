@@ -1,4 +1,11 @@
-import type { ModoRow, ModoState } from "./comparador-types";
+import type { ModoRow } from "./comparador-types";
+
+export type ModoState = {
+	delta: number;
+	locked: boolean;
+};
+
+export type RedistributeResult = ModoRow[];
 
 export function redistributeBySliders(
 	initial: ModoRow[],
@@ -113,84 +120,10 @@ export function getSliderRange(
 	};
 }
 
-export function redistributeModo(
-	real: ModoRow[],
-	modoExcluir: string,
-): ModoRow[] {
-	const removed = real.find((r) => r.modo === modoExcluir);
-	if (!removed) return real;
-
-	const remaining = real.filter((r) => r.modo !== modoExcluir);
-	if (remaining.length === 0) return [];
-
-	const extraPerMode = removed.n_viajes / remaining.length;
-
-	const withExtras = remaining.map((r) => ({
-		...r,
-		n_viajes: r.n_viajes + extraPerMode,
-	}));
-
-	return recalculateModoPercentages(withExtras);
-}
-
-export function redistributeGeneric<
-	T extends { n_viajes: number; porcentaje: number },
->(rows: T[], removedTrips: number): T[] {
-	if (rows.length === 0) return [];
-	const total = rows.reduce((sum, r) => sum + r.n_viajes, 0);
-	if (total === 0) return rows;
-
-	const withExtras = rows.map((r) => ({
-		...r,
-		n_viajes: r.n_viajes + removedTrips * (r.n_viajes / total),
-	}));
-
-	return recalculatePercentages(withExtras);
-}
-
-export function redistributeRealist<
-	T extends { n_viajes: number; porcentaje: number },
->(rows: T[], removedTrips: number): T[] {
-	if (rows.length === 0) return [];
-	const total = rows.reduce((sum, r) => sum + r.n_viajes, 0);
-	if (total === 0) return rows;
-	const withExtras = rows.map((r) => {
-		const excludingPercent = r.n_viajes / (total - removedTrips);
-		return {
-			...r,
-			n_viajes: r.n_viajes + removedTrips * excludingPercent,
-		};
-	});
-
-	return recalculatePercentages(withExtras);
-}
-
-function recalculateModoPercentages(rows: ModoRow[]): ModoRow[] {
-	const total = rows.reduce((sum, r) => sum + r.n_viajes, 0);
-	if (total === 0) return rows;
-
-	return rows.map((r) => ({
-		...r,
-		porcentaje: Math.round((r.n_viajes / total) * 1000) / 10,
-	}));
-}
-
-function recalculatePercentages<
-	T extends { n_viajes: number; porcentaje: number },
->(rows: T[]): T[] {
-	const total = rows.reduce((sum, r) => sum + r.n_viajes, 0);
-	if (total === 0) return rows;
-
-	return rows.map((r) => ({
-		...r,
-		porcentaje: Math.round((r.n_viajes / total) * 1000) / 10,
-	}));
-}
-
-export function getRemovedTrips(
+export function createInitialStatsMap(
 	statsModo: ModoRow[],
-	modoExcluir: string,
-): number {
-	const removed = statsModo.find((r) => r.modo === modoExcluir);
-	return removed?.n_viajes ?? 0;
+): Map<string, number> {
+	return new Map(statsModo.map((m) => [m.modo ?? "", m.porcentaje]));
 }
+
+export type { ModoRow };

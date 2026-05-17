@@ -663,13 +663,9 @@ function ComparadorPage() {
 										);
 
 										const handleChange = (val: number) => {
-											const clamped = Math.max(
-												range.min,
-												Math.min(range.max, val),
-											);
 											setSliderState((prev) => ({
 												...prev,
-												[modo]: { delta: clamped, locked: false },
+												[modo]: { delta: val, locked: false },
 											}));
 											setUserAdjustedModes((prev) => {
 												const next = new Set(prev);
