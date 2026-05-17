@@ -22,13 +22,18 @@ export function SantiagoMapPage() {
 			</div>
 
 			<section className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex flex-col items-end gap-2 p-2 sm:p-4">
-				<button
-					type="button"
-					onClick={resetView}
-					className="pointer-events-auto rounded-full border border-[#b9d7d1] bg-white/90 px-3 py-1.5 text-xs font-bold text-[#24525b] shadow-[0_8px_24px_rgba(16,47,55,0.18)] backdrop-blur transition hover:border-[#5bb6a6] hover:bg-white"
-				>
-					Alejar
-				</button>
+				{hoverInfo?.pinned ? (
+					<button
+						type="button"
+						onClick={() => {
+							clearPinned();
+							resetView();
+						}}
+						className="pointer-events-auto rounded-full border border-[#b9d7d1] bg-white/90 px-3 py-1.5 text-xs font-bold text-[#24525b] shadow-[0_8px_24px_rgba(16,47,55,0.18)] backdrop-blur transition hover:border-[#5bb6a6] hover:bg-white"
+					>
+						Alejar
+					</button>
+				) : null}
 
 				<div className="pointer-events-auto w-full rounded-2xl border border-white/70 bg-white/90 px-4 py-3 shadow-[0_-12px_40px_rgba(16,47,55,0.16)] backdrop-blur-xl">
 					{hoverInfo ? (
