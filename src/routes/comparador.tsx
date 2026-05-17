@@ -172,22 +172,35 @@ const getStatsPorModo = createServerFn({ method: "POST" })
 	.inputValidator(validateOrigenDestino)
 	.handler(async ({ data }): Promise<ModoRow[]> => {
 		const query = `
+		 WITH cats AS (
+		   SELECT v.viaje,
+		     CASE
+		       WHEN v.modoAgregado IN ('1','6','17','18', '10', '7', '5', '15')
+		         THEN 'Auto'
+		       WHEN v.modoAgregado IN ('2','3','11','12','13','14') THEN 'Bus'
+		       WHEN v.modoAgregado IN ('4','16') THEN 'Metro/Tren'
+		       WHEN v.modoAgregado IN ('8','9') THEN 'No Motorizado'
+		       ELSE 'Otro'
+		     END AS cat_modo,
+		     d.distEuclidiana,
+		     v.tiempoViaje
+		   FROM viaje v
+		   LEFT JOIN distancia_viaje d ON d.viaje = v.viaje
+		   LEFT JOIN comuna co ON co.id = v.comunaOrigen
+		   LEFT JOIN comuna cd ON cd.id = v.comunaDestino
+		   WHERE co.comuna = ?1 AND cd.comuna = ?2
+		     AND v.tiempoViaje > 0 AND d.distEuclidiana > 0
+		 )
 		 SELECT
-		   v.modoAgregado AS modo,
-		   m.modo AS modoNombre,
+		   cat_modo AS modo,
+		   cat_modo AS modoNombre,
 		   COUNT(*) AS n_viajes,
 		   ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (), 1) AS porcentaje,
-		   ROUND(AVG(d.distEuclidiana * 60.0 / v.tiempoViaje), 1) AS velocidad_promedio,
-		   ROUND(AVG(v.tiempoViaje), 1) AS tiempo_promedio_min,
-		   ROUND(AVG(d.distEuclidiana), 2) AS distancia_promedio_km
-		 FROM viaje v
-		 LEFT JOIN distancia_viaje d ON d.viaje = v.viaje
-		 LEFT JOIN comuna co ON co.id = v.comunaOrigen
-		 LEFT JOIN comuna cd ON cd.id = v.comunaDestino
-		 LEFT JOIN modo m ON m.id = v.modoAgregado
-		 WHERE co.comuna = ?1 AND cd.comuna = ?2
-		   AND v.tiempoViaje > 0 AND d.distEuclidiana > 0
-		 GROUP BY v.modoAgregado
+		   ROUND(AVG(distEuclidiana * 60.0 / tiempoViaje / 1000), 1) AS velocidad_promedio,
+		   ROUND(AVG(tiempoViaje), 1) AS tiempo_promedio_min,
+		   ROUND(AVG(distEuclidiana), 2) / 1000 AS distancia_promedio_km
+		 FROM cats
+		 GROUP BY cat_modo
 		 ORDER BY n_viajes DESC`;
 		try {
 			const stmt = env.EOD2012.prepare(query) as unknown as {
