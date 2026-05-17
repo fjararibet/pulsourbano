@@ -650,15 +650,15 @@ export function addODLayers(map: MapLibreMap) {
 				["linear"],
 				["get", "od_intensity"],
 				0,
-				"rgba(111, 91, 213, 0.03)",
+				"rgba(111, 91, 213, 0.06)",
 				0.25,
-				"rgba(111, 91, 213, 0.18)",
+				"rgba(111, 91, 213, 0.22)",
 				0.5,
-				"rgba(111, 91, 213, 0.35)",
+				"rgba(111, 91, 213, 0.42)",
 				0.75,
-				"rgba(111, 91, 213, 0.52)",
+				"rgba(111, 91, 213, 0.62)",
 				1,
-				"rgba(22, 138, 118, 0.68)",
+				"rgba(111, 91, 213, 0.82)",
 			],
 			"fill-opacity": 1,
 		},
@@ -666,6 +666,11 @@ export function addODLayers(map: MapLibreMap) {
 			visibility: "none",
 		},
 	});
+
+	// Ensure the comuna hitbox stays on top so clicks still reach it.
+	if (map.getLayer(COMUNA_INTERACTION_LAYER_ID)) {
+		map.moveLayer(COMUNA_INTERACTION_LAYER_ID);
+	}
 }
 
 /** Oculta la capa OD y restaura el GeoJSON original (sin od_intensity). */
@@ -687,7 +692,7 @@ export function restoreComunaSource(
  */
 export function setComunaODData(
 	map: MapLibreMap,
-	odData: Array<{ comuna: string; trips: number }>,
+	odData: Array<{ comuna: string; trips: number; coef?: number }>,
 	originalGeoJSON: GeoJSON.FeatureCollection,
 ) {
 	const source = map.getSource("comunas-rm");
@@ -696,7 +701,9 @@ export function setComunaODData(
 	const maxTrips = Math.max(...odData.map((d) => d.trips), 1);
 	const tripsMap = new Map<string, number>();
 	for (const item of odData) {
-		tripsMap.set(normalizeComunaName(item.comuna), item.trips / maxTrips);
+		const intensity =
+			item.coef !== undefined ? item.coef : item.trips / maxTrips;
+		tripsMap.set(normalizeComunaName(item.comuna), intensity);
 	}
 
 	const newFeatures = originalGeoJSON.features.map((feature) => {

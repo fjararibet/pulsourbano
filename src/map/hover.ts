@@ -170,7 +170,6 @@ export function setupComunaHover(
 		const onSelectOrigin = getOnSelectOrigin();
 		if (getOdMode() && onSelectOrigin && comunaName) {
 			onSelectOrigin(comunaName);
-			return;
 		}
 
 		const info = formatComunaHover(feature, true);

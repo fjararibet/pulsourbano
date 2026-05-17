@@ -7,6 +7,7 @@ import { DEFAULT_VISIBLE_LAYERS, LAYER_TOGGLES } from "./config";
 import { MapLegend } from "./Legend";
 import type { HoverInfo, LayerVisibility } from "./types";
 import { useSantiagoMap } from "./use-santiago-map";
+import { normalizeComunaName } from "./utils";
 
 /**
  * Página principal: contenedor del mapa + panel lateral con toggles de capas,
@@ -25,9 +26,10 @@ export function SantiagoMapPage() {
 	const [odData, setOdData] = useState<Array<{
 		comuna: string;
 		trips: number;
+		coef: number;
 	}> | null>(null);
 	const [odLoading, setOdLoading] = useState(false);
-	const { containerRef, resetView, clearPinned } = useSantiagoMap(
+	const { containerRef, resetView, clearPinned, pinnedComuna } = useSantiagoMap(
 		visibleLayers,
 		setHoverInfo,
 		simulationInput,
@@ -50,6 +52,12 @@ export function SantiagoMapPage() {
 	}, [clearPinned]);
 
 	useEffect(() => {
+		if (odMode && pinnedComuna && pinnedComuna !== selectedOrigin) {
+			setSelectedOrigin(pinnedComuna);
+		}
+	}, [odMode, pinnedComuna, selectedOrigin]);
+
+	useEffect(() => {
 		if (!selectedOrigin) {
 			setOdData(null);
 			return;
@@ -57,12 +65,36 @@ export function SantiagoMapPage() {
 		setOdLoading(true);
 		getDestinosDesdeComuna({ data: { comunaOrigen: selectedOrigin } })
 			.then((results) => {
-				setOdData(
-					results.map((r) => ({
-						comuna: r.destino ?? "",
-						trips: r.total_viajes,
+				const originNorm = normalizeComunaName(selectedOrigin);
+				const internalRow = results.find(
+					(r) => normalizeComunaName(r.destino ?? "") === originNorm,
+				);
+				const internalTrips =
+					internalRow?.total_viajes ??
+					Math.max(...results.map((r) => r.total_viajes), 1);
+
+				const withCoef = results.map((r) => ({
+					comuna: r.destino ?? "",
+					trips: r.total_viajes,
+					coef: Math.min(r.total_viajes / internalTrips, 1),
+				}));
+
+				// eslint-disable-next-line no-console
+				console.log(
+					"OD Destinos desde",
+					selectedOrigin,
+					"(coef base = viajes internos):",
+				);
+				// eslint-disable-next-line no-console
+				console.table(
+					withCoef.map((d) => ({
+						comuna: d.comuna,
+						viajes: Math.round(d.trips).toLocaleString("es-CL"),
+						coef: d.coef.toFixed(3),
 					})),
 				);
+
+				setOdData(withCoef);
 			})
 			.catch((err) => {
 				console.error("OD query failed", err);
@@ -177,15 +209,58 @@ export function SantiagoMapPage() {
 						</div>
 						{odMode && (
 							<div className="mt-2">
+								{selectedOrigin && (
+									<div className="mb-2 flex items-center gap-2">
+										<span className="rounded-full bg-[#168a76]/15 px-2.5 py-0.5 text-xs font-bold text-[#168a76]">
+											{selectedOrigin}
+										</span>
+										<button
+											type="button"
+											onClick={() => {
+												setSelectedOrigin("");
+												setOdData(null);
+											}}
+											className="text-[10px] font-bold text-[#5b777c] transition hover:text-[#d75235]"
+										>
+											✕ limpiar
+										</button>
+									</div>
+								)}
 								{odLoading && (
 									<p className="text-xs text-[#5b777c]">Cargando viajes…</p>
 								)}
 								{!odLoading && odData && odData.length > 0 && (
-									<p className="text-xs text-[#5b777c]">
-										{odData.length} destinos · máx:{" "}
-										{Math.round(odData[0]?.trips ?? 0).toLocaleString("es-CL")}{" "}
-										viajes
-									</p>
+									<>
+										<p className="mb-1.5 text-[10px] font-bold uppercase tracking-wide text-[#5b777c]">
+											{odData.length} destinos
+										</p>
+										<div className="max-h-[200px] overflow-y-auto overscroll-contain pr-1">
+											{odData.map((d) => {
+												const barWidth = `${Math.round(d.coef * 100)}%`;
+												return (
+													<div
+														key={d.comuna}
+														className="mb-1 flex items-center gap-2"
+													>
+														<div className="w-24 shrink-0 truncate text-[11px] font-semibold text-[#102f37]">
+															{d.comuna}
+														</div>
+														<div className="flex-1">
+															<div className="h-1.5 overflow-hidden rounded-full bg-[#e8edef]">
+																<div
+																	className="h-full rounded-full bg-[#6f5bd5]"
+																	style={{ width: barWidth }}
+																/>
+															</div>
+														</div>
+														<div className="w-14 shrink-0 text-right text-[10px] tabular-nums text-[#5b777c]">
+															{Math.round(d.trips).toLocaleString("es-CL")}
+														</div>
+													</div>
+												);
+											})}
+										</div>
+									</>
 								)}
 								{!odLoading && !odData && (
 									<p className="text-xs text-[#168a76]">

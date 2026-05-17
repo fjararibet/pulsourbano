@@ -1,5 +1,5 @@
 import type { MapGeoJSONFeature, Map as MapLibreMap } from "maplibre-gl";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
 	calculateQuickSimulation,
 	type QuickSimulationInput,
@@ -72,12 +72,14 @@ export function useSantiagoMap(
 	const pinnedInfoRef = useRef<HoverInfo>(null);
 	const clearPinnedEffectsRef = useRef<(() => void) | null>(null);
 	const comunasRef = useRef<GeoJSON.FeatureCollection | null>(null);
+	const [pinnedComuna, setPinnedComuna] = useState("");
 
 	const clearPinned = useCallback(() => {
 		clearPinnedEffectsRef.current?.();
 		clearPinnedEffectsRef.current = null;
 		pinnedInfoRef.current = null;
 		setHoverInfo(null);
+		setPinnedComuna("");
 	}, [setHoverInfo]);
 
 	// Mantener un ref con la última visibilidad para usarla dentro del effect
@@ -120,6 +122,11 @@ export function useSantiagoMap(
 				pinnedInfoRef.current = pinnedInfo;
 				clearPinnedEffectsRef.current = clearEffects ?? null;
 				setHoverInfo(pinnedInfo);
+				if (info.kind === "Comuna RM") {
+					setPinnedComuna(info.title);
+				} else {
+					setPinnedComuna("");
+				}
 			},
 		};
 
@@ -373,7 +380,7 @@ export function useSantiagoMap(
 		});
 	};
 
-	return { containerRef, resetView, clearPinned };
+	return { containerRef, resetView, clearPinned, pinnedComuna };
 }
 
 const integerFormatter = new Intl.NumberFormat("es-CL", {
