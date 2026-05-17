@@ -38,7 +38,6 @@ const COSTING_COLORS: Record<CostingMode, string> = {
 	auto: "#f59e0b",
 	bus: "#3b82f6",
 	bicycle: "#10b981",
-	pedestrian: "#8b5cf6",
 	metro: "#ef4444",
 };
 

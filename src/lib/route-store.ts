@@ -1,6 +1,6 @@
 import { comunasRM } from "./comunas-rm";
 
-export type CostingMode = "auto" | "bus" | "bicycle" | "pedestrian" | "metro";
+export type CostingMode = "auto" | "bus" | "bicycle" | "metro";
 
 export interface CachedRoute {
 	shape: [number, number][];
@@ -56,13 +56,7 @@ for (const comuna of comunasRM) {
 
 export const ALL_COMUNAS = Object.keys(ALL_COMUNA_CENTROIDS);
 
-export const ALL_COSTINGS: CostingMode[] = [
-	"auto",
-	"bus",
-	"bicycle",
-	"pedestrian",
-	"metro",
-];
+export const ALL_COSTINGS: CostingMode[] = ["auto", "bus", "bicycle", "metro"];
 
 export function getRoute(
 	origen: string,

@@ -43,14 +43,7 @@ function unwrapRoute(coords: [number, number][]): [number, number][] {
   return deduped;
 }
 
-// Compute cumulative degree-distance along a path (simple Euclidean sum)
-function cumDist(coords: [number, number][]): number {
-  let d = 0;
-  for (let i = 1; i < coords.length; i++) {
-    d += Math.hypot(coords[i]![0] - coords[i - 1]![0], coords[i]![1] - coords[i - 1]![1]);
-  }
-  return d;
-}
+
 
 // Position of a point on a line = cumulative distance up to the closest coordinate
 function linePosition(point: [number, number], lineCoords: [number, number][]): number {
@@ -207,22 +200,6 @@ function buildMetroGraph(
   }
 
   return adj;
-}
-
-function findClosestIndex(
-  point: [number, number],
-  coords: [number, number][],
-): number {
-  let minDist = Infinity;
-  let minIdx = 0;
-  for (let i = 0; i < coords.length; i++) {
-    const dist = haversineKm(point, coords[i]!);
-    if (dist < minDist) {
-      minDist = dist;
-      minIdx = i;
-    }
-  }
-  return minIdx;
 }
 
 function findMetroPath(

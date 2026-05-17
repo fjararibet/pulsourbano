@@ -58,7 +58,6 @@ export const ROUTE_ARROW_CORE_LAYER_BY_MODE = {
 	auto: "route-arrow-core-auto",
 	bus: "route-arrow-core-bus",
 	bicycle: "route-arrow-core-bicycle",
-	pedestrian: "route-arrow-core-pedestrian",
 	metro: "route-arrow-core-metro",
 } as const;
 

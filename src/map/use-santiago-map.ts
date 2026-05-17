@@ -106,13 +106,6 @@ const MODE_PROFILES: ModeProfile[] = [
 		routeUsage: 0.25,
 		transportSpeed: 0.35,
 	},
-	{
-		costing: "pedestrian",
-		color: "#8b5cf6",
-		lateralOffset: -0.55,
-		routeUsage: 0.1,
-		transportSpeed: 0.12,
-	},
 ];
 
 function arrowStyleFor(profile: ModeProfile): ArrowStyle {
