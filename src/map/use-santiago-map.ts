@@ -21,7 +21,6 @@ import {
 	bringRouteArrowToFront,
 	clearRouteArrow,
 	updateComunaSelectionLayers,
-	updateRouteArrowData,
 } from "./layers";
 import {
 	hideRouteArrowOverlay,
@@ -262,12 +261,6 @@ export function useSantiagoMap(
 							bearing,
 							last,
 						);
-
-						// Dejar una traza sutil en el terreno
-						updateRouteArrowData(map, {
-							type: "FeatureCollection",
-							features: [arc],
-						});
 					}
 				}
 			}
