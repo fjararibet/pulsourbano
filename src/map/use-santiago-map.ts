@@ -2,11 +2,11 @@ import type { Map as MapLibreMap } from "maplibre-gl";
 import maplibregl from "maplibre-gl";
 import type { RefObject } from "react";
 import { useCallback, useEffect, useRef } from "react";
+import { type CostingMode, runValhallaRoute } from "#/lib/valhalla";
 import {
 	type ArrowHandle,
 	type ArrowScene,
 	type ArrowStyle,
-	arcLineString,
 	createArrowScene,
 } from "./ArrowScene";
 import {
@@ -50,29 +50,43 @@ type DualSelect = {
 interface RouteVariant {
 	lateralOffset: number;
 	style: ArrowStyle;
+	costing: CostingMode;
 }
 
 const ROUTE_VARIANTS: RouteVariant[] = [
 	{
+		costing: "auto",
 		lateralOffset: 0.55,
 		style: { color: "#f59e0b", thickness: 4.5, highlightSpeed: 1.8 },
 	},
 	{
+		costing: "bus",
 		lateralOffset: -0.35,
 		style: {
 			color: "#3b82f6",
 			thickness: 3.2,
-			archHeight: 0.12,
+			archHeight: 0.0,
 			highlightSpeed: 1.2,
 		},
 	},
 	{
+		costing: "bicycle",
 		lateralOffset: 0.15,
 		style: {
 			color: "#10b981",
 			thickness: 2.6,
-			archHeight: 0.08,
+			archHeight: 0.0,
 			highlightSpeed: 2.6,
+		},
+	},
+	{
+		costing: "pedestrian",
+		lateralOffset: -0.55,
+		style: {
+			color: "#8b5cf6",
+			thickness: 2.0,
+			archHeight: 0.0,
+			highlightSpeed: 3.2,
 		},
 	},
 ];
@@ -312,17 +326,28 @@ export function useSantiagoMap(
 
 				const origenCentroid = getPolygonCentroid(origenFeature);
 				const destinoCentroid = getPolygonCentroid(destinoFeature);
-				const scene = arrowSceneRef.current;
-				if (origenCentroid && destinoCentroid && scene) {
+				if (origenCentroid && destinoCentroid) {
 					for (const handle of routeArrowHandlesRef.current) handle.remove();
-					routeArrowHandlesRef.current = ROUTE_VARIANTS.map((variant) =>
-						scene.add({
-							points: arcLineString(origenCentroid, destinoCentroid, {
-								lateralOffset: variant.lateralOffset,
-							}),
-							style: variant.style,
-						}),
-					);
+					routeArrowHandlesRef.current = [];
+
+					for (const variant of ROUTE_VARIANTS) {
+						runValhallaRoute(origenCentroid, destinoCentroid, variant.costing)
+							.then((result) => {
+								const scene = arrowSceneRef.current;
+								if (!scene) return;
+								const handle = scene.add({
+									points: result.shape,
+									style: variant.style,
+								});
+								routeArrowHandlesRef.current.push(handle);
+							})
+							.catch((err) => {
+								console.error(
+									`Valhalla route error (${variant.costing}):`,
+									err,
+								);
+							});
+					}
 				}
 			}
 		}
