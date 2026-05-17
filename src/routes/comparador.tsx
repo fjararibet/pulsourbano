@@ -12,6 +12,7 @@ import type {
 	TiempoMedioRow,
 } from "#/lib/comparador/comparador-types";
 import { getSliderRange, redistributeBySliders } from "#/lib/comparador/redist";
+import PercentageSliders from "#/lib/comparador/sliders";
 
 // ── tipos ─────────────────────────────────────────────
 
@@ -437,6 +438,7 @@ function ComparadorPage() {
 			<h1 className="mb-6 text-2xl font-black tracking-tight text-[#102f37]">
 				Estadísticas de Viajes
 			</h1>
+			<PercentageSliders/>
 
 			<form
 				onSubmit={handleSubmit}
