@@ -249,7 +249,9 @@ export function addRouteArrowLayers(map: MapLibreMap) {
 
 	// One core layer per mode — `line-gradient` doesn't support data-driven
 	// expressions, so each mode needs its own layer to pulse at its own speed.
-	for (const [mode, layerId] of Object.entries(ROUTE_ARROW_CORE_LAYER_BY_MODE)) {
+	for (const [mode, layerId] of Object.entries(
+		ROUTE_ARROW_CORE_LAYER_BY_MODE,
+	)) {
 		map.addLayer({
 			id: layerId,
 			type: "line",
@@ -271,7 +273,6 @@ export function addRouteArrowLayers(map: MapLibreMap) {
 			},
 		});
 	}
-
 }
 
 export function updateRouteArrowData(
@@ -605,6 +606,7 @@ export function addNoiseLayers(
 		id: "noise-fill",
 		type: "fill",
 		source: "noise",
+		filter: EMPTY_NOISE_COMUNA_FILTER,
 		paint: {
 			"fill-color": dbColor,
 			"fill-opacity": 0.55,
@@ -615,6 +617,7 @@ export function addNoiseLayers(
 		id: "noise-outline",
 		type: "line",
 		source: "noise",
+		filter: EMPTY_NOISE_COMUNA_FILTER,
 		paint: {
 			"line-color": dbColor,
 			"line-width": ["interpolate", ["linear"], ["zoom"], 10, 0.6, 14, 1.4],

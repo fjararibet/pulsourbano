@@ -573,7 +573,11 @@ export function setupNoiseInteraction(
 	};
 	const setSelectedFilter = (feature: MapGeoJSONFeature | null) => {
 		setLayerFilters(
-			[...NOISE_SELECTED_ZONE_LAYER_IDS, ...NOISE_COMUNA_SELECTED_LAYER_IDS],
+			[
+				"noise-outline",
+				...NOISE_SELECTED_ZONE_LAYER_IDS,
+				...NOISE_COMUNA_SELECTED_LAYER_IDS,
+			],
 			feature,
 		);
 	};
