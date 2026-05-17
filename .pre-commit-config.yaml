@@ -1,0 +1,32 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-toml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: detect-private-key
+  - repo: local
+    hooks:
+      - id: biome-check
+        name: biome check
+        language: system
+        entry: npx biome check --files-ignore-unknown=true --no-errors-on-unmatched
+        types: [file]
+      - id: tsc
+        name: TypeScript check
+        language: system
+        entry: npx tsc --noEmit
+        types: [file]
+        pass_filenames: false
+      - id: preview-url
+        name: Print preview URL
+        language: system
+        entry: scripts/print-preview-url.sh
+        stages: [pre-push]
+        pass_filenames: false
+        always_run: true
+        verbose: true
