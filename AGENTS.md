@@ -1,4 +1,4 @@
-# AGENTS.md — Esgrima
+# AGENTS.md — Pulso Urbano
 
 > Agent-facing development guide for this TanStack Start project.
 
