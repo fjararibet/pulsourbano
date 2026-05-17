@@ -200,6 +200,17 @@ export const BASE_STYLE = {
 			attribution:
 				'© <a href="https://registry.opendata.aws/terrain-tiles/">AWS Terrain Tiles</a>',
 		},
+		"hillshade-dem": {
+			type: "raster-dem" as const,
+			tiles: [
+				"https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png",
+			],
+			tileSize: 256,
+			maxzoom: 15,
+			encoding: "terrarium" as const,
+			attribution:
+				'© <a href="https://registry.opendata.aws/terrain-tiles/">AWS Terrain Tiles</a>',
+		},
 	},
 	layers: [
 		{
@@ -219,7 +230,7 @@ export const BASE_STYLE = {
 		{
 			id: "terrain-hillshade",
 			type: "hillshade" as const,
-			source: "terrain-dem",
+			source: "hillshade-dem",
 			paint: {
 				"hillshade-exaggeration": 0.3,
 				"hillshade-shadow-color": "rgba(0,0,0,0.2)",
