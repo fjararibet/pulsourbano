@@ -18,6 +18,12 @@ export const COMUNA_HOVER_COLOR = "#6f5bd5";
 /** Color para comuna seleccionada (pin active). */
 export const COMUNA_SELECTED_COLOR = "#1e3a8a";
 
+/** Color para comuna origen. */
+export const ORIGEN_COLOR = "#10a56f";
+
+/** Color para comuna destino. */
+export const DESTINO_COLOR = "#3b82f6";
+
 /** Color base de la red de buses RED. */
 export const BUS_COLOR = "#d75235";
 
@@ -36,6 +42,18 @@ export const COMUNA_SELECTED_LAYER_IDS = [
 	"comunas-selected-outline",
 ] as const;
 
+/** Capas visuales de la comuna origen. */
+export const COMUNA_ORIGEN_LAYER_IDS = [
+	"comunas-origen-fill",
+	"comunas-origen-outline",
+] as const;
+
+/** Capas visuales de la comuna destino. */
+export const COMUNA_DESTINO_LAYER_IDS = [
+	"comunas-destino-fill",
+	"comunas-destino-outline",
+] as const;
+
 /**
  * Filtro neutro que oculta la capa "hover" de buses cuando no hay
  * ningún recorrido seleccionado bajo el cursor.
@@ -51,6 +69,13 @@ export const EMPTY_COMUNA_HOVER_FILTER: FilterSpecification = [
 	"==",
 	["get", "cod_comuna"],
 	-1,
+];
+
+/** Filtro neutro que oculta el resaltado por nombre de comuna. */
+export const EMPTY_COMUNA_NAME_FILTER: FilterSpecification = [
+	"==",
+	["get", "Comuna"],
+	"",
 ];
 
 /**

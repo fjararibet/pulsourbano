@@ -1,19 +1,51 @@
 import "maplibre-gl/dist/maplibre-gl.css";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { DESTINO_COLOR, ORIGEN_COLOR } from "./config";
 import type { HoverInfo } from "./types";
 import { useSantiagoMap } from "./use-santiago-map";
 
 export function SantiagoMapPage() {
 	const [hoverInfo, setHoverInfo] = useState<HoverInfo>(null);
-	const { containerRef, clearPinned, resetView } = useSantiagoMap(setHoverInfo);
+	const [selections, setSelections] = useState<{
+		origen: string | null;
+		destino: string | null;
+	}>({ origen: null, destino: null });
+
+	const handleSelectComuna = useCallback((name: string) => {
+		setSelections((prev) => {
+			if (prev.origen === name) return { origen: null, destino: null };
+			if (prev.destino === name) return { ...prev, destino: null };
+			if (!prev.origen) return { ...prev, origen: name };
+			if (name === prev.origen) return prev;
+			return { ...prev, destino: name };
+		});
+	}, []);
+
+	const clearSelections = useCallback(() => {
+		setSelections({ origen: null, destino: null });
+	}, []);
+
+	const { containerRef, clearPinned, resetView } = useSantiagoMap(
+		setHoverInfo,
+		{
+			origen: selections.origen,
+			destino: selections.destino,
+			onSelectComuna: handleSelectComuna,
+		},
+	);
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
-			if (e.key === "Escape") clearPinned();
+			if (e.key === "Escape") {
+				clearPinned();
+				clearSelections();
+			}
 		};
 		document.addEventListener("keydown", handleKeyDown);
 		return () => document.removeEventListener("keydown", handleKeyDown);
-	}, [clearPinned]);
+	}, [clearPinned, clearSelections]);
+
+	const hasSelection = selections.origen || selections.destino;
 
 	return (
 		<main className="relative h-[100svh] w-full overflow-hidden bg-[#edf4e8] text-[#102f37]">
@@ -22,16 +54,16 @@ export function SantiagoMapPage() {
 			</div>
 
 			<section className="pointer-events-none absolute bottom-0 left-0 right-0 z-10 flex flex-col items-end gap-2 p-2 sm:pointer-events-auto sm:inset-y-0 sm:left-0 sm:right-auto sm:w-80 sm:items-start sm:overflow-y-auto sm:border-r sm:border-white/70 sm:bg-white/90 sm:p-4 sm:shadow-[4px_0_24px_rgba(16,47,55,0.1)] sm:backdrop-blur-xl">
-				{hoverInfo?.pinned ? (
+				{hasSelection ? (
 					<button
 						type="button"
 						onClick={() => {
-							clearPinned();
+							clearSelections();
 							resetView();
 						}}
 						className="pointer-events-auto rounded-full border border-[#b9d7d1] bg-white/90 px-3 py-1.5 text-xs font-bold text-[#24525b] shadow-[0_8px_24px_rgba(16,47,55,0.18)] backdrop-blur transition hover:border-[#5bb6a6] hover:bg-white"
 					>
-						Alejar
+						Reiniciar
 					</button>
 				) : null}
 
@@ -76,9 +108,67 @@ export function SantiagoMapPage() {
 							</div>
 						</div>
 					) : (
-						<p className="m-0 text-center text-xs font-medium text-[#5b777c]">
-							Selecciona una comuna
-						</p>
+						<div className="flex flex-col gap-2">
+							{selections.origen ? (
+								<div className="flex items-center gap-2">
+									<span
+										className="h-3 w-3 shrink-0 rounded-full"
+										style={{ backgroundColor: ORIGEN_COLOR }}
+									/>
+									<span className="text-sm font-bold text-[#102f37]">
+										Origen: {selections.origen}
+									</span>
+									<button
+										type="button"
+										onClick={() =>
+											setSelections((p) => ({
+												...p,
+												origen: null,
+												destino: null,
+											}))
+										}
+										className="ml-auto shrink-0 rounded-full p-1 text-[10px] font-bold text-[#5b777c] transition hover:bg-[#eef4f1] hover:text-[#24525b]"
+										aria-label="Quitar origen"
+									>
+										✕
+									</button>
+								</div>
+							) : null}
+							{selections.destino ? (
+								<div className="flex items-center gap-2">
+									<span
+										className="h-3 w-3 shrink-0 rounded-full"
+										style={{ backgroundColor: DESTINO_COLOR }}
+									/>
+									<span className="text-sm font-bold text-[#102f37]">
+										Destino: {selections.destino}
+									</span>
+									<button
+										type="button"
+										onClick={() =>
+											setSelections((p) => ({ ...p, destino: null }))
+										}
+										className="ml-auto shrink-0 rounded-full p-1 text-[10px] font-bold text-[#5b777c] transition hover:bg-[#eef4f1] hover:text-[#24525b]"
+										aria-label="Quitar destino"
+									>
+										✕
+									</button>
+								</div>
+							) : null}
+							{!selections.origen ? (
+								<p className="m-0 text-center text-xs font-medium text-[#5b777c]">
+									Selecciona una comuna de origen
+								</p>
+							) : !selections.destino ? (
+								<p className="m-0 text-center text-xs font-medium text-[#5b777c]">
+									Selecciona una comuna de destino
+								</p>
+							) : (
+								<p className="m-0 text-center text-xs font-medium text-[#5b777c]">
+									Origen y destino seleccionados
+								</p>
+							)}
+						</div>
 					)}
 				</div>
 			</section>

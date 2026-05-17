@@ -165,6 +165,28 @@ export function setupComunaHover(
 }
 
 /**
+ * Selección dual de comunas: click en una comuna la marca como origen o destino.
+ * No hace zoom ni muestra popup.
+ */
+export function setupComunaDualSelect(
+	map: MapLibreMap,
+	onSelectComuna: (name: string) => void,
+) {
+	const onClick = (event: MapLayerMouseEvent) => {
+		const feature = event.features?.[0];
+		if (!feature) return;
+		const name = getFeatureString(feature, "Comuna");
+		if (name) onSelectComuna(name);
+	};
+
+	map.on("click", COMUNA_INTERACTION_LAYER_ID, onClick);
+
+	return () => {
+		map.off("click", COMUNA_INTERACTION_LAYER_ID, onClick);
+	};
+}
+
+/**
  * Hover especializado para `bus-routes`: muestrea con un cuadradito alrededor
  * del cursor para capturar varios recorridos superpuestos y resalta todos
  * los que pasan por ese tramo.

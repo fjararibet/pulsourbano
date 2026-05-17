@@ -6,8 +6,16 @@ import {
 	INITIAL_ZOOM,
 	SANTIAGO_CENTER,
 } from "./config";
-import { type HoverPinController, setupComunaHover } from "./hover";
-import { addComunaLayers, bringComunaHoverToFront } from "./layers";
+import {
+	type HoverPinController,
+	setupComunaDualSelect,
+	setupComunaHover,
+} from "./hover";
+import {
+	addComunaLayers,
+	bringComunaHoverToFront,
+	updateComunaSelectionLayers,
+} from "./layers";
 import type { HoverInfo } from "./types";
 import { loadGeoJSON } from "./utils";
 
@@ -16,11 +24,20 @@ import { loadGeoJSON } from "./utils";
  * capas y conecta los handlers de hover. Devuelve el ref del contenedor y
  * un helper para resetear la vista.
  */
-export function useSantiagoMap(setHoverInfo: (info: HoverInfo) => void) {
+export function useSantiagoMap(
+	setHoverInfo: (info: HoverInfo) => void,
+	dualSelect?: {
+		origen: string | null;
+		destino: string | null;
+		onSelectComuna: (name: string) => void;
+	},
+) {
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const mapRef = useRef<MapLibreMap | null>(null);
 	const pinnedInfoRef = useRef<HoverInfo>(null);
 	const clearPinnedEffectsRef = useRef<(() => void) | null>(null);
+	const dualSelectRef = useRef(dualSelect);
+	dualSelectRef.current = dualSelect;
 
 	const clearPinned = useCallback(() => {
 		clearPinnedEffectsRef.current?.();
@@ -105,7 +122,17 @@ export function useSantiagoMap(setHoverInfo: (info: HoverInfo) => void) {
 				map.setZoom(INITIAL_ZOOM);
 
 				if (comunas) {
-					hoverCleanup.push(setupComunaHover(map, pinController, COMUNA_ZOOM));
+					if (dualSelectRef.current) {
+						hoverCleanup.push(
+							setupComunaDualSelect(map, (name) => {
+								dualSelectRef.current?.onSelectComuna(name);
+							}),
+						);
+					} else {
+						hoverCleanup.push(
+							setupComunaHover(map, pinController, COMUNA_ZOOM),
+						);
+					}
 				}
 			});
 		})();
@@ -116,6 +143,14 @@ export function useSantiagoMap(setHoverInfo: (info: HoverInfo) => void) {
 			mapRef.current = null;
 		};
 	}, [setHoverInfo]);
+
+	const origen = dualSelect?.origen ?? null;
+	const destino = dualSelect?.destino ?? null;
+	useEffect(() => {
+		const map = mapRef.current;
+		if (!map) return;
+		updateComunaSelectionLayers(map, origen, destino);
+	}, [origen, destino]);
 
 	const resetView = () => {
 		mapRef.current?.easeTo({

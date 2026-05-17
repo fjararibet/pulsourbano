@@ -1,5 +1,6 @@
 import type {
 	ExpressionSpecification,
+	FilterSpecification,
 	GeoJSONSource,
 	Map as MapLibreMap,
 } from "maplibre-gl";
@@ -7,13 +8,18 @@ import {
 	BUS_ARROW_ICON_ID,
 	BUS_COLOR,
 	COMUNA_COLOR,
+	COMUNA_DESTINO_LAYER_IDS,
 	COMUNA_INTERACTION_LAYER_ID,
+	COMUNA_ORIGEN_LAYER_IDS,
 	COMUNA_SELECTED_COLOR,
 	COMUNA_SELECTED_LAYER_IDS,
+	DESTINO_COLOR,
 	EMPTY_BUS_HOVER_FILTER,
 	EMPTY_COMUNA_HOVER_FILTER,
+	EMPTY_COMUNA_NAME_FILTER,
 	LAYER_TOGGLES,
 	LOGICAL_LAYERS,
+	ORIGEN_COLOR,
 } from "./config";
 import type { LayerVisibility } from "./types";
 
@@ -79,6 +85,48 @@ export function addComunaLayers(
 			"line-opacity": 1,
 		},
 	});
+	map.addLayer({
+		id: "comunas-origen-fill",
+		type: "fill",
+		source: "comunas-rm",
+		filter: EMPTY_COMUNA_NAME_FILTER,
+		paint: {
+			"fill-color": ORIGEN_COLOR,
+			"fill-opacity": 0.35,
+		},
+	});
+	map.addLayer({
+		id: "comunas-origen-outline",
+		type: "line",
+		source: "comunas-rm",
+		filter: EMPTY_COMUNA_NAME_FILTER,
+		paint: {
+			"line-color": ORIGEN_COLOR,
+			"line-width": ["interpolate", ["linear"], ["zoom"], 9, 2, 13, 3],
+			"line-opacity": 1,
+		},
+	});
+	map.addLayer({
+		id: "comunas-destino-fill",
+		type: "fill",
+		source: "comunas-rm",
+		filter: EMPTY_COMUNA_NAME_FILTER,
+		paint: {
+			"fill-color": DESTINO_COLOR,
+			"fill-opacity": 0.35,
+		},
+	});
+	map.addLayer({
+		id: "comunas-destino-outline",
+		type: "line",
+		source: "comunas-rm",
+		filter: EMPTY_COMUNA_NAME_FILTER,
+		paint: {
+			"line-color": DESTINO_COLOR,
+			"line-width": ["interpolate", ["linear"], ["zoom"], 9, 2, 13, 3],
+			"line-opacity": 1,
+		},
+	});
 }
 
 /** Mantiene el resaltado de comuna por encima de las demás capas. */
@@ -86,8 +134,35 @@ export function bringComunaHoverToFront(map: MapLibreMap) {
 	for (const layerId of COMUNA_SELECTED_LAYER_IDS) {
 		if (map.getLayer(layerId)) map.moveLayer(layerId);
 	}
+	for (const layerId of COMUNA_ORIGEN_LAYER_IDS) {
+		if (map.getLayer(layerId)) map.moveLayer(layerId);
+	}
+	for (const layerId of COMUNA_DESTINO_LAYER_IDS) {
+		if (map.getLayer(layerId)) map.moveLayer(layerId);
+	}
 	if (map.getLayer(COMUNA_INTERACTION_LAYER_ID)) {
 		map.moveLayer(COMUNA_INTERACTION_LAYER_ID);
+	}
+}
+
+/** Actualiza los filtros de las capas de origen y destino. */
+export function updateComunaSelectionLayers(
+	map: MapLibreMap,
+	origen: string | null,
+	destino: string | null,
+) {
+	const origenFilter: FilterSpecification = origen
+		? ["==", ["get", "Comuna"], origen]
+		: EMPTY_COMUNA_NAME_FILTER;
+	const destinoFilter: FilterSpecification = destino
+		? ["==", ["get", "Comuna"], destino]
+		: EMPTY_COMUNA_NAME_FILTER;
+
+	for (const layerId of COMUNA_ORIGEN_LAYER_IDS) {
+		if (map.getLayer(layerId)) map.setFilter(layerId, origenFilter);
+	}
+	for (const layerId of COMUNA_DESTINO_LAYER_IDS) {
+		if (map.getLayer(layerId)) map.setFilter(layerId, destinoFilter);
 	}
 }
 
