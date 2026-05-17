@@ -131,9 +131,8 @@ export function useSantiagoMap(
 			map.on("load", async () => {
 				resize();
 
-				// Activar terreno 3D y luz direccional para relieve real
+				// Luz direccional para que el relieve del terreno proyecte sombras
 				try {
-					map.setTerrain({ source: "terrain-dem", exaggeration: 1.5 });
 					map.setLight({
 						anchor: "viewport",
 						color: "#ffffff",

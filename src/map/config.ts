@@ -9,8 +9,8 @@ export const INITIAL_ZOOM = 11;
 export const COMUNA_ZOOM = 13;
 
 /** Cámara de detalle: vista lateral al entrar en una comuna. */
-export const MAP_DETAIL_PITCH = 58;
-export const MAP_DETAIL_BEARING = -18;
+export const MAP_DETAIL_PITCH = 68;
+export const MAP_DETAIL_BEARING = -22;
 
 /** Color para hover de comuna. */
 export const COMUNA_HOVER_COLOR = "#6f5bd5";
@@ -216,9 +216,21 @@ export const BASE_STYLE = {
 				"raster-saturation": -0.12,
 			},
 		},
+		{
+			id: "terrain-hillshade",
+			type: "hillshade" as const,
+			source: "terrain-dem",
+			paint: {
+				"hillshade-exaggeration": 0.45,
+				"hillshade-shadow-color": "rgba(0,0,0,0.22)",
+				"hillshade-highlight-color": "rgba(255,255,255,0.28)",
+				"hillshade-accent-color": "rgba(0,0,0,0.08)",
+				"hillshade-illumination-direction": 315,
+			},
+		},
 	],
 	terrain: {
 		source: "terrain-dem",
-		exaggeration: 1.4,
+		exaggeration: 2.2,
 	},
 } as const;
