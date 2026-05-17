@@ -17,7 +17,7 @@ jobs:
           script: |
             const branch = context.ref.replace('refs/heads/', '');
             const sanitizedBranch = branch.toLowerCase().replace(/[^a-z0-9]/g, '-');
-            const url = `https://${sanitizedBranch}-esgrima.fjararibet.workers.dev`;
+            const url = `https://${sanitizedBranch}-pulso-urbano.fjararibet.workers.dev`;
 
             await github.rest.repos.createCommitComment({
               owner: context.repo.owner,
