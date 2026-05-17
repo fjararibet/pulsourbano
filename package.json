@@ -22,7 +22,7 @@
     "db:dtpmgeo:apply:remote": "wrangler d1 migrations apply DTPMGEO --remote"
   },
   "dependencies": {
-    "@cloudflare/vite-plugin": "^1.26.0",
+    "@cloudflare/vite-plugin": "^1.37.1",
     "@faker-js/faker": "^10.3.0",
     "@t3-oss/env-core": "^0.13.10",
     "@tailwindcss/vite": "^4.1.18",
@@ -73,7 +73,7 @@
     "typescript": "^6.0.2",
     "vite": "^8.0.0",
     "vitest": "^4.1.5",
-    "wrangler": "^4.70.0"
+    "wrangler": "^4.92.0"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
