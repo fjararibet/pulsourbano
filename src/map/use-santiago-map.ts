@@ -169,18 +169,33 @@ export function useSantiagoMap(
 		if (!map) return;
 		updateComunaSelectionLayers(map, origen, destino);
 
-		if (destino && destino !== prevDestinoRef.current) {
-			const feature = comunasRef.current?.features.find(
+		const findComunaFeature = (name: string) =>
+			comunasRef.current?.features.find(
 				(f) =>
 					// biome-ignore lint/suspicious/noExplicitAny: GeoJSON property is dynamic
-					(f.properties as any)?.Comuna === destino,
+					(f.properties as any)?.Comuna === name,
 			);
-			if (feature && feature.geometry.type === "Polygon") {
-				const coords = feature.geometry.coordinates[0] as [number, number][];
-				const bounds = coords.reduce(
-					(b, [lng, lat]) => b.extend([lng, lat]),
-					new maplibregl.LngLatBounds(coords[0], coords[0]),
-				);
+
+		const extendBounds = (
+			bounds: maplibregl.LngLatBounds,
+			feature: GeoJSON.Feature,
+		) => {
+			if (feature.geometry.type !== "Polygon") return;
+			const coords = feature.geometry.coordinates[0] as [number, number][];
+			for (const [lng, lat] of coords) bounds.extend([lng, lat]);
+		};
+
+		if (
+			origen &&
+			destino &&
+			(origen !== prevOrigenRef.current || destino !== prevDestinoRef.current)
+		) {
+			const origenFeature = findComunaFeature(origen);
+			const destinoFeature = findComunaFeature(destino);
+			if (origenFeature && destinoFeature) {
+				const bounds = new maplibregl.LngLatBounds();
+				extendBounds(bounds, origenFeature);
+				extendBounds(bounds, destinoFeature);
 				map.fitBounds(bounds, {
 					padding: 48,
 					maxZoom: COMUNA_ZOOM,
