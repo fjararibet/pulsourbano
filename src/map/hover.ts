@@ -13,6 +13,8 @@ import {
 	COMUNA_SELECTED_LAYER_IDS,
 	EMPTY_BUS_HOVER_FILTER,
 	EMPTY_COMUNA_HOVER_FILTER,
+	MAP_DETAIL_BEARING,
+	MAP_DETAIL_PITCH,
 } from "./config";
 import type {
 	FrequencyInfo,
@@ -138,7 +140,13 @@ export function setupComunaHover(
 			(b, [lng, lat]) => b.extend([lng, lat]),
 			new maplibregl.LngLatBounds(coords[0], coords[0]),
 		);
-		map.fitBounds(bounds, { padding: 48, maxZoom: comunaZoom, duration: 450 });
+		map.fitBounds(bounds, {
+			padding: 48,
+			maxZoom: comunaZoom,
+			pitch: MAP_DETAIL_PITCH,
+			bearing: MAP_DETAIL_BEARING,
+			duration: 650,
+		});
 
 		const info = formatComunaHover(feature, true);
 		pinController.pin(info, () => {

@@ -8,6 +8,10 @@ export const INITIAL_ZOOM = 11;
 /** Zoom al hacer click en una comuna. */
 export const COMUNA_ZOOM = 13;
 
+/** Cámara de detalle: vista lateral al entrar en una comuna. */
+export const MAP_DETAIL_PITCH = 58;
+export const MAP_DETAIL_BEARING = -18;
+
 /** Color para hover de comuna. */
 export const COMUNA_HOVER_COLOR = "#6f5bd5";
 
@@ -141,6 +145,17 @@ export const BASE_STYLE = {
 			attribution:
 				'© <a href="https://www.openstreetmap.org/copyright">OSM</a> © <a href="https://carto.com/attributions">CARTO</a>',
 		},
+		"terrain-dem": {
+			type: "raster-dem" as const,
+			tiles: [
+				"https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png",
+			],
+			tileSize: 256,
+			maxzoom: 15,
+			encoding: "terrarium" as const,
+			attribution:
+				'© <a href="https://registry.opendata.aws/terrain-tiles/">AWS Terrain Tiles</a>',
+		},
 	},
 	layers: [
 		{
@@ -158,4 +173,8 @@ export const BASE_STYLE = {
 			},
 		},
 	],
+	terrain: {
+		source: "terrain-dem",
+		exaggeration: 1.4,
+	},
 } as const;
