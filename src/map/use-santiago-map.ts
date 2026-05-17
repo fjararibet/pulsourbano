@@ -3,9 +3,7 @@ import maplibregl from "maplibre-gl";
 import type { RefObject } from "react";
 import { useCallback, useEffect, useRef } from "react";
 import {
-	ALL_COMUNAS,
 	getRoute,
-	precomputeAllRoutesForComunas,
 	precomputePairRoutes,
 } from "#/lib/route-store";
 import type { CostingMode } from "#/lib/valhalla";
@@ -229,8 +227,6 @@ export function useSantiagoMap(
 				if (containerRef.current) {
 					arrowSceneRef.current = createArrowScene(map, containerRef.current);
 				}
-
-				precomputeAllRoutesForComunas(ALL_COMUNAS);
 
 				setLayerGroupVisibility(
 					map,

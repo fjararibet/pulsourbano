@@ -20,6 +20,26 @@ function makeKey(
 	return `${origen}:${destino}:${costing}`;
 }
 
+async function loadPrecomputedRoute(
+	origen: string,
+	destino: string,
+	costing: CostingMode,
+): Promise<CachedRoute | null> {
+	const fileName = `${encodeURIComponent(origen)}_${encodeURIComponent(destino)}_${costing}.json`;
+	try {
+		const res = await fetch(`/data/routes/${fileName}`);
+		if (!res.ok) return null;
+		const data = await res.json();
+		return {
+			shape: data.shape as [number, number][],
+			time: data.time as number,
+			distance: data.distance as number,
+		};
+	} catch {
+		return null;
+	}
+}
+
 function polygonCentroid(coords: number[][][]): [number, number] {
 	let sumLng = 0;
 	let sumLat = 0;
@@ -57,12 +77,17 @@ export function getRoute(
 		);
 	}
 
-	const promise = runValhallaRoute(coords, destCoords, costing).then(
-		(result) => ({
-			shape: result.shape,
-			time: result.time,
-			distance: result.distance,
-		}),
+	const promise = loadPrecomputedRoute(origen, destino, costing).then(
+		(precomputed) => {
+			if (precomputed) return precomputed;
+			return runValhallaRoute(coords, destCoords, costing).then(
+				(result) => ({
+					shape: result.shape,
+					time: result.time,
+					distance: result.distance,
+				}),
+			);
+		},
 	);
 
 	routeCache.set(key, promise);
@@ -106,12 +131,17 @@ export function precomputeAllRoutes(
 			const destCoords = ALL_COMUNA_CENTROIDS[destino];
 			if (!origenCoords || !destCoords) continue;
 
-			const promise = runValhallaRoute(origenCoords, destCoords, costing).then(
-				(result) => ({
-					shape: result.shape,
-					time: result.time,
-					distance: result.distance,
-				}),
+			const promise = loadPrecomputedRoute(origen, destino, costing).then(
+				(precomputed) => {
+					if (precomputed) return precomputed;
+					return runValhallaRoute(origenCoords, destCoords, costing).then(
+						(result) => ({
+							shape: result.shape,
+							time: result.time,
+							distance: result.distance,
+						}),
+					);
+				},
 			);
 
 			routeCache.set(key, promise);
@@ -143,12 +173,17 @@ export function precomputePairRoutes(
 		const destCoords = ALL_COMUNA_CENTROIDS[destino];
 		if (!origenCoords || !destCoords) continue;
 
-		const promise = runValhallaRoute(origenCoords, destCoords, costing).then(
-			(result) => ({
-				shape: result.shape,
-				time: result.time,
-				distance: result.distance,
-			}),
+		const promise = loadPrecomputedRoute(origen, destino, costing).then(
+			(precomputed) => {
+				if (precomputed) return precomputed;
+				return runValhallaRoute(origenCoords, destCoords, costing).then(
+					(result) => ({
+						shape: result.shape,
+						time: result.time,
+						distance: result.distance,
+					}),
+				);
+			},
 		);
 
 		routeCache.set(key, promise);
