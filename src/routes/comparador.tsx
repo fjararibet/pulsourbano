@@ -1,7 +1,17 @@
 import { env } from "cloudflare:workers";
 import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
+import React from "react";
 import { z } from "zod";
+import type {
+	ModoRow,
+	PeriodoRow,
+	PropositoRow,
+	ResumenViaje,
+	StatsRow,
+	TiempoMedioRow,
+} from "#/lib/redist";
+import { redistributeGeneric, redistributeModo } from "#/lib/redist";
 
 // ── tipos ─────────────────────────────────────────────
 
@@ -10,116 +20,14 @@ type ComunaRow = {
 	comuna: string;
 };
 
-type ModoRow = {
-	modo: string | null;
-	modoNombre: string | null;
-	n_viajes: number;
-	porcentaje: number;
-	velocidad_promedio: number;
-	tiempo_promedio_min: number;
-	distancia_promedio_km: number;
-};
-
-type PropositoRow = {
-	proposito: string | null;
-	n_viajes: number;
-	porcentaje: number;
-};
-
-type PeriodoRow = {
-	periodo: string | null;
-	n_viajes: number;
-	porcentaje: number;
-};
-
-type TiempoMedioRow = {
-	tiempoMedio: string | null;
-	n_viajes: number;
-	porcentaje: number;
-};
-
-type StatsRow = {
-	modo: string | null;
-	n_viajes: number;
-	porcentaje: number;
-	velocidad_promedio: number;
-};
-
-type ResumenViaje = {
-	total_viajes: number;
-	distancia_promedio_km: number;
-	tiempo_promedio_min: number;
-	velocidad_promedio_kmh: number;
-	n_viajes_bicicleta: number;
-	n_viajes_auto: number;
-	n_viajes_micro: number;
-	n_viajes_metro: number;
-	n_viajes_pie: number;
-};
-
 // ── server functions ──────────────────────────────────
-
-const COMUNAS_RM = [
-	"CERRILLOS",
-	"CERRO NAVIA",
-	"CONCHALI",
-	"EL BOSQUE",
-	"ESTACION CENTRAL",
-	"HUECHURABA",
-	"INDEPENDENCIA",
-	"LA CISTERNA",
-	"LA FLORIDA",
-	"LA GRANJA",
-	"LA PINTANA",
-	"LA REINA",
-	"LAS CONDES",
-	"LO BARNECHEA",
-	"LO ESPEJO",
-	"LO PRADO",
-	"MACUL",
-	"MAIPU",
-	"ÑUÑOA",
-	"PEDRO AGUIRRE CERDA",
-	"PEÑALOLEN",
-	"PUDAHUEL",
-	"PUENTE ALTO",
-	"QUILICURA",
-	"QUINTA NORMAL",
-	"RECOLETA",
-	"RENCA",
-	"SAN JOAQUIN",
-	"SAN MIGUEL",
-	"SAN RAMON",
-	"SANTIAGO",
-	"VITACURA",
-	"SAN BERNARDO",
-	"SAN RAMON",
-	"BUIN",
-	"CALERA DE TANGO",
-	"COLINA",
-	"CURACAVI",
-	"EL MONTE",
-	"ISLA DE MAIPO",
-	"LA LIGUA",
-	"LAMPA",
-	"MARIA PINTO",
-	"MELIPILLA",
-	"PADRE HURTADO",
-	"PAINE",
-	"PIRQUE",
-	"SAN JOSE DE MAIPO",
-	"SAN PEDRO",
-	"TALAGANTE",
-	"ALHUE",
-	"PUCHUNCAVI",
-];
 
 const getComunas = createServerFn({ method: "GET" }).handler(async () => {
 	try {
 		const { results } = await env.EOD2012.prepare(
 			`SELECT id, comuna FROM comuna ORDER BY comuna`,
 		).all<ComunaRow>();
-		return results.filter((c) => COMUNAS_RM.includes(c.comuna));
+		return results;
 	} catch (e) {
 		console.error("[getComunas] DB error:", e);
 		return [] as ComunaRow[];
@@ -143,18 +51,16 @@ function validateOrigenDestino(data: unknown): {
 const getEstadisticasViajes = createServerFn({ method: "POST" })
 	.inputValidator(validateOrigenDestino)
 	.handler(async ({ data }): Promise<StatsRow[]> => {
-		const query = `SELECT v.modoAgregado                                 AS modo,
-		        COUNT(*)                                        AS n_viajes,
+		const query = `SELECT v.modoAgregado AS modo,
+		        COUNT(*) AS n_viajes,
 		        ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (), 1) AS porcentaje,
 		        ROUND(AVG(d.distEuclidiana * 60.0 / v.tiempoViaje), 1) AS velocidad_promedio
 		 FROM viaje v
-		 LEFT JOIN distanciaViaje d ON d.viaje = v.viaje
+		 LEFT JOIN distancia_viaje d ON d.viaje = v.viaje
 		 LEFT JOIN comuna co ON co.id = v.comunaOrigen
 		 LEFT JOIN comuna cd ON cd.id = v.comunaDestino
-		 WHERE co.comuna = ?1
-		   AND cd.comuna = ?2
-		   AND v.tiempoViaje > 0
-		   AND d.distEuclidiana > 0
+		 WHERE co.comuna = ?1 AND cd.comuna = ?2
+		   AND v.tiempoViaje > 0 AND d.distEuclidiana > 0
 		 GROUP BY v.modoAgregado
 		 ORDER BY n_viajes DESC`;
 		try {
@@ -207,8 +113,7 @@ const getResumenViaje = createServerFn({ method: "POST" })
 		     AND v.tiempoViaje > 0 AND d.distEuclidiana > 0
 		 ),
 		 modes AS (
-		   SELECT v.modoAgregado,
-		     COUNT(*) AS n
+		   SELECT v.modoAgregado, COUNT(*) AS n
 		   FROM viaje v
 		   LEFT JOIN comuna co ON co.id = v.comunaOrigen
 		   LEFT JOIN comuna cd ON cd.id = v.comunaDestino
@@ -216,10 +121,7 @@ const getResumenViaje = createServerFn({ method: "POST" })
 		   GROUP BY v.modoAgregado
 		 )
 		 SELECT
-		   t.total_viajes,
-		   t.distancia_promedio_km,
-		   t.tiempo_promedio_min,
-		   t.velocidad_promedio_kmh,
+		   t.total_viajes, t.distancia_promedio_km, t.tiempo_promedio_min, t.velocidad_promedio_kmh,
 		   COALESCE(m_bici.n, 0) AS n_viajes_bicicleta,
 		   COALESCE(m_auto.n, 0) AS n_viajes_auto,
 		   COALESCE(m_micro.n, 0) AS n_viajes_micro,
@@ -382,7 +284,7 @@ const getStatsPorTiempoMedio = createServerFn({ method: "POST" })
 		}
 	});
 
-// ── validación de search params ───────────────────────
+// ── search params ─────────────────────────────────────
 
 const searchSchema = z.object({
 	origen: z.string().optional(),
@@ -400,46 +302,45 @@ export const Route = createFileRoute("/comparador")({
 	}),
 	loader: async ({ deps }) => {
 		const comunas = await getComunas();
-		let stats: StatsRow[] = [];
-		let total = 0;
-		let resumen: ResumenViaje = {
-			total_viajes: 0,
-			distancia_promedio_km: 0,
-			tiempo_promedio_min: 0,
-			velocidad_promedio_kmh: 0,
-			n_viajes_bicicleta: 0,
-			n_viajes_auto: 0,
-			n_viajes_micro: 0,
-			n_viajes_metro: 0,
-			n_viajes_pie: 0,
-		};
-		let statsModo: ModoRow[] = [];
-		let statsProposito: PropositoRow[] = [];
-		let statsPeriodo: PeriodoRow[] = [];
-		let statsTiempoMedio: TiempoMedioRow[] = [];
-		if (deps.origen && deps.destino) {
-			stats = await getEstadisticasViajes({
-				data: { origen: deps.origen, destino: deps.destino },
-			});
-			total = await getTotalViajes({
-				data: { origen: deps.origen, destino: deps.destino },
-			});
-			resumen = await getResumenViaje({
-				data: { origen: deps.origen, destino: deps.destino },
-			});
-			statsModo = await getStatsPorModo({
-				data: { origen: deps.origen, destino: deps.destino },
-			});
-			statsProposito = await getStatsPorProposito({
-				data: { origen: deps.origen, destino: deps.destino },
-			});
-			statsPeriodo = await getStatsPorPeriodo({
-				data: { origen: deps.origen, destino: deps.destino },
-			});
-			statsTiempoMedio = await getStatsPorTiempoMedio({
-				data: { origen: deps.origen, destino: deps.destino },
-			});
+		if (!deps.origen || !deps.destino) {
+			return {
+				comunas,
+				stats: [] as StatsRow[],
+				total: 0,
+				resumen: defaultResumen(),
+				statsModo: [] as ModoRow[],
+				statsProposito: [] as PropositoRow[],
+				statsPeriodo: [] as PeriodoRow[],
+				statsTiempoMedio: [] as TiempoMedioRow[],
+				origen: "",
+				destino: "",
+			};
 		}
+		const [
+			stats,
+			total,
+			resumen,
+			statsModo,
+			statsProposito,
+			statsPeriodo,
+			statsTiempoMedio,
+		] = await Promise.all([
+			getEstadisticasViajes({
+				data: { origen: deps.origen, destino: deps.destino },
+			}),
+			getTotalViajes({ data: { origen: deps.origen, destino: deps.destino } }),
+			getResumenViaje({ data: { origen: deps.origen, destino: deps.destino } }),
+			getStatsPorModo({ data: { origen: deps.origen, destino: deps.destino } }),
+			getStatsPorProposito({
+				data: { origen: deps.origen, destino: deps.destino },
+			}),
+			getStatsPorPeriodo({
+				data: { origen: deps.origen, destino: deps.destino },
+			}),
+			getStatsPorTiempoMedio({
+				data: { origen: deps.origen, destino: deps.destino },
+			}),
+		]);
 		return {
 			comunas,
 			stats,
@@ -454,6 +355,20 @@ export const Route = createFileRoute("/comparador")({
 		};
 	},
 });
+
+function defaultResumen(): ResumenViaje {
+	return {
+		total_viajes: 0,
+		distancia_promedio_km: 0,
+		tiempo_promedio_min: 0,
+		velocidad_promedio_kmh: 0,
+		n_viajes_bicicleta: 0,
+		n_viajes_auto: 0,
+		n_viajes_micro: 0,
+		n_viajes_metro: 0,
+		n_viajes_pie: 0,
+	};
+}
 
 // ── componente ────────────────────────────────────────
 
@@ -471,11 +386,36 @@ function ComparadorPage() {
 	} = Route.useLoaderData();
 	const navigate = Route.useNavigate();
 
+	const [modoExcluir, setModoExcluir] = React.useState<string | null>(null);
+
+	const removedModo = modoExcluir
+		? statsModo.find((m) => m.modo === modoExcluir)
+		: null;
+	const removedTrips = removedModo?.n_viajes ?? 0;
+
+	const modoExcluidoNombre = removedModo?.modoNombre ?? "";
+
+	const simStatsModo = modoExcluir
+		? redistributeModo(statsModo, modoExcluir)
+		: statsModo;
+	const simStatsProposito = modoExcluir
+		? redistributeGeneric(statsProposito, removedTrips)
+		: statsProposito;
+	const simStatsPeriodo = modoExcluir
+		? redistributeGeneric(statsPeriodo, removedTrips)
+		: statsPeriodo;
+	const simStatsTiempoMedio = modoExcluir
+		? redistributeGeneric(statsTiempoMedio, removedTrips)
+		: statsTiempoMedio;
+
+	const simTotal = modoExcluir ? total - removedTrips : total;
+
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		const form = new FormData(e.currentTarget);
 		const o = form.get("origen") as string;
 		const d = form.get("destino") as string;
+		setModoExcluir(null);
 		if (o && d) {
 			navigate({ search: { origen: o, destino: d } });
 		}
@@ -554,10 +494,32 @@ function ComparadorPage() {
 						<span className="text-sm font-semibold text-[#5b777c]">
 							Total viajes:{" "}
 							<strong className="text-[#102f37]">
-								{total.toLocaleString("es-CL")}
+								{simTotal.toLocaleString("es-CL")}
 							</strong>
+							{modoExcluir && (
+								<span className="ml-2 text-xs text-[#168a76]">
+									(simulación)
+								</span>
+							)}
 						</span>
 					</div>
+
+					{modoExcluir && (
+						<div className="mb-4 rounded-xl border border-[#168a76] bg-[#168a76]/10 p-4">
+							<p className="text-sm font-bold text-[#168a76]">
+								🔁 Simulando remoción de <strong>{modoExcluidoNombre}</strong> —{" "}
+								{Math.round(removedTrips).toLocaleString("es-CL")} viajes
+								redistribuidos proporcionalmente entre los demás modos
+							</p>
+							<button
+								type="button"
+								onClick={() => setModoExcluir(null)}
+								className="mt-2 text-xs font-medium text-[#102f37] underline hover:text-[#168a76]"
+							>
+								✕ Quitar simulación
+							</button>
+						</div>
+					)}
 
 					<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
 						<div className="rounded-2xl border border-white/60 bg-white/70 p-5 shadow-[0_16px_50px_rgba(16,47,55,0.1)] backdrop-blur-sm">
@@ -565,7 +527,7 @@ function ComparadorPage() {
 								Viajes Totales
 							</p>
 							<p className="mt-2 text-3xl font-black text-[#102f37]">
-								{resumen.total_viajes.toLocaleString("es-CL")}
+								{simTotal.toLocaleString("es-CL")}
 							</p>
 						</div>
 						<div className="rounded-2xl border border-white/60 bg-white/70 p-5 shadow-[0_16px_50px_rgba(16,47,55,0.1)] backdrop-blur-sm">
@@ -640,12 +602,20 @@ function ComparadorPage() {
 						</div>
 					</div>
 
-					{statsModo.length === 0 ? (
+					{simStatsModo.length === 0 ? (
 						<p className="mt-6 rounded-2xl border border-white/60 bg-white/70 p-6 text-sm text-[#5b777c] backdrop-blur-sm">
 							No se encontraron viajes para este par de comunas.
 						</p>
 					) : (
 						<div className="mt-6 overflow-hidden rounded-2xl border border-white/60 bg-white/70 shadow-[0_16px_50px_rgba(16,47,55,0.1)] backdrop-blur-sm">
+							<div className="border-b border-[#d0e0d8] px-5 py-3 flex items-center justify-between">
+								<h3 className="text-sm font-bold text-[#102f37]">
+									Por Modo de Transporte
+								</h3>
+								<p className="text-xs text-[#5b777c]">
+									Haz click en un modo para simular su remoción
+								</p>
+							</div>
 							<table className="w-full text-sm">
 								<thead>
 									<tr className="border-b border-[#d0e0d8]">
@@ -670,31 +640,46 @@ function ComparadorPage() {
 									</tr>
 								</thead>
 								<tbody>
-									{statsModo.map((row) => (
-										<tr
-											key={row.modo ?? "∅"}
-											className="border-b border-[#eef4eb] last:border-0"
-										>
-											<td className="px-5 py-3 font-medium text-[#102f37]">
-												{row.modoNombre ?? "—"}
-											</td>
-											<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
-												{row.n_viajes.toLocaleString("es-CL")}
-											</td>
-											<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
-												{row.porcentaje}%
-											</td>
-											<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
-												{(row.velocidad_promedio / 1000).toFixed(1)}
-											</td>
-											<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
-												{row.tiempo_promedio_min.toFixed(0)}
-											</td>
-											<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
-												{(row.distancia_promedio_km / 1000).toFixed(1)}
-											</td>
-										</tr>
-									))}
+									{simStatsModo.map((row) => {
+										const isExcluded = modoExcluir === row.modo;
+										return (
+											<tr
+												key={row.modo ?? "∅"}
+												className={`border-b border-[#eef4eb] last:border-0 cursor-pointer transition ${
+													isExcluded
+														? "bg-red-50 opacity-50"
+														: "hover:bg-[#f0f7f4]"
+												}`}
+												onClick={() =>
+													setModoExcluir(isExcluded ? null : (row.modo ?? null))
+												}
+											>
+												<td className="px-5 py-3 font-medium text-[#102f37]">
+													{row.modoNombre ?? "—"}
+													{isExcluded && (
+														<span className="ml-2 text-xs text-red-500">
+															(excluido)
+														</span>
+													)}
+												</td>
+												<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
+													{Math.round(row.n_viajes).toLocaleString("es-CL")}
+												</td>
+												<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
+													{row.porcentaje}%
+												</td>
+												<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
+													{(row.velocidad_promedio / 1000).toFixed(1)}
+												</td>
+												<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
+													{row.tiempo_promedio_min.toFixed(0)}
+												</td>
+												<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
+													{(row.distancia_promedio_km / 1000).toFixed(1)}
+												</td>
+											</tr>
+										);
+									})}
 								</tbody>
 							</table>
 						</div>
@@ -705,11 +690,16 @@ function ComparadorPage() {
 							<div className="border-b border-[#d0e0d8] px-5 py-3">
 								<h3 className="text-sm font-bold text-[#102f37]">
 									Por Propósito
+									{modoExcluir && (
+										<span className="ml-2 text-xs text-[#168a76]">
+											(simulado)
+										</span>
+									)}
 								</h3>
 							</div>
 							<table className="w-full text-sm">
 								<tbody>
-									{statsProposito.map((row) => (
+									{simStatsProposito.map((row) => (
 										<tr
 											key={row.proposito ?? "∅"}
 											className="border-b border-[#eef4eb] last:border-0"
@@ -718,7 +708,7 @@ function ComparadorPage() {
 												{row.proposito ?? "—"}
 											</td>
 											<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
-												{row.n_viajes.toLocaleString("es-CL")}
+												{Math.round(row.n_viajes).toLocaleString("es-CL")}
 											</td>
 											<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
 												{row.porcentaje}%
@@ -733,11 +723,16 @@ function ComparadorPage() {
 							<div className="border-b border-[#d0e0d8] px-5 py-3">
 								<h3 className="text-sm font-bold text-[#102f37]">
 									Por Horario
+									{modoExcluir && (
+										<span className="ml-2 text-xs text-[#168a76]">
+											(simulado)
+										</span>
+									)}
 								</h3>
 							</div>
 							<table className="w-full text-sm">
 								<tbody>
-									{statsPeriodo.map((row) => (
+									{simStatsPeriodo.map((row) => (
 										<tr
 											key={row.periodo ?? "∅"}
 											className="border-b border-[#eef4eb] last:border-0"
@@ -746,7 +741,7 @@ function ComparadorPage() {
 												{row.periodo ?? "—"}
 											</td>
 											<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
-												{row.n_viajes.toLocaleString("es-CL")}
+												{Math.round(row.n_viajes).toLocaleString("es-CL")}
 											</td>
 											<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
 												{row.porcentaje}%
@@ -762,11 +757,16 @@ function ComparadorPage() {
 						<div className="border-b border-[#d0e0d8] px-5 py-3">
 							<h3 className="text-sm font-bold text-[#102f37]">
 								Por Tiempo de Viaje
+								{modoExcluir && (
+									<span className="ml-2 text-xs text-[#168a76]">
+										(simulado)
+									</span>
+								)}
 							</h3>
 						</div>
 						<table className="w-full text-sm">
 							<tbody>
-								{statsTiempoMedio.map((row) => (
+								{simStatsTiempoMedio.map((row) => (
 									<tr
 										key={row.tiempoMedio ?? "∅"}
 										className="border-b border-[#eef4eb] last:border-0"
@@ -775,7 +775,7 @@ function ComparadorPage() {
 											{row.tiempoMedio ?? "—"}
 										</td>
 										<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
-											{row.n_viajes.toLocaleString("es-CL")}
+											{Math.round(row.n_viajes).toLocaleString("es-CL")}
 										</td>
 										<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
 											{row.porcentaje}%
