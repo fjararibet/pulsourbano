@@ -1,5 +1,6 @@
 import type { Map as MapLibreMap } from "maplibre-gl";
 import maplibregl from "maplibre-gl";
+import type { RefObject } from "react";
 import { useCallback, useEffect, useRef } from "react";
 import {
 	type ArrowHandle,
@@ -10,27 +11,38 @@ import {
 } from "./ArrowScene";
 import {
 	BASE_STYLE,
+	COMUNA_ALL_LAYER_IDS,
 	COMUNA_ZOOM,
 	INITIAL_ZOOM,
 	MAP_DETAIL_BEARING,
 	MAP_DETAIL_PITCH,
+	METRO_ALL_LAYER_IDS,
 	SANTIAGO_CENTER,
 } from "./config";
 import {
 	type HoverPinController,
 	setupComunaDualSelect,
 	setupComunaHover,
+	setupMetroStationClick,
 } from "./hover";
 import {
 	addComunaLayers,
+	addMetroLayers,
 	addRouteArrowLayers,
 	bringComunaHoverToFront,
 	bringRouteArrowToFront,
 	clearRouteArrow,
 	updateComunaSelectionLayers,
 } from "./layers";
-import type { HoverInfo } from "./types";
+import { getMetroGeoJSON } from "./server-metro";
+import type { HoverInfo, InteractionMode } from "./types";
 import { getPolygonCentroid, loadGeoJSON } from "./utils";
+
+type DualSelect = {
+	origen: string | null;
+	destino: string | null;
+	onSelectComuna: (name: string) => void;
+};
 
 interface RouteVariant {
 	lateralOffset: number;
@@ -65,21 +77,20 @@ const ROUTE_VARIANTS: RouteVariant[] = [
 /**
  * Inicializa MapLibre, carga los GeoJSON de Metro/Buses/Ciclovías, monta las
  * capas y conecta los handlers de hover. Devuelve el ref del contenedor y
- * un helper para resetear la vista.
+ * helpers para resetear la vista y alternar modos.
  */
 export function useSantiagoMap(
 	setHoverInfo: (info: HoverInfo) => void,
-	dualSelect?: {
-		origen: string | null;
-		destino: string | null;
-		onSelectComuna: (name: string) => void;
-	},
+	dualSelect?: DualSelect,
+	modeRef?: RefObject<InteractionMode>,
 ) {
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const mapRef = useRef<MapLibreMap | null>(null);
 	const pinnedInfoRef = useRef<HoverInfo>(null);
 	const clearPinnedEffectsRef = useRef<(() => void) | null>(null);
 	const dualSelectRef = useRef(dualSelect);
+	const fallbackModeRef = useRef<InteractionMode>("comunas");
+	const activeModeRef = modeRef ?? fallbackModeRef;
 	const comunasRef = useRef<GeoJSON.FeatureCollection | null>(null);
 	const routeArrowAnimCleanupRef = useRef<(() => void) | null>(null);
 	const arrowSceneRef = useRef<ArrowScene | null>(null);
@@ -93,6 +104,14 @@ export function useSantiagoMap(
 		pinnedInfoRef.current = null;
 		setHoverInfo(null);
 	}, [setHoverInfo]);
+
+	const applyModeVisibility = useCallback((mode: InteractionMode) => {
+		const map = mapRef.current;
+		if (!map) return;
+
+		setLayerGroupVisibility(map, COMUNA_ALL_LAYER_IDS, mode === "comunas");
+		setLayerGroupVisibility(map, METRO_ALL_LAYER_IDS, mode === "metro");
+	}, []);
 
 	useEffect(() => {
 		let cancelled = false;
@@ -110,10 +129,10 @@ export function useSantiagoMap(
 
 		(async () => {
 			if (!containerRef.current) return;
-			const maplibregl = await import("maplibre-gl");
+			const maplibre = await import("maplibre-gl");
 			if (cancelled || !containerRef.current) return;
 
-			const map = new maplibregl.Map({
+			const map = new maplibre.Map({
 				container: containerRef.current,
 				// biome-ignore lint/suspicious/noExplicitAny: MapLibre tiene tipos de style muy estrictos para objetos inline.
 				style: structuredClone(BASE_STYLE) as any,
@@ -133,15 +152,12 @@ export function useSantiagoMap(
 				console.error("MapLibre error", event.error ?? event);
 			});
 
-			// Exponer el mapa al window en dev para debug desde la consola.
 			let debugWindow: (typeof window & { __simMap?: MapLibreMap }) | undefined;
 			if (import.meta.env.DEV) {
 				debugWindow = window as typeof window & { __simMap?: MapLibreMap };
 				debugWindow.__simMap = map;
 			}
 
-			// Resize defensivo: en algunos layouts (mobile, tabs) el contenedor
-			// arranca con tamaño 0 y MapLibre lo deja en blanco si no le decimos.
 			const resize = () => map.resize();
 			const ro = new ResizeObserver(resize);
 			if (containerRef.current) ro.observe(containerRef.current);
@@ -175,16 +191,31 @@ export function useSantiagoMap(
 					});
 				} catch {}
 
-				const comunas = await loadGeoJSON("/data/comunas_rm.geojson");
+				const [comunas, metro] = await Promise.all([
+					loadGeoJSON("/data/comunas_rm.geojson"),
+					getMetroGeoJSON(),
+				]);
 				comunasRef.current = comunas;
 
 				if (comunas) addComunaLayers(map, comunas);
+				if (metro) addMetroLayers(map, metro);
 				if (comunas) bringComunaHoverToFront(map);
 				addRouteArrowLayers(map);
 				bringRouteArrowToFront(map);
 				if (containerRef.current) {
 					arrowSceneRef.current = createArrowScene(map, containerRef.current);
 				}
+
+				setLayerGroupVisibility(
+					map,
+					COMUNA_ALL_LAYER_IDS,
+					activeModeRef.current === "comunas",
+				);
+				setLayerGroupVisibility(
+					map,
+					METRO_ALL_LAYER_IDS,
+					activeModeRef.current === "metro",
+				);
 
 				map.setCenter(SANTIAGO_CENTER);
 				map.setZoom(INITIAL_ZOOM);
@@ -198,9 +229,14 @@ export function useSantiagoMap(
 						);
 					} else {
 						hoverCleanup.push(
-							setupComunaHover(map, pinController, COMUNA_ZOOM),
+							setupComunaHover(map, pinController, COMUNA_ZOOM, activeModeRef),
 						);
 					}
+				}
+				if (metro) {
+					hoverCleanup.push(
+						setupMetroStationClick(map, pinController, activeModeRef),
+					);
 				}
 
 				mapReadyRef.current = true;
@@ -212,7 +248,7 @@ export function useSantiagoMap(
 			cleanup?.();
 			mapRef.current = null;
 		};
-	}, [setHoverInfo]);
+	}, [setHoverInfo, activeModeRef]);
 
 	const resetView = useCallback(() => {
 		mapRef.current?.easeTo({
@@ -220,7 +256,7 @@ export function useSantiagoMap(
 			zoom: INITIAL_ZOOM,
 			bearing: 0,
 			pitch: 0,
-			duration: 200,
+			duration: 650,
 		});
 	}, []);
 
@@ -269,7 +305,6 @@ export function useSantiagoMap(
 					duration: 650,
 				});
 
-				// Generar flechas de ruta origen-destino (3 rutas distintas)
 				const origenCentroid = getPolygonCentroid(origenFeature);
 				const destinoCentroid = getPolygonCentroid(destinoFeature);
 				const scene = arrowSceneRef.current;
@@ -301,7 +336,6 @@ export function useSantiagoMap(
 		}
 
 		if (origen && !destino && prevDestinoRef.current) {
-			// Se quitó el destino: limpiar flecha
 			clearRouteArrow(map);
 			for (const handle of routeArrowHandlesRef.current) handle.remove();
 			routeArrowHandlesRef.current = [];
@@ -313,5 +347,27 @@ export function useSantiagoMap(
 		prevDestinoRef.current = destino;
 	}, [origen, destino, resetView]);
 
-	return { containerRef, clearPinned, resetView, mapReadyRef };
+	return {
+		containerRef,
+		clearPinned,
+		resetView,
+		mapReadyRef,
+		applyModeVisibility,
+	};
+}
+
+function setLayerGroupVisibility(
+	map: MapLibreMap,
+	layerIds: readonly string[],
+	visible: boolean,
+) {
+	for (const layerId of layerIds) {
+		if (map.getLayer(layerId)) {
+			map.setLayoutProperty(
+				layerId,
+				"visibility",
+				visible ? "visible" : "none",
+			);
+		}
+	}
 }

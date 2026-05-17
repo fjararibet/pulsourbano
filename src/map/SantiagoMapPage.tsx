@@ -1,12 +1,15 @@
 import "maplibre-gl/dist/maplibre-gl.css";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { DESTINO_COLOR, ORIGEN_COLOR } from "./config";
-import type { HoverInfo } from "./types";
+import type { HoverInfo, InteractionMode } from "./types";
 import { useSantiagoMap } from "./use-santiago-map";
 
 export function SantiagoMapPage() {
 	const [hoverInfo, setHoverInfo] = useState<HoverInfo>(null);
 	const [mapReady, setMapReady] = useState(false);
+	const [mode, setMode] = useState<InteractionMode>("comunas");
+	const modeRef = useRef<InteractionMode>("comunas");
+	modeRef.current = mode;
 	const [selections, setSelections] = useState<{
 		origen: string | null;
 		destino: string | null;
@@ -26,13 +29,20 @@ export function SantiagoMapPage() {
 		setSelections({ origen: null, destino: null });
 	}, []);
 
-	const { containerRef, clearPinned, resetView, mapReadyRef } = useSantiagoMap(
+	const {
+		containerRef,
+		clearPinned,
+		resetView,
+		mapReadyRef,
+		applyModeVisibility,
+	} = useSantiagoMap(
 		setHoverInfo,
 		{
 			origen: selections.origen,
 			destino: selections.destino,
 			onSelectComuna: handleSelectComuna,
 		},
+		modeRef,
 	);
 
 	useEffect(() => {
@@ -56,7 +66,21 @@ export function SantiagoMapPage() {
 		return () => document.removeEventListener("keydown", handleKeyDown);
 	}, [clearPinned, clearSelections]);
 
-	const hasSelection = selections.origen || selections.destino;
+	useEffect(() => {
+		applyModeVisibility(mode);
+	}, [mode, applyModeVisibility]);
+
+	const changeMode = (nextMode: InteractionMode) => {
+		modeRef.current = nextMode;
+		setMode(nextMode);
+		clearPinned();
+		if (nextMode !== "comunas") clearSelections();
+		applyModeVisibility(nextMode);
+		resetView();
+	};
+
+	const hasSelection =
+		mode === "comunas" && (selections.origen || selections.destino);
 
 	return (
 		<main className="relative h-[100svh] w-full overflow-hidden bg-[#edf4e8] text-[#102f37]">
@@ -74,6 +98,31 @@ export function SantiagoMapPage() {
 					</div>
 				</div>
 			)}
+
+			<div className="absolute top-2 right-2 z-20 flex overflow-hidden rounded-full border border-white/70 bg-white/90 shadow-lg backdrop-blur-xl sm:top-4 sm:right-4">
+				<button
+					type="button"
+					onClick={() => changeMode("comunas")}
+					className={`px-3 py-1.5 text-xs font-bold transition ${
+						mode === "comunas"
+							? "bg-[#6f5bd5] text-white"
+							: "text-[#5b777c] hover:bg-[#f1f7f4]"
+					}`}
+				>
+					Comunas
+				</button>
+				<button
+					type="button"
+					onClick={() => changeMode("metro")}
+					className={`px-3 py-1.5 text-xs font-bold transition ${
+						mode === "metro"
+							? "bg-[#0f8f98] text-white"
+							: "text-[#5b777c] hover:bg-[#f1f7f4]"
+					}`}
+				>
+					Metro
+				</button>
+			</div>
 
 			<section className="pointer-events-none absolute bottom-0 left-0 right-0 z-10 flex flex-col items-end gap-2 p-2 sm:pointer-events-auto sm:inset-y-0 sm:left-0 sm:right-auto sm:w-80 sm:items-start sm:overflow-y-auto sm:border-r sm:border-white/70 sm:bg-white/90 sm:p-4 sm:shadow-[4px_0_24px_rgba(16,47,55,0.1)] sm:backdrop-blur-xl">
 				{hasSelection ? (
@@ -129,6 +178,10 @@ export function SantiagoMapPage() {
 								) : null}
 							</div>
 						</div>
+					) : mode === "metro" ? (
+						<p className="m-0 text-center text-xs font-medium text-[#5b777c]">
+							Selecciona una estación de metro
+						</p>
 					) : (
 						<div className="flex flex-col gap-2">
 							{selections.origen ? (

@@ -73,6 +73,24 @@ export const COMUNA_DESTINO_LAYER_IDS = [
 	"comunas-destino-outline",
 ] as const;
 
+/** Todas las capas físicas del grupo comunas, incluyendo interacción y selección. */
+export const COMUNA_ALL_LAYER_IDS = [
+	"comunas-fill",
+	"comunas-outline",
+	COMUNA_INTERACTION_LAYER_ID,
+	...COMUNA_SELECTED_LAYER_IDS,
+	...COMUNA_ORIGEN_LAYER_IDS,
+	...COMUNA_DESTINO_LAYER_IDS,
+	...ROUTE_ARROW_LAYER_IDS,
+] as const;
+
+/** Todas las capas físicas del grupo metro. */
+export const METRO_ALL_LAYER_IDS = [
+	"metro-line-halo",
+	"metro-lines",
+	"metro-stations",
+] as const;
+
 /**
  * Filtro neutro que oculta la capa "hover" de buses cuando no hay
  * ningún recorrido seleccionado bajo el cursor.
@@ -242,6 +260,6 @@ export const BASE_STYLE = {
 	],
 	terrain: {
 		source: "terrain-dem",
-		exaggeration: 1.6,
+		exaggeration: 1.4,
 	},
-} as const;
+};
