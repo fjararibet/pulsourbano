@@ -55,8 +55,8 @@ export function addComunaLayers(
 		source: "comunas-rm",
 		paint: {
 			"line-color": COMUNA_COLOR,
-			"line-width": ["interpolate", ["linear"], ["zoom"], 9, 1.5, 13, 3],
-			"line-opacity": 0.5,
+			"line-width": ["interpolate", ["linear"], ["zoom"], 9, 2.5, 13, 5],
+			"line-opacity": 0.6,
 		},
 	});
 	map.addLayer({
