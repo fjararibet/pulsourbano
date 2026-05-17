@@ -11,7 +11,7 @@ import type {
 	StatsRow,
 	TiempoMedioRow,
 } from "#/lib/comparador/comparador-types";
-import { redistributeGeneric, redistributeModo } from "#/lib/comparador/redist";
+import { getSliderRange, redistributeBySliders } from "#/lib/comparador/redist";
 
 // ── tipos ─────────────────────────────────────────────
 
@@ -399,34 +399,34 @@ function ComparadorPage() {
 	} = Route.useLoaderData();
 	const navigate = Route.useNavigate();
 
-	const [modoExcluir, setModoExcluir] = React.useState<string | null>(null);
+	const [sliderState, setSliderState] = React.useState<
+		Record<string, { delta: number; locked: boolean }>
+	>({});
 
-	const removedModo = modoExcluir
-		? statsModo.find((m) => m.modo === modoExcluir)
-		: null;
-	const removedTrips = removedModo?.n_viajes ?? 0;
+	const [userAdjustedModes, setUserAdjustedModes] = React.useState<Set<string>>(
+		new Set(),
+	);
 
-	const simStatsModo = modoExcluir
-		? redistributeModo(statsModo, modoExcluir)
-		: statsModo;
-	const simStatsProposito = modoExcluir
-		? redistributeGeneric(statsProposito, removedTrips)
-		: statsProposito;
-	const simStatsPeriodo = modoExcluir
-		? redistributeGeneric(statsPeriodo, removedTrips)
-		: statsPeriodo;
-	const simStatsTiempoMedio = modoExcluir
-		? redistributeGeneric(statsTiempoMedio, removedTrips)
-		: statsTiempoMedio;
+	const simStatsModo = redistributeBySliders(
+		statsModo,
+		sliderState,
+		userAdjustedModes,
+		total,
+	);
 
-	const simTotal = modoExcluir ? total - removedTrips : total;
+	const simStatsProposito = statsProposito;
+	const simStatsPeriodo = statsPeriodo;
+	const simStatsTiempoMedio = statsTiempoMedio;
+
+	const simTotal = total;
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		const form = new FormData(e.currentTarget);
 		const o = form.get("origen") as string;
 		const d = form.get("destino") as string;
-		setModoExcluir(null);
+		setSliderState({});
+		setUserAdjustedModes(new Set());
 		if (o && d) {
 			navigate({ search: { origen: o, destino: d } });
 		}
@@ -507,13 +507,31 @@ function ComparadorPage() {
 							<strong className="text-[#102f37]">
 								{simTotal.toLocaleString("es-CL")}
 							</strong>
-							{modoExcluir && (
+							{Object.entries(sliderState).length > 0 && (
 								<span className="ml-2 text-xs text-[#168a76]">
 									(simulación)
 								</span>
 							)}
 						</span>
 					</div>
+
+					{Object.keys(sliderState).length > 0 && (
+						<div className="mb-4 rounded-xl border border-[#168a76] bg-[#168a76]/10 p-4">
+							<p className="text-sm font-bold text-[#168a76]">
+								🔁 Simulación activa — los porcentajes siempre suman 100%
+							</p>
+							<button
+								type="button"
+								onClick={() => {
+									setSliderState({});
+									setUserAdjustedModes(new Set());
+								}}
+								className="mt-2 text-xs font-medium text-[#102f37] underline hover:text-[#168a76]"
+							>
+								✕ Reiniciar simulación
+							</button>
+						</div>
+					)}
 
 					<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
 						<div className="rounded-2xl border border-white/60 bg-white/70 p-5 shadow-[0_16px_50px_rgba(16,47,55,0.1)] backdrop-blur-sm">
@@ -607,26 +625,23 @@ function ComparadorPage() {
 									Por Modo de Transporte
 								</h3>
 								<p className="text-xs text-[#5b777c]">
-									Simulación deshabilitada
+									Ajusta los sliders para redistribuir
 								</p>
 							</div>
 							<table className="w-full text-sm">
 								<thead>
 									<tr className="border-b border-[#d0e0d8]">
-										<th className="px-5 py-3 text-left font-bold text-[#5b777c]">
-											Modo
-										</th>
 										<th className="px-5 py-3 text-center font-bold text-[#5b777c]">
-											%
-										</th>
-										<th className="px-5 py-3 text-right font-bold text-[#5b777c]">
-											Viajes
-										</th>
-										<th className="px-5 py-3 text-right font-bold text-[#5b777c]">
-											%
+											Distribución %
 										</th>
 										<th className="px-5 py-3 text-right font-bold text-[#5b777c]">
 											Vel. km/h
+										</th>
+										<th className="px-5 py-3 text-right font-bold text-[#5b777c]">
+											Tiempo min
+										</th>
+										<th className="px-5 py-3 text-right font-bold text-[#5b777c]">
+											Dist. km
 										</th>
 										<th className="px-5 py-3 text-right font-bold text-[#5b777c]">
 											Tiempo min
@@ -640,6 +655,29 @@ function ComparadorPage() {
 									{simStatsModo.map((row) => {
 										const modo = row.modo ?? "";
 										const currentPct = Math.round(row.porcentaje * 10) / 10;
+										const range = getSliderRange(
+											modo,
+											statsModo,
+											sliderState,
+											userAdjustedModes,
+										);
+
+										const handleChange = (val: number) => {
+											const clamped = Math.max(
+												range.min,
+												Math.min(range.max, val),
+											);
+											setSliderState((prev) => ({
+												...prev,
+												[modo]: { delta: clamped, locked: false },
+											}));
+											setUserAdjustedModes((prev) => {
+												const next = new Set(prev);
+												next.add(modo);
+												return next;
+											});
+										};
+
 										return (
 											<tr
 												key={modo}
@@ -648,24 +686,31 @@ function ComparadorPage() {
 												<td className="px-5 py-3 font-medium text-[#102f37]">
 													{row.modoNombre ?? "—"}
 												</td>
-												<td className="px-5 py-3 text-center">
-													<div className="flex items-center justify-center gap-2">
-														<span className="w-12 text-sm font-medium text-[#102f37]">
+												<td className="px-5 py-3">
+													<div className="flex items-center gap-2">
+														<span className="w-10 text-sm font-medium text-[#102f37]">
 															{currentPct}%
 														</span>
-														<div className="relative h-2 w-20 rounded-full bg-[#eef4eb]">
+														<div className="relative h-2 flex-1 rounded-full bg-[#eef4eb]">
+															<input
+																type="range"
+																min={Math.round(range.min * 10) / 10}
+																max={Math.round(range.max * 10) / 10}
+																step="0.1"
+																value={currentPct}
+																onChange={(e) =>
+																	handleChange(Number(e.target.value))
+																}
+																className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+															/>
 															<div
-																className="absolute top-0 left-0 h-full rounded-full bg-[#168a76]"
-																style={{ width: `${currentPct}%` }}
+																className="pointer-events-none absolute top-1/2 h-3 w-3 -translate-y-1/2 rounded-full border-2 border-white shadow bg-[#168a76]"
+																style={{
+																	left: `calc(${currentPct}% - 6px)`,
+																}}
 															/>
 														</div>
 													</div>
-												</td>
-												<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
-													{Math.round(row.n_viajes).toLocaleString("es-CL")}
-												</td>
-												<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
-													{row.porcentaje}%
 												</td>
 												<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
 													{(row.velocidad_promedio / 1000).toFixed(1)}
@@ -746,7 +791,7 @@ function ComparadorPage() {
 						<div className="border-b border-[#d0e0d8] px-5 py-3">
 							<h3 className="text-sm font-bold text-[#102f37]">
 								Por Tiempo de Viaje
-								{modoExcluir && (
+								{Object.keys(sliderState).length > 0 && (
 									<span className="ml-2 text-xs text-[#168a76]">
 										(simulado)
 									</span>
