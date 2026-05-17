@@ -9,10 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as KvRouteImport } from './routes/kv'
 import { Route as EodRouteImport } from './routes/eod'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiCacheClearRouteImport } from './routes/api/cache-clear'
 
+const KvRoute = KvRouteImport.update({
+  id: '/kv',
+  path: '/kv',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EodRoute = EodRouteImport.update({
   id: '/eod',
   path: '/eod',
@@ -32,35 +38,46 @@ const ApiCacheClearRoute = ApiCacheClearRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/eod': typeof EodRoute
+  '/kv': typeof KvRoute
   '/api/cache-clear': typeof ApiCacheClearRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/eod': typeof EodRoute
+  '/kv': typeof KvRoute
   '/api/cache-clear': typeof ApiCacheClearRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/eod': typeof EodRoute
+  '/kv': typeof KvRoute
   '/api/cache-clear': typeof ApiCacheClearRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/eod' | '/api/cache-clear'
+  fullPaths: '/' | '/eod' | '/kv' | '/api/cache-clear'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/eod' | '/api/cache-clear'
-  id: '__root__' | '/' | '/eod' | '/api/cache-clear'
+  to: '/' | '/eod' | '/kv' | '/api/cache-clear'
+  id: '__root__' | '/' | '/eod' | '/kv' | '/api/cache-clear'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EodRoute: typeof EodRoute
+  KvRoute: typeof KvRoute
   ApiCacheClearRoute: typeof ApiCacheClearRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/kv': {
+      id: '/kv'
+      path: '/kv'
+      fullPath: '/kv'
+      preLoaderRoute: typeof KvRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/eod': {
       id: '/eod'
       path: '/eod'
@@ -88,6 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EodRoute: EodRoute,
+  KvRoute: KvRoute,
   ApiCacheClearRoute: ApiCacheClearRoute,
 }
 export const routeTree = rootRouteImport
