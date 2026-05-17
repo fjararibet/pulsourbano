@@ -6,6 +6,7 @@ import { useSantiagoMap } from "./use-santiago-map";
 
 export function SantiagoMapPage() {
 	const [hoverInfo, setHoverInfo] = useState<HoverInfo>(null);
+	const [mapReady, setMapReady] = useState(false);
 	const [selections, setSelections] = useState<{
 		origen: string | null;
 		destino: string | null;
@@ -25,7 +26,7 @@ export function SantiagoMapPage() {
 		setSelections({ origen: null, destino: null });
 	}, []);
 
-	const { containerRef, clearPinned, resetView } = useSantiagoMap(
+	const { containerRef, clearPinned, resetView, mapReadyRef } = useSantiagoMap(
 		setHoverInfo,
 		{
 			origen: selections.origen,
@@ -33,6 +34,16 @@ export function SantiagoMapPage() {
 			onSelectComuna: handleSelectComuna,
 		},
 	);
+
+	useEffect(() => {
+		const check = setInterval(() => {
+			if (mapReadyRef.current) {
+				setMapReady(true);
+				clearInterval(check);
+			}
+		}, 50);
+		return () => clearInterval(check);
+	}, [mapReadyRef]);
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
@@ -52,6 +63,17 @@ export function SantiagoMapPage() {
 			<div className="absolute inset-0 z-0">
 				<div ref={containerRef} className="h-full w-full" />
 			</div>
+
+			{!mapReady && (
+				<div className="absolute inset-0 z-20 flex items-center justify-center bg-[#edf4e8]">
+					<div className="flex flex-col items-center gap-3">
+						<div className="h-8 w-8 animate-spin rounded-full border-4 border-[#b9d7d1] border-t-[#24525b]" />
+						<span className="text-sm font-medium text-[#5b777c]">
+							Cargando mapa...
+						</span>
+					</div>
+				</div>
+			)}
 
 			<section className="pointer-events-none absolute bottom-0 left-0 right-0 z-10 flex flex-col items-end gap-2 p-2 sm:pointer-events-auto sm:inset-y-0 sm:left-0 sm:right-auto sm:w-80 sm:items-start sm:overflow-y-auto sm:border-r sm:border-white/70 sm:bg-white/90 sm:p-4 sm:shadow-[4px_0_24px_rgba(16,47,55,0.1)] sm:backdrop-blur-xl">
 				{hasSelection ? (

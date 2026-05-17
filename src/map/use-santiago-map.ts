@@ -51,6 +51,7 @@ export function useSantiagoMap(
 	const comunasRef = useRef<GeoJSON.FeatureCollection | null>(null);
 	const routeArrowAnimCleanupRef = useRef<(() => void) | null>(null);
 	const arrowOverlayCleanupRef = useRef<(() => void) | null | undefined>(null);
+	const mapReadyRef = useRef(false);
 	dualSelectRef.current = dualSelect;
 
 	const clearPinned = useCallback(() => {
@@ -132,16 +133,13 @@ export function useSantiagoMap(
 			map.on("load", async () => {
 				resize();
 
-				// Luz direccional para que el relieve del terreno proyecte sombras
 				try {
 					map.setLight({
 						anchor: "viewport",
 						color: "#ffffff",
 						intensity: 0.65,
 					});
-				} catch {
-					// Si el navegador no soporta WebGL para terreno, continuar sin
-				}
+				} catch {}
 
 				const comunas = await loadGeoJSON("/data/comunas_rm.geojson");
 				comunasRef.current = comunas;
@@ -173,6 +171,8 @@ export function useSantiagoMap(
 						);
 					}
 				}
+
+				mapReadyRef.current = true;
 			});
 		})();
 
@@ -290,5 +290,5 @@ export function useSantiagoMap(
 		prevDestinoRef.current = destino;
 	}, [origen, destino, resetView]);
 
-	return { containerRef, clearPinned, resetView };
+	return { containerRef, clearPinned, resetView, mapReadyRef };
 }
