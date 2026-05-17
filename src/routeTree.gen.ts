@@ -10,12 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as EodRouteImport } from './routes/eod'
+import { Route as ComparadorRouteImport } from './routes/comparador'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiTrpcSplatRouteImport } from './routes/api.trpc.$'
 
 const EodRoute = EodRouteImport.update({
   id: '/eod',
   path: '/eod',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ComparadorRoute = ComparadorRouteImport.update({
+  id: '/comparador',
+  path: '/comparador',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -31,30 +37,34 @@ const ApiTrpcSplatRoute = ApiTrpcSplatRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/comparador': typeof ComparadorRoute
   '/eod': typeof EodRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/comparador': typeof ComparadorRoute
   '/eod': typeof EodRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/comparador': typeof ComparadorRoute
   '/eod': typeof EodRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/eod' | '/api/trpc/$'
+  fullPaths: '/' | '/comparador' | '/eod' | '/api/trpc/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/eod' | '/api/trpc/$'
-  id: '__root__' | '/' | '/eod' | '/api/trpc/$'
+  to: '/' | '/comparador' | '/eod' | '/api/trpc/$'
+  id: '__root__' | '/' | '/comparador' | '/eod' | '/api/trpc/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ComparadorRoute: typeof ComparadorRoute
   EodRoute: typeof EodRoute
   ApiTrpcSplatRoute: typeof ApiTrpcSplatRoute
 }
@@ -66,6 +76,13 @@ declare module '@tanstack/react-router' {
       path: '/eod'
       fullPath: '/eod'
       preLoaderRoute: typeof EodRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/comparador': {
+      id: '/comparador'
+      path: '/comparador'
+      fullPath: '/comparador'
+      preLoaderRoute: typeof ComparadorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -87,6 +104,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ComparadorRoute: ComparadorRoute,
   EodRoute: EodRoute,
   ApiTrpcSplatRoute: ApiTrpcSplatRoute,
 }
