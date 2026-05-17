@@ -4,7 +4,9 @@ import type {
 	Map as MapLibreMap,
 } from "maplibre-gl";
 import type { CostingMode } from "#/lib/route-store";
-import { ROUTE_ARROW_COLOR, ROUTE_ARROW_CORE_LAYER_BY_MODE } from "./config";
+import { ROUTE_ARROW_CORE_LAYER_BY_MODE } from "./config";
+
+const HIGHLIGHT_COLOR = "#ffffff";
 
 export interface ArrowStyle {
 	color?: string;
@@ -52,9 +54,9 @@ type CometStop = readonly [position: number, alpha: number];
 
 const COMET_SHAPE: readonly CometStop[] = [
 	[-0.14, 0],
-	[-0.05, 0.35],
-	[0, 0.95],
-	[0.05, 0.35],
+	[-0.05, 0.2],
+	[0, 0.55],
+	[0.05, 0.2],
 	[0.14, 0],
 ];
 
@@ -153,7 +155,7 @@ export function createArrowMapLibreManager(
 		// Overshoot [0,1] by the tail extent so the head fades off the end
 		// instead of stopping there.
 		const waveProgress = t * (1 + 2 * COMET_TAIL_EXTENT) - COMET_TAIL_EXTENT;
-		return createCometGradient(waveProgress, ROUTE_ARROW_COLOR);
+		return createCometGradient(waveProgress, HIGHLIGHT_COLOR);
 	};
 
 	const animate = (time: number) => {
