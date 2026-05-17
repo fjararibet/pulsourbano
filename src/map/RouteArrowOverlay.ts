@@ -12,6 +12,7 @@ let ctx: CanvasRenderingContext2D | null = null;
 let mapInstance: MapLibreMap | null = null;
 let startedAt = 0;
 let isVisible = false;
+let rafId: number | null = null;
 
 export function initRouteArrowOverlay(
 	map: MapLibreMap,
@@ -54,11 +55,33 @@ export function initRouteArrowOverlay(
 	return () => {
 		ro.disconnect();
 		map.off("render", onRender);
+		stopAnimationLoop();
 		c.remove();
 		canvas = null;
 		ctx = null;
 		mapInstance = null;
 	};
+}
+
+function tick() {
+	rafId = null;
+	if (!isVisible) return;
+	if (ctx && canvas && currentState) {
+		drawArrow(ctx, canvas, currentState, performance.now());
+	}
+	rafId = requestAnimationFrame(tick);
+}
+
+function startAnimationLoop() {
+	if (rafId !== null) return;
+	rafId = requestAnimationFrame(tick);
+}
+
+function stopAnimationLoop() {
+	if (rafId !== null) {
+		cancelAnimationFrame(rafId);
+		rafId = null;
+	}
 }
 
 export function showRouteArrowOverlay(
@@ -75,6 +98,7 @@ export function showRouteArrowOverlay(
 	};
 	isVisible = true;
 	startedAt = performance.now();
+	startAnimationLoop();
 	if (mapInstance) {
 		mapInstance.triggerRepaint();
 	}
@@ -83,6 +107,7 @@ export function showRouteArrowOverlay(
 export function hideRouteArrowOverlay() {
 	isVisible = false;
 	currentState = null;
+	stopAnimationLoop();
 	if (ctx && canvas) {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 	}
@@ -191,23 +216,72 @@ function drawArrow(
 		context.stroke();
 	}
 
-	// Animated flowing highlight
-	const elapsed = (now - startedAt) / 1000;
-	const wavePos = (elapsed % 1.6) / 1.6;
-	const headIdx = Math.floor(wavePos * (elevatedPoints.length - 1));
-	const tailIdx = Math.max(0, headIdx - 12);
-
-	const tailPt = elevatedPoints[tailIdx];
-	if (tailPt) {
-		context.beginPath();
-		context.moveTo(tailPt[0], tailPt[1]);
-		for (let i = tailIdx + 1; i <= headIdx; i++) {
-			const pt = elevatedPoints[i];
-			if (pt) context.lineTo(pt[0], pt[1]);
+	// Animated flowing highlight — arc-length parameterized so the head
+	// reliably reaches the very end of the arrow on each cycle.
+	const cumLen: number[] = [0];
+	let runningLen = 0;
+	for (let i = 1; i < elevatedPoints.length; i++) {
+		const prev = elevatedPoints[i - 1];
+		const cur = elevatedPoints[i];
+		if (prev && cur) {
+			const dx = cur[0] - prev[0];
+			const dy = cur[1] - prev[1];
+			runningLen += Math.sqrt(dx * dx + dy * dy);
 		}
-		context.strokeStyle = "#ffffff";
-		context.lineWidth = 2.8 * dpr;
-		context.stroke();
+		cumLen.push(runningLen);
+	}
+	const totalElevatedLen = runningLen;
+
+	if (totalElevatedLen > 0) {
+		const elapsed = (now - startedAt) / 1000;
+		const cycle = 1.8;
+		const phase = (elapsed % cycle) / cycle;
+		const tailFrac = 0.18;
+		// Sweep head past the tip so the tail can clear out before a new
+		// comet enters at the start — no pause, perfectly looping.
+		const headFrac = phase * (1 + tailFrac);
+		const rawHeadLen = headFrac * totalElevatedLen;
+		const rawTailLen = rawHeadLen - tailFrac * totalElevatedLen;
+		const headLen = Math.min(totalElevatedLen, rawHeadLen);
+		const tailLen = Math.max(0, rawTailLen);
+
+		const pointAtLen = (d: number): [number, number] | null => {
+			const clamped = Math.max(0, Math.min(totalElevatedLen, d));
+			for (let i = 1; i < cumLen.length; i++) {
+				const segEnd = cumLen[i];
+				const segStart = cumLen[i - 1];
+				if (segEnd === undefined || segStart === undefined) continue;
+				if (segEnd >= clamped) {
+					const segLen = segEnd - segStart;
+					const local = segLen > 0 ? (clamped - segStart) / segLen : 0;
+					const a = elevatedPoints[i - 1];
+					const b = elevatedPoints[i];
+					if (a && b) {
+						return [a[0] + (b[0] - a[0]) * local, a[1] + (b[1] - a[1]) * local];
+					}
+					return null;
+				}
+			}
+			return elevatedPoints[elevatedPoints.length - 1] ?? null;
+		};
+
+		const tailPoint = pointAtLen(tailLen);
+		const headPoint = pointAtLen(headLen);
+		if (tailPoint && headPoint) {
+			context.beginPath();
+			context.moveTo(tailPoint[0], tailPoint[1]);
+			for (let i = 0; i < cumLen.length; i++) {
+				const cl = cumLen[i];
+				if (cl !== undefined && cl > tailLen && cl < headLen) {
+					const pt = elevatedPoints[i];
+					if (pt) context.lineTo(pt[0], pt[1]);
+				}
+			}
+			context.lineTo(headPoint[0], headPoint[1]);
+			context.strokeStyle = "#ffffff";
+			context.lineWidth = 2.8 * dpr;
+			context.stroke();
+		}
 	}
 
 	// Arrowhead at elevated end
