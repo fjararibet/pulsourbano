@@ -119,7 +119,6 @@ export function setupHoverLayer(
  */
 export function setupComunaHover(
 	map: MapLibreMap,
-	popup: Popup,
 	setHoverInfo: (info: HoverInfo) => void,
 	pinController: HoverPinController,
 	comunaZoom: number,
@@ -152,7 +151,6 @@ export function setupComunaHover(
 		setSelectedFilter(null);
 		hoveredCode = null;
 		map.getCanvas().style.cursor = "";
-		popup.remove();
 	};
 
 	const clearHover = () => {
@@ -168,7 +166,6 @@ export function setupComunaHover(
 		const info = formatComunaHover(feature, false);
 		setHoverFilter(feature);
 		map.getCanvas().style.cursor = "pointer";
-		popup.setLngLat(event.lngLat).setHTML(createPopupHtml(info)).addTo(map);
 		setHoverInfo(info);
 	};
 
@@ -190,13 +187,11 @@ export function setupComunaHover(
 			setSelectedFilter(null);
 			hoveredCode = null;
 			map.getCanvas().style.cursor = "";
-			popup.remove();
 		});
 
 		setHoverFilter(null);
 		setSelectedFilter(feature);
 		map.getCanvas().style.cursor = "pointer";
-		popup.setLngLat(event.lngLat).setHTML(createPopupHtml(info)).addTo(map);
 	};
 
 	map.on("mousemove", COMUNA_INTERACTION_LAYER_ID, onMove);

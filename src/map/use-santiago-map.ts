@@ -75,13 +75,6 @@ export function useSantiagoMap(setHoverInfo: (info: HoverInfo) => void) {
 				debugWindow.__simMap = map;
 			}
 
-			const popup = new maplibregl.Popup({
-				closeButton: false,
-				closeOnClick: false,
-				offset: 14,
-				className: "santiago-map-popup",
-			});
-
 			// Resize defensivo: en algunos layouts (mobile, tabs) el contenedor
 			// arranca con tamaño 0 y MapLibre lo deja en blanco si no le decimos.
 			const resize = () => map.resize();
@@ -96,7 +89,6 @@ export function useSantiagoMap(setHoverInfo: (info: HoverInfo) => void) {
 				pinnedInfoRef.current = null;
 				clearPinnedEffectsRef.current = null;
 				for (const fn of hoverCleanup) fn();
-				popup.remove();
 				if (debugWindow?.__simMap === map) delete debugWindow.__simMap;
 				ro.disconnect();
 				map.remove();
@@ -114,13 +106,7 @@ export function useSantiagoMap(setHoverInfo: (info: HoverInfo) => void) {
 
 				if (comunas) {
 					hoverCleanup.push(
-						setupComunaHover(
-							map,
-							popup,
-							setHoverInfo,
-							pinController,
-							COMUNA_ZOOM,
-						),
+						setupComunaHover(map, setHoverInfo, pinController, COMUNA_ZOOM),
 					);
 				}
 			});
