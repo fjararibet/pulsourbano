@@ -1,11 +1,10 @@
 import { comunasRM } from "./comunas-rm";
-import type { CostingMode } from "./valhalla";
-import { runValhallaRoute } from "./valhalla";
+
+export type CostingMode = "auto" | "bus" | "bicycle" | "pedestrian";
 
 export interface CachedRoute {
 	shape: [number, number][];
 	time: number;
-	distance: number;
 }
 
 type RouteKey = `${string}:${string}:${CostingMode}`;
@@ -24,20 +23,15 @@ async function loadPrecomputedRoute(
 	origen: string,
 	destino: string,
 	costing: CostingMode,
-): Promise<CachedRoute | null> {
+): Promise<CachedRoute> {
 	const fileName = `${encodeURIComponent(origen)}_${encodeURIComponent(destino)}_${costing}.json`;
-	try {
-		const res = await fetch(`/data/routes/${encodeURIComponent(fileName)}`);
-		if (!res.ok) return null;
-		const data = await res.json();
-		return {
-			shape: data.shape as [number, number][],
-			time: data.time as number,
-			distance: data.distance as number,
-		};
-	} catch {
-		return null;
-	}
+	const res = await fetch(`/data/routes/${encodeURIComponent(fileName)}`);
+	if (!res.ok) throw new Error(`Route not found: ${fileName}`);
+	const data = await res.json();
+	return {
+		shape: data.shape as [number, number][],
+		time: data.time as number,
+	};
 }
 
 function polygonCentroid(coords: number[][][]): [number, number] {
@@ -60,6 +54,15 @@ for (const comuna of comunasRM) {
 	ALL_COMUNA_CENTROIDS[comuna.name] = polygonCentroid(comuna.coords);
 }
 
+export const ALL_COMUNAS = Object.keys(ALL_COMUNA_CENTROIDS);
+
+export const ALL_COSTINGS: CostingMode[] = [
+	"auto",
+	"bus",
+	"bicycle",
+	"pedestrian",
+];
+
 export function getRoute(
 	origen: string,
 	destino: string,
@@ -69,93 +72,9 @@ export function getRoute(
 	const cached = routeCache.get(key);
 	if (cached) return cached;
 
-	const coords = ALL_COMUNA_CENTROIDS[origen];
-	const destCoords = ALL_COMUNA_CENTROIDS[destino];
-	if (!coords || !destCoords) {
-		return Promise.reject(
-			new Error(`Missing coords for ${origen} or ${destino}`),
-		);
-	}
-
-	const promise = loadPrecomputedRoute(origen, destino, costing).then(
-		(precomputed) => {
-			if (precomputed) return precomputed;
-			return runValhallaRoute(coords, destCoords, costing).then((result) => ({
-				shape: result.shape,
-				time: result.time,
-				distance: result.distance,
-			}));
-		},
-	);
-
+	const promise = loadPrecomputedRoute(origen, destino, costing);
 	routeCache.set(key, promise);
 	return promise;
-}
-
-export const ALL_COMUNAS = Object.keys(ALL_COMUNA_CENTROIDS);
-
-export function allPairs(): Array<{ origen: string; destino: string }> {
-	const pairs: Array<{ origen: string; destino: string }> = [];
-	for (const origen of ALL_COMUNAS) {
-		for (const destino of ALL_COMUNAS) {
-			if (origen !== destino) {
-				pairs.push({ origen, destino });
-			}
-		}
-	}
-	return pairs;
-}
-
-export const ALL_COSTINGS: CostingMode[] = [
-	"auto",
-	"bus",
-	"bicycle",
-	"pedestrian",
-];
-
-export function precomputeAllRoutes(
-	pairs: Array<{ origen: string; destino: string }>,
-	costings: CostingMode[] = ALL_COSTINGS,
-	onProgress?: (done: number, total: number) => void,
-): void {
-	const tasks: Array<() => Promise<CachedRoute>> = [];
-
-	for (const { origen, destino } of pairs) {
-		for (const costing of costings) {
-			const key = makeKey(origen, destino, costing);
-			if (routeCache.has(key)) continue;
-
-			const origenCoords = ALL_COMUNA_CENTROIDS[origen];
-			const destCoords = ALL_COMUNA_CENTROIDS[destino];
-			if (!origenCoords || !destCoords) continue;
-
-			const promise = loadPrecomputedRoute(origen, destino, costing).then(
-				(precomputed) => {
-					if (precomputed) return precomputed;
-					return runValhallaRoute(origenCoords, destCoords, costing).then(
-						(result) => ({
-							shape: result.shape,
-							time: result.time,
-							distance: result.distance,
-						}),
-					);
-				},
-			);
-
-			routeCache.set(key, promise);
-			tasks.push(() => promise);
-		}
-	}
-
-	if (onProgress && tasks.length > 0) {
-		let completed = 0;
-		for (const task of tasks) {
-			task().finally(() => {
-				completed++;
-				onProgress(completed, tasks.length);
-			});
-		}
-	}
 }
 
 export function precomputePairRoutes(
@@ -166,37 +85,6 @@ export function precomputePairRoutes(
 	for (const costing of costings) {
 		const key = makeKey(origen, destino, costing);
 		if (routeCache.has(key)) continue;
-
-		const origenCoords = ALL_COMUNA_CENTROIDS[origen];
-		const destCoords = ALL_COMUNA_CENTROIDS[destino];
-		if (!origenCoords || !destCoords) continue;
-
-		const promise = loadPrecomputedRoute(origen, destino, costing).then(
-			(precomputed) => {
-				if (precomputed) return precomputed;
-				return runValhallaRoute(origenCoords, destCoords, costing).then(
-					(result) => ({
-						shape: result.shape,
-						time: result.time,
-						distance: result.distance,
-					}),
-				);
-			},
-		);
-
-		routeCache.set(key, promise);
-	}
-}
-
-export function precomputeAllRoutesForComunas(
-	comunas: string[],
-	costings: CostingMode[] = ALL_COSTINGS,
-): void {
-	for (const origen of comunas) {
-		for (const destino of comunas) {
-			if (origen !== destino) {
-				precomputePairRoutes(origen, destino, costings);
-			}
-		}
+		routeCache.set(key, loadPrecomputedRoute(origen, destino, costing));
 	}
 }
