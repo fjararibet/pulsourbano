@@ -7,6 +7,10 @@ body,
 	min-height: 100%;
 }
 
+* {
+	cursor: default !important;
+}
+
 body {
 	margin: 0;
 	font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
@@ -23,6 +27,11 @@ button {
 .maplibregl-ctrl-top-right {
 	top: 1rem;
 	right: 1rem;
+}
+
+.maplibregl-canvas-container.maplibregl-interactive,
+.maplibregl-canvas-container.maplibregl-interactive:active {
+	cursor: default;
 }
 
 .maplibregl-ctrl-group {

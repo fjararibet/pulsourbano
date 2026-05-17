@@ -234,13 +234,6 @@ export default function CityMap({
 		};
 	}, [isSelectingRegion, onToggleComuna]);
 
-	// Cursor when selecting
-	useEffect(() => {
-		const map = mapRef.current?.getMap();
-		if (!map) return;
-		map.getCanvas().style.cursor = isSelectingRegion ? "pointer" : "";
-	}, [isSelectingRegion]);
-
 	// Manage station markers
 	useEffect(() => {
 		const map = mapRef.current?.getMap();
@@ -259,7 +252,7 @@ export default function CityMap({
 				const color = getAqiColor(station.aqi.value);
 				const editStyle = isEditMode
 					? "border-style: dashed; cursor: grab;"
-					: "cursor: pointer;";
+					: "";
 				el.style.cssText = `
 					width: 32px;
 					height: 32px;

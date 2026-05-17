@@ -68,14 +68,12 @@ export function setupHoverLayer(
 		const feature = event.features?.[0];
 		if (!feature) return;
 		const info = formatFeature(feature);
-		map.getCanvas().style.cursor = "pointer";
 		popup.setLngLat(event.lngLat).setHTML(createPopupHtml(info)).addTo(map);
 		setHoverInfo(info);
 	};
 
 	const onLeave = () => {
 		if (pinController.isPinned()) return;
-		map.getCanvas().style.cursor = "";
 		popup.remove();
 		setHoverInfo(null);
 	};
@@ -91,10 +89,8 @@ export function setupHoverLayer(
 
 		const pinnedInfo = { ...info, pinned: true };
 		pinController.pin(pinnedInfo, () => {
-			map.getCanvas().style.cursor = "";
 			popup.remove();
 		});
-		map.getCanvas().style.cursor = "pointer";
 		popup
 			.setLngLat(event.lngLat)
 			.setHTML(createPopupHtml(pinnedInfo))
@@ -176,7 +172,6 @@ export function setupBusRouteHover(
 	const clearHover = () => {
 		map.setFilter("bus-hover-lines", EMPTY_BUS_HOVER_FILTER);
 		map.setFilter("bus-hover-arrows", EMPTY_BUS_HOVER_FILTER);
-		map.getCanvas().style.cursor = "";
 		popup.remove();
 		if (!pinController.isPinned()) setHoverInfo(null);
 	};
@@ -232,7 +227,6 @@ export function setupBusRouteHover(
 		}
 
 		setHoveredRoutes(busRoutes);
-		map.getCanvas().style.cursor = "pointer";
 
 		const info = formatBusRouteHover(
 			busRoutes,
@@ -260,7 +254,6 @@ export function setupBusRouteHover(
 		const info = formatBusRouteHover(busRoutes, frequencies, travelTimes, true);
 		pinController.pin(info, clearHover);
 		setHoveredRoutes(busRoutes);
-		map.getCanvas().style.cursor = "pointer";
 		popup.setLngLat(event.lngLat).setHTML(createPopupHtml(info)).addTo(map);
 	};
 
