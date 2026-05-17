@@ -221,16 +221,16 @@ export const BASE_STYLE = {
 			type: "hillshade" as const,
 			source: "terrain-dem",
 			paint: {
-				"hillshade-exaggeration": 0.45,
-				"hillshade-shadow-color": "rgba(0,0,0,0.22)",
-				"hillshade-highlight-color": "rgba(255,255,255,0.28)",
-				"hillshade-accent-color": "rgba(0,0,0,0.08)",
+				"hillshade-exaggeration": 0.3,
+				"hillshade-shadow-color": "rgba(0,0,0,0.2)",
+				"hillshade-highlight-color": "rgba(255,255,255,0.25)",
+				"hillshade-accent-color": "rgba(0,0,0,0.06)",
 				"hillshade-illumination-direction": 315,
 			},
 		},
 	],
 	terrain: {
 		source: "terrain-dem",
-		exaggeration: 2.2,
+		exaggeration: 1.6,
 	},
 } as const;
