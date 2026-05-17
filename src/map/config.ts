@@ -45,9 +45,6 @@ export const COMUNA_COLOR = "#6f5bd5";
 /** Color de la flecha de ruta origen-destino. */
 export const ROUTE_ARROW_COLOR = "#f59e0b";
 
-/** Identificador del ícono de flecha para la ruta origen-destino. */
-export const ROUTE_ARROW_ICON_ID = "route-arrow-head";
-
 /** ID de la fuente GeoJSON de la flecha de ruta. */
 export const ROUTE_ARROW_SOURCE_ID = "route-arrow";
 
@@ -74,7 +71,6 @@ export const ROUTE_ARROW_LAYER_IDS = [
 	"route-arrow-glow",
 	"route-arrow-base",
 	...ROUTE_ARROW_CORE_LAYER_IDS,
-	"route-arrow-symbols",
 ] as const;
 
 /** Capa invisible que mantiene el hover de comunas siempre disponible. */

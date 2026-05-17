@@ -25,7 +25,6 @@ import {
 	ORIGEN_COLOR,
 	ROUTE_ARROW_COLOR,
 	ROUTE_ARROW_CORE_LAYER_BY_MODE,
-	ROUTE_ARROW_ICON_ID,
 	ROUTE_ARROW_LAYER_IDS,
 	ROUTE_ARROW_SOURCE_ID,
 } from "./config";
@@ -184,8 +183,6 @@ export function addRouteArrowLayers(map: MapLibreMap) {
 		lineMetrics: true,
 	});
 
-	ensureRouteArrowIcon(map);
-
 	// Each layer multiplies the feature's `thickness` (usage signal) by a
 	// zoom-driven base width, so a heavier route is wider at every zoom.
 	// `["zoom"]` must sit at the top of the expression tree, so we put `*`
@@ -268,26 +265,6 @@ export function addRouteArrowLayers(map: MapLibreMap) {
 		});
 	}
 
-	map.addLayer({
-		id: "route-arrow-symbols",
-		type: "symbol",
-		source: ROUTE_ARROW_SOURCE_ID,
-		filter: ["==", ["geometry-type"], "LineString"],
-		layout: {
-			"symbol-placement": "line",
-			"symbol-spacing": 140,
-			"icon-image": ROUTE_ARROW_ICON_ID,
-			"icon-rotation-alignment": "map",
-			"icon-keep-upright": false,
-			"icon-size": ["interpolate", ["linear"], ["zoom"], 10, 0.7, 14, 1.2],
-			"icon-allow-overlap": true,
-			"icon-ignore-placement": true,
-		},
-		paint: {
-			"icon-color": ["get", "color"],
-			"icon-opacity": 0.9,
-		},
-	});
 }
 
 export function updateRouteArrowData(
@@ -308,40 +285,6 @@ export function bringRouteArrowToFront(map: MapLibreMap) {
 	for (const layerId of ROUTE_ARROW_LAYER_IDS) {
 		if (map.getLayer(layerId)) map.moveLayer(layerId);
 	}
-}
-
-/** IDs de iconos de flecha por color. */
-export function ensureRouteArrowIcon(map: MapLibreMap) {
-	if (map.hasImage(ROUTE_ARROW_ICON_ID)) return;
-
-	const pixelRatio = 2;
-	const width = 32;
-	const height = 24;
-	const canvas = document.createElement("canvas");
-	canvas.width = width * pixelRatio;
-	canvas.height = height * pixelRatio;
-	const ctx = canvas.getContext("2d");
-	if (!ctx) return;
-
-	ctx.scale(pixelRatio, pixelRatio);
-	ctx.fillStyle = "#f59e0b";
-	ctx.beginPath();
-	ctx.moveTo(2, 6);
-	ctx.lineTo(24, 12);
-	ctx.lineTo(2, 18);
-	ctx.lineTo(7, 12);
-	ctx.closePath();
-	ctx.fill();
-
-	ctx.strokeStyle = "rgba(255,255,255,0.92)";
-	ctx.lineWidth = 1.6;
-	ctx.stroke();
-
-	map.addImage(
-		ROUTE_ARROW_ICON_ID,
-		ctx.getImageData(0, 0, canvas.width, canvas.height),
-		{ pixelRatio },
-	);
 }
 
 /** Inicia la animación de gradiente que fluye a lo largo de la flecha. */
