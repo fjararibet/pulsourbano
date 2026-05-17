@@ -27,7 +27,7 @@ async function loadPrecomputedRoute(
 ): Promise<CachedRoute | null> {
 	const fileName = `${encodeURIComponent(origen)}_${encodeURIComponent(destino)}_${costing}.json`;
 	try {
-		const res = await fetch(`/data/routes/${fileName}`);
+		const res = await fetch(`/data/routes/${encodeURIComponent(fileName)}`);
 		if (!res.ok) return null;
 		const data = await res.json();
 		return {
@@ -45,7 +45,7 @@ function polygonCentroid(coords: number[][][]): [number, number] {
 	let sumLat = 0;
 	let count = 0;
 	for (const ring of coords) {
-		for (const [lng, lat] of ring) {
+		for (const [lng = 0, lat = 0] of ring) {
 			sumLng += lng;
 			sumLat += lat;
 			count++;
@@ -80,13 +80,11 @@ export function getRoute(
 	const promise = loadPrecomputedRoute(origen, destino, costing).then(
 		(precomputed) => {
 			if (precomputed) return precomputed;
-			return runValhallaRoute(coords, destCoords, costing).then(
-				(result) => ({
-					shape: result.shape,
-					time: result.time,
-					distance: result.distance,
-				}),
-			);
+			return runValhallaRoute(coords, destCoords, costing).then((result) => ({
+				shape: result.shape,
+				time: result.time,
+				distance: result.distance,
+			}));
 		},
 	);
 
@@ -120,7 +118,7 @@ export function precomputeAllRoutes(
 	costings: CostingMode[] = ALL_COSTINGS,
 	onProgress?: (done: number, total: number) => void,
 ): void {
-	const tasks: Array<() => void> = [];
+	const tasks: Array<() => Promise<CachedRoute>> = [];
 
 	for (const { origen, destino } of pairs) {
 		for (const costing of costings) {

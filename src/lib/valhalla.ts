@@ -53,7 +53,9 @@ export async function runValhallaRoute(
 	}
 
 	const data: ValhallaRouteResponse = await response.json();
-	const shape = decodePolyline(data.trip.legs[0].shape);
+	const leg = data.trip.legs[0];
+	if (!leg) throw new Error("Valhalla returned no legs");
+	const shape = decodePolyline(leg.shape);
 	return {
 		shape,
 		time: data.trip.summary.time,

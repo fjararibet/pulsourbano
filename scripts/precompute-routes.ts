@@ -1,4 +1,4 @@
-import { createWriteStream, existsSync, mkdirSync } from "fs";
+import { existsSync, mkdirSync } from "fs";
 import { readFileSync, writeFileSync } from "fs";
 import https from "https";
 import http from "http";
@@ -49,7 +49,7 @@ function polygonCentroid(coords: number[][][]): [number, number] {
   let sumLat = 0;
   let count = 0;
   for (const ring of coords) {
-    for (const [lng, lat] of ring) {
+    for (const [lng = 0, lat = 0] of ring) {
       sumLng += lng;
       sumLat += lat;
       count++;
@@ -144,7 +144,9 @@ async function fetchRoute(
   };
 
   const data = await postJson<ValhallaRouteResponse>(VALHALLA_URL, request);
-  const shape = decodePolyline(data.trip.legs[0].shape);
+  const leg = data.trip.legs[0];
+  if (!leg) throw new Error("Valhalla returned no legs");
+  const shape = decodePolyline(leg.shape);
   return {
     shape,
     time: data.trip.summary.time,
@@ -214,6 +216,7 @@ async function main() {
       try {
         const from = centroids[origen];
         const to = centroids[destino];
+        if (!from || !to) continue;
         const route = await fetchRoute(from, to, costing);
         writeFileSync(filename, JSON.stringify(route));
         completed++;

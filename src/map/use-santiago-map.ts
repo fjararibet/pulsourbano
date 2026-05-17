@@ -2,10 +2,7 @@ import type { Map as MapLibreMap } from "maplibre-gl";
 import maplibregl from "maplibre-gl";
 import type { RefObject } from "react";
 import { useCallback, useEffect, useRef } from "react";
-import {
-	getRoute,
-	precomputePairRoutes,
-} from "#/lib/route-store";
+	import { getRoute, precomputePairRoutes } from "#/lib/route-store";
 import type { CostingMode } from "#/lib/valhalla";
 import {
 	type ArrowHandle,
