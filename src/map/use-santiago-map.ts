@@ -2,7 +2,13 @@ import type { Map as MapLibreMap } from "maplibre-gl";
 import maplibregl from "maplibre-gl";
 import type { RefObject } from "react";
 import { useCallback, useEffect, useRef } from "react";
-import { type CostingMode, runValhallaRoute } from "#/lib/valhalla";
+import {
+	ALL_COMUNAS,
+	getRoute,
+	precomputeAllRoutesForComunas,
+	precomputePairRoutes,
+} from "#/lib/route-store";
+import type { CostingMode } from "#/lib/valhalla";
 import {
 	type ArrowHandle,
 	type ArrowScene,
@@ -224,6 +230,8 @@ export function useSantiagoMap(
 					arrowSceneRef.current = createArrowScene(map, containerRef.current);
 				}
 
+				precomputeAllRoutesForComunas(ALL_COMUNAS);
+
 				setLayerGroupVisibility(
 					map,
 					COMUNA_ALL_LAYER_IDS,
@@ -330,8 +338,10 @@ export function useSantiagoMap(
 					for (const handle of routeArrowHandlesRef.current) handle.remove();
 					routeArrowHandlesRef.current = [];
 
+					precomputePairRoutes(origen, destino);
+
 					for (const variant of ROUTE_VARIANTS) {
-						runValhallaRoute(origenCentroid, destinoCentroid, variant.costing)
+						getRoute(origen, destino, variant.costing)
 							.then((result) => {
 								const scene = arrowSceneRef.current;
 								if (!scene) return;
