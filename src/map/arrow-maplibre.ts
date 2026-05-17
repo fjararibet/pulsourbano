@@ -93,11 +93,14 @@ export function createArrowMapLibreManager(
 	const updateData = () => {
 		const features: GeoJSON.Feature[] = [];
 		for (const [, arrow] of arrows) {
+			const coords = arrow.points;
+			if (coords.length < 2) continue;
+
 			features.push({
 				type: "Feature",
 				geometry: {
 					type: "LineString",
-					coordinates: arrow.points,
+					coordinates: coords,
 				},
 				properties: { color: arrow.color },
 			});

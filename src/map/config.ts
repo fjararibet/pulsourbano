@@ -58,7 +58,6 @@ export const ROUTE_ARROW_LAYER_IDS = [
 	"route-arrow-base",
 	"route-arrow-core",
 	"route-arrow-symbols",
-	"route-arrow-head",
 ] as const;
 
 /** Capa invisible que mantiene el hover de comunas siempre disponible. */
