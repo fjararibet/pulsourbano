@@ -20,17 +20,16 @@ import {
 	bringComunaHoverToFront,
 	bringRouteArrowToFront,
 	clearRouteArrow,
-	startRouteArrowAnimation,
 	updateComunaSelectionLayers,
 	updateRouteArrowData,
 } from "./layers";
-import type { HoverInfo } from "./types";
 import {
-	createArcLineString,
-	createArrowHeadFeature,
-	getPolygonCentroid,
-	loadGeoJSON,
-} from "./utils";
+	hideRouteArrowOverlay,
+	initRouteArrowOverlay,
+	showRouteArrowOverlay,
+} from "./RouteArrowOverlay";
+import type { HoverInfo } from "./types";
+import { createArcLineString, getPolygonCentroid, loadGeoJSON } from "./utils";
 
 /**
  * Inicializa MapLibre, carga los GeoJSON de Metro/Buses/Ciclovías, monta las
@@ -52,6 +51,7 @@ export function useSantiagoMap(
 	const dualSelectRef = useRef(dualSelect);
 	const comunasRef = useRef<GeoJSON.FeatureCollection | null>(null);
 	const routeArrowAnimCleanupRef = useRef<(() => void) | null>(null);
+	const arrowOverlayCleanupRef = useRef<(() => void) | null | undefined>(null);
 	dualSelectRef.current = dualSelect;
 
 	const clearPinned = useCallback(() => {
@@ -122,6 +122,8 @@ export function useSantiagoMap(
 				clearPinnedEffectsRef.current = null;
 				routeArrowAnimCleanupRef.current?.();
 				routeArrowAnimCleanupRef.current = null;
+				arrowOverlayCleanupRef.current?.();
+				arrowOverlayCleanupRef.current = null;
 				for (const fn of hoverCleanup) fn();
 				if (debugWindow?.__simMap === map) delete debugWindow.__simMap;
 				ro.disconnect();
@@ -149,6 +151,12 @@ export function useSantiagoMap(
 				if (comunas) bringComunaHoverToFront(map);
 				addRouteArrowLayers(map);
 				bringRouteArrowToFront(map);
+				if (containerRef.current) {
+					arrowOverlayCleanupRef.current = initRouteArrowOverlay(
+						map,
+						containerRef.current,
+					);
+				}
 
 				map.setCenter(SANTIAGO_CENTER);
 				map.setZoom(INITIAL_ZOOM);
@@ -231,7 +239,7 @@ export function useSantiagoMap(
 					duration: 650,
 				});
 
-				// Generar flecha de ruta origen-destino
+				// Generar flecha de ruta origen-destino (canvas overlay 3D)
 				const origenCentroid = getPolygonCentroid(origenFeature);
 				const destinoCentroid = getPolygonCentroid(destinoFeature);
 				if (origenCentroid && destinoCentroid) {
@@ -247,15 +255,19 @@ export function useSantiagoMap(
 						const dx = last[0] - secondToLast[0];
 						const dy = last[1] - secondToLast[1];
 						const bearing = ((-Math.atan2(dy, dx) * 180) / Math.PI + 360) % 360;
-						const arrowHead = createArrowHeadFeature(last, bearing);
 
+						showRouteArrowOverlay(
+							map,
+							coords as [number, number][],
+							bearing,
+							last,
+						);
+
+						// Dejar una traza sutil en el terreno
 						updateRouteArrowData(map, {
 							type: "FeatureCollection",
-							features: [arc, arrowHead],
+							features: [arc],
 						});
-
-						routeArrowAnimCleanupRef.current?.();
-						routeArrowAnimCleanupRef.current = startRouteArrowAnimation(map);
 					}
 				}
 			}
@@ -268,6 +280,7 @@ export function useSantiagoMap(
 		) {
 			resetView();
 			clearRouteArrow(map);
+			hideRouteArrowOverlay();
 			routeArrowAnimCleanupRef.current?.();
 			routeArrowAnimCleanupRef.current = null;
 		}
@@ -275,6 +288,7 @@ export function useSantiagoMap(
 		if (origen && !destino && prevDestinoRef.current) {
 			// Se quitó el destino: limpiar flecha
 			clearRouteArrow(map);
+			hideRouteArrowOverlay();
 			routeArrowAnimCleanupRef.current?.();
 			routeArrowAnimCleanupRef.current = null;
 		}
