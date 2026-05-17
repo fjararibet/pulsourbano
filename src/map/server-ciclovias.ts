@@ -8,10 +8,10 @@ type Row = {
 	longitud_km: number;
 };
 
-export const getCiclobiasGeoJSON = createServerFn({ method: "GET" }).handler(
+export const getCicloviasGeoJSON = createServerFn({ method: "GET" }).handler(
 	async (): Promise<GeoJSON.FeatureCollection> => {
 		const { results } = await env.DTPMGEO.prepare(
-			"SELECT geometry, name, popupinfo, longitud_km FROM ciclobias",
+			"SELECT geometry, name, popupinfo, longitud_km FROM ciclovias",
 		).all<Row>();
 		return {
 			type: "FeatureCollection",

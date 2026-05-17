@@ -29,7 +29,7 @@ export const comunas = sqliteTable("comunas", {
 	geometry: text().notNull(),
 });
 
-export const ciclobias = sqliteTable("ciclobias", {
+export const ciclovias = sqliteTable("ciclovias", {
 	id: integer({ mode: "number" }).primaryKey({ autoIncrement: true }),
 	fid: integer({ mode: "number" }),
 	name: text(),

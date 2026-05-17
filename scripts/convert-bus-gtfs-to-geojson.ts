@@ -16,7 +16,6 @@
  *   npx tsx scripts/convert-bus-gtfs-to-geojson.ts
  *   npx tsx scripts/convert-bus-gtfs-to-geojson.ts /custom/path/buses.geojson
  */
-import { createWriteStream } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
