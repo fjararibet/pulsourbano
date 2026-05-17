@@ -51,12 +51,29 @@ export const ROUTE_ARROW_ICON_ID = "route-arrow-head";
 /** ID de la fuente GeoJSON de la flecha de ruta. */
 export const ROUTE_ARROW_SOURCE_ID = "route-arrow";
 
+/**
+ * Capas `route-arrow-core` divididas por modo. `line-gradient` solo admite
+ * expresiones sobre `line-progress` (sin data-driven styling), así que para
+ * que cada modo pulse a su propio ritmo cada uno necesita su propia capa
+ * con su filtro por `mode`.
+ */
+export const ROUTE_ARROW_CORE_LAYER_BY_MODE = {
+	auto: "route-arrow-core-auto",
+	bus: "route-arrow-core-bus",
+	bicycle: "route-arrow-core-bicycle",
+	pedestrian: "route-arrow-core-pedestrian",
+} as const;
+
+export const ROUTE_ARROW_CORE_LAYER_IDS = Object.values(
+	ROUTE_ARROW_CORE_LAYER_BY_MODE,
+);
+
 /** Capas visuales de la flecha de ruta. */
 export const ROUTE_ARROW_LAYER_IDS = [
 	"route-arrow-shadow",
 	"route-arrow-glow",
 	"route-arrow-base",
-	"route-arrow-core",
+	...ROUTE_ARROW_CORE_LAYER_IDS,
 	"route-arrow-symbols",
 ] as const;
 

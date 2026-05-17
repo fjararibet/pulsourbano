@@ -24,6 +24,7 @@ import {
 	OD_SOURCE_ID,
 	ORIGEN_COLOR,
 	ROUTE_ARROW_COLOR,
+	ROUTE_ARROW_CORE_LAYER_BY_MODE,
 	ROUTE_ARROW_ICON_ID,
 	ROUTE_ARROW_LAYER_IDS,
 	ROUTE_ARROW_SOURCE_ID,
@@ -185,6 +186,21 @@ export function addRouteArrowLayers(map: MapLibreMap) {
 
 	ensureRouteArrowIcon(map);
 
+	// Each layer multiplies the feature's `thickness` (usage signal) by a
+	// zoom-driven base width, so a heavier route is wider at every zoom.
+	// `["zoom"]` must sit at the top of the expression tree, so we put `*`
+	// inside the interpolate stops rather than wrapping interpolate in `*`.
+	const thicknessScale = (low: number, high: number): ExpressionSpecification =>
+		[
+			"interpolate",
+			["linear"],
+			["zoom"],
+			10,
+			["*", ["coalesce", ["get", "thickness"], 3], low],
+			14,
+			["*", ["coalesce", ["get", "thickness"], 3], high],
+		] as unknown as ExpressionSpecification;
+
 	map.addLayer({
 		id: "route-arrow-shadow",
 		type: "line",
@@ -192,7 +208,7 @@ export function addRouteArrowLayers(map: MapLibreMap) {
 		filter: ["==", ["geometry-type"], "LineString"],
 		paint: {
 			"line-color": ["get", "color"],
-			"line-width": ["interpolate", ["linear"], ["zoom"], 10, 8, 14, 16],
+			"line-width": thicknessScale(2.4, 4.8),
 			"line-opacity": 0.2,
 			"line-blur": 8,
 		},
@@ -205,7 +221,7 @@ export function addRouteArrowLayers(map: MapLibreMap) {
 		filter: ["==", ["geometry-type"], "LineString"],
 		paint: {
 			"line-color": ["get", "color"],
-			"line-width": ["interpolate", ["linear"], ["zoom"], 10, 6, 14, 12],
+			"line-width": thicknessScale(1.8, 3.6),
 			"line-opacity": 0.45,
 			"line-blur": 6,
 		},
@@ -222,27 +238,35 @@ export function addRouteArrowLayers(map: MapLibreMap) {
 		},
 		paint: {
 			"line-color": ["get", "color"],
-			"line-width": ["interpolate", ["linear"], ["zoom"], 10, 2.5, 14, 5],
+			"line-width": thicknessScale(0.75, 1.5),
 			"line-opacity": 0.65,
 		},
 	});
 
-	map.addLayer({
-		id: "route-arrow-core",
-		type: "line",
-		source: ROUTE_ARROW_SOURCE_ID,
-		filter: ["==", ["geometry-type"], "LineString"],
-		layout: {
-			"line-cap": "round",
-			"line-join": "round",
-		},
-		paint: {
-			"line-color": ["get", "color"],
-			"line-gradient": createRouteArrowGradient(0.5, "#ffffff"),
-			"line-width": ["interpolate", ["linear"], ["zoom"], 10, 3.5, 14, 7],
-			"line-opacity": 0.95,
-		},
-	});
+	// One core layer per mode — `line-gradient` doesn't support data-driven
+	// expressions, so each mode needs its own layer to pulse at its own speed.
+	for (const [mode, layerId] of Object.entries(ROUTE_ARROW_CORE_LAYER_BY_MODE)) {
+		map.addLayer({
+			id: layerId,
+			type: "line",
+			source: ROUTE_ARROW_SOURCE_ID,
+			filter: [
+				"all",
+				["==", ["geometry-type"], "LineString"],
+				["==", ["get", "mode"], mode],
+			],
+			layout: {
+				"line-cap": "round",
+				"line-join": "round",
+			},
+			paint: {
+				"line-color": ["get", "color"],
+				"line-gradient": createRouteArrowGradient(0.5, "#ffffff"),
+				"line-width": thicknessScale(1.05, 2.1),
+				"line-opacity": 0.95,
+			},
+		});
+	}
 
 	map.addLayer({
 		id: "route-arrow-symbols",
@@ -252,7 +276,7 @@ export function addRouteArrowLayers(map: MapLibreMap) {
 		layout: {
 			"symbol-placement": "line",
 			"symbol-spacing": 140,
-			"icon-image": "route-arrow-head-auto",
+			"icon-image": ROUTE_ARROW_ICON_ID,
 			"icon-rotation-alignment": "map",
 			"icon-keep-upright": false,
 			"icon-size": ["interpolate", ["linear"], ["zoom"], 10, 0.7, 14, 1.2],

@@ -51,49 +51,66 @@ type DualSelect = {
 	onMapReady?: (map: MapLibreMap) => void;
 };
 
-interface RouteVariant {
-	lateralOffset: number;
-	style: ArrowStyle;
+interface ModeProfile {
 	costing: CostingMode;
+	color: string;
+	lateralOffset: number;
+	/** 0..1 share of trips taken on this mode (EOD 2012 modal split, rounded). */
+	routeUsage: number;
+	/** 0..1 relative travel speed (1 = fastest urban mode). */
+	transportSpeed: number;
 }
 
-const ROUTE_VARIANTS: RouteVariant[] = [
+// Thickness range (display units) at routeUsage 0 → 1.
+const THICKNESS_MIN = 3.0;
+const THICKNESS_MAX = 10.0;
+// Comet cycle period (seconds) at transportSpeed 1 → 0. Lower cycle = faster sweep.
+const CYCLE_FAST = 1.0;
+const CYCLE_SLOW = 3.4;
+
+// TODO: replace these hardcoded `routeUsage` values with real per-pair modal
+// share (e.g., from EOD 2012 trips between origen/destino). Until then we use
+// a fixed ramp so thickness orders pedestrian < bicycle < bus < auto.
+const MODE_PROFILES: ModeProfile[] = [
 	{
 		costing: "auto",
+		color: "#f59e0b",
 		lateralOffset: 0.55,
-		style: { color: "#f59e0b", thickness: 4.5, highlightSpeed: 1.8 },
+		routeUsage: 0.85,
+		transportSpeed: 1.0,
 	},
 	{
 		costing: "bus",
+		color: "#3b82f6",
 		lateralOffset: -0.35,
-		style: {
-			color: "#3b82f6",
-			thickness: 3.2,
-			archHeight: 0.0,
-			highlightSpeed: 1.2,
-		},
+		routeUsage: 0.55,
+		transportSpeed: 0.45,
 	},
 	{
 		costing: "bicycle",
+		color: "#10b981",
 		lateralOffset: 0.15,
-		style: {
-			color: "#10b981",
-			thickness: 2.6,
-			archHeight: 0.0,
-			highlightSpeed: 2.6,
-		},
+		routeUsage: 0.25,
+		transportSpeed: 0.35,
 	},
 	{
 		costing: "pedestrian",
+		color: "#8b5cf6",
 		lateralOffset: -0.55,
-		style: {
-			color: "#8b5cf6",
-			thickness: 2.0,
-			archHeight: 0.0,
-			highlightSpeed: 3.2,
-		},
+		routeUsage: 0.10,
+		transportSpeed: 0.12,
 	},
 ];
+
+function arrowStyleFor(profile: ModeProfile): ArrowStyle {
+	const usage = Math.min(1, Math.max(0, profile.routeUsage));
+	const speed = Math.min(1, Math.max(0, profile.transportSpeed));
+	return {
+		color: profile.color,
+		thickness: THICKNESS_MIN + (THICKNESS_MAX - THICKNESS_MIN) * usage,
+		highlightSpeed: CYCLE_SLOW - (CYCLE_SLOW - CYCLE_FAST) * speed,
+	};
+}
 
 /**
  * Inicializa MapLibre, carga los GeoJSON de Metro/Buses/Ciclovías, monta las
@@ -224,7 +241,7 @@ export function useSantiagoMap(
 				addODLayers(map);
 				addRouteArrowLayers(map);
 				bringRouteArrowToFront(map);
-				arrowManagerRef.current = createArrowMapLibreManager(map, "auto");
+				arrowManagerRef.current = createArrowMapLibreManager(map);
 
 				setLayerGroupVisibility(
 					map,
@@ -334,17 +351,18 @@ export function useSantiagoMap(
 
 					precomputePairRoutes(origen, destino);
 
-					for (const variant of ROUTE_VARIANTS) {
+					for (const profile of MODE_PROFILES) {
 						const manager = arrowManagerRef.current;
 						if (!manager) return;
-						const costing = variant.costing;
+						const costing = profile.costing;
 						getRoute(origen, destino, costing)
 							.then((result) => {
 								const mgr = arrowManagerRef.current;
 								if (!mgr) return;
 								const handle = mgr.add({
 									points: result.shape,
-									style: variant.style,
+									mode: costing,
+									style: arrowStyleFor(profile),
 								});
 								routeArrowHandlesRef.current.push(handle);
 							})

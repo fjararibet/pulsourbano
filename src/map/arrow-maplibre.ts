@@ -4,23 +4,20 @@ import type {
 	Map as MapLibreMap,
 } from "maplibre-gl";
 import type { CostingMode } from "#/lib/route-store";
-import { ROUTE_ARROW_COLOR } from "./config";
+import { ROUTE_ARROW_COLOR, ROUTE_ARROW_CORE_LAYER_BY_MODE } from "./config";
 
 export interface ArrowStyle {
 	color?: string;
-	highlightColor?: string;
+	/** Stroke weight in display units — drives `line-width` per feature. */
 	thickness?: number;
-	archHeight?: number;
-	archMax?: number;
+	/** Comet animation cycle period in seconds (smaller = faster sweep). */
 	highlightSpeed?: number;
-	highlightWidth?: number;
-	tailFraction?: number;
-	glow?: boolean;
-	arrowhead?: boolean;
 }
 
 interface ArrowConfig {
 	points: [number, number][];
+	/** Identifies which mode's gradient phase applies to this feature. */
+	mode: CostingMode;
 	style?: ArrowStyle;
 }
 
@@ -101,19 +98,25 @@ function createCometGradient(
 	return expr as ExpressionSpecification;
 }
 
+const DEFAULT_THICKNESS = 3;
+const DEFAULT_HIGHLIGHT_SPEED = 1.8;
+
+interface ArrowState {
+	points: [number, number][];
+	color: string;
+	thickness: number;
+	highlightSpeed: number;
+	mode: CostingMode;
+}
+
 export function createArrowMapLibreManager(
 	map: MapLibreMap,
-	_costing: CostingMode,
 ): ArrowMapLibreManager {
-	const arrows = new Map<
-		number,
-		{ points: [number, number][]; color: string }
-	>();
+	const arrows = new Map<number, ArrowState>();
 	let nextId = 1;
 	let rafId: number | null = null;
 	let disposed = false;
 	let startedAt = 0;
-	const highlightSpeed = 1.8;
 
 	const updateData = () => {
 		const features: GeoJSON.Feature[] = [];
@@ -127,7 +130,11 @@ export function createArrowMapLibreManager(
 					type: "LineString",
 					coordinates: coords,
 				},
-				properties: { color: arrow.color },
+				properties: {
+					color: arrow.color,
+					mode: arrow.mode,
+					thickness: arrow.thickness,
+				},
 			});
 		}
 
@@ -140,23 +147,38 @@ export function createArrowMapLibreManager(
 		}
 	};
 
-	const animate = (time: number) => {
-		if (disposed || arrows.size === 0) return;
-		if (startedAt === 0) startedAt = time;
-
-		const elapsedSeconds = (time - startedAt) / 1000;
-		const cycle = Math.max(0.001, highlightSpeed);
+	const buildModeGradient = (elapsedSeconds: number, speed: number) => {
+		const cycle = Math.max(0.001, speed);
 		const t = (elapsedSeconds % cycle) / cycle;
 		// Overshoot [0,1] by the tail extent so the head fades off the end
 		// instead of stopping there.
 		const waveProgress = t * (1 + 2 * COMET_TAIL_EXTENT) - COMET_TAIL_EXTENT;
+		return createCometGradient(waveProgress, ROUTE_ARROW_COLOR);
+	};
 
-		setPaintPropertyIfLayerExists(
-			map,
-			"route-arrow-core",
-			"line-gradient",
-			createCometGradient(waveProgress, ROUTE_ARROW_COLOR),
-		);
+	const animate = (time: number) => {
+		if (disposed || arrows.size === 0) return;
+		if (startedAt === 0) startedAt = time;
+		const elapsedSeconds = (time - startedAt) / 1000;
+
+		// Each transport mode has its own core layer, so we set its gradient
+		// independently based on its own cycle period.
+		const speedByMode = new Map<CostingMode, number>();
+		for (const arrow of arrows.values()) {
+			if (!speedByMode.has(arrow.mode)) {
+				speedByMode.set(arrow.mode, arrow.highlightSpeed);
+			}
+		}
+
+		for (const [mode, speed] of speedByMode) {
+			const layerId = ROUTE_ARROW_CORE_LAYER_BY_MODE[mode];
+			setPaintPropertyIfLayerExists(
+				map,
+				layerId,
+				"line-gradient",
+				buildModeGradient(elapsedSeconds, speed),
+			);
+		}
 
 		rafId = requestAnimationFrame(animate);
 	};
@@ -170,10 +192,13 @@ export function createArrowMapLibreManager(
 	return {
 		add(config) {
 			const id = nextId++;
-			const color = config.style?.color ?? COSTING_COLORS[_costing];
+			const color = config.style?.color ?? COSTING_COLORS[config.mode];
 			arrows.set(id, {
 				points: config.points.map((p) => [p[0], p[1]] as [number, number]),
 				color,
+				thickness: config.style?.thickness ?? DEFAULT_THICKNESS,
+				highlightSpeed: config.style?.highlightSpeed ?? DEFAULT_HIGHLIGHT_SPEED,
+				mode: config.mode,
 			});
 			updateData();
 			ensureLoop();
@@ -187,9 +212,11 @@ export function createArrowMapLibreManager(
 							(p) => [p[0], p[1]] as [number, number],
 						);
 					}
-					if (patch.style?.color) {
-						arrow.color = patch.style.color;
-					}
+					if (patch.style?.color) arrow.color = patch.style.color;
+					if (patch.style?.thickness !== undefined)
+						arrow.thickness = patch.style.thickness;
+					if (patch.style?.highlightSpeed !== undefined)
+						arrow.highlightSpeed = patch.style.highlightSpeed;
 					updateData();
 				},
 				remove() {
