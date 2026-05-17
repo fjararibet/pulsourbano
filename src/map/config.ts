@@ -36,6 +36,21 @@ export const COMUNA_SELECTED_LAYER_IDS = [
 	"comunas-selected-outline",
 ] as const;
 
+/** Todas las capas físicas del grupo comunas, incluyendo interacción. */
+export const COMUNA_ALL_LAYER_IDS = [
+	"comunas-fill",
+	"comunas-outline",
+	COMUNA_INTERACTION_LAYER_ID,
+	...COMUNA_SELECTED_LAYER_IDS,
+] as const;
+
+/** Todas las capas físicas del grupo metro. */
+export const METRO_ALL_LAYER_IDS = [
+	"metro-line-halo",
+	"metro-lines",
+	"metro-stations",
+] as const;
+
 /**
  * Filtro neutro que oculta la capa "hover" de buses cuando no hay
  * ningún recorrido seleccionado bajo el cursor.

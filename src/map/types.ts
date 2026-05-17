@@ -2,6 +2,8 @@ import type { LayerId } from "./config";
 
 export type LayerVisibility = Record<LayerId, boolean>;
 
+export type InteractionMode = "comunas" | "metro";
+
 export type HoverInfo = {
 	kind: string;
 	title: string;

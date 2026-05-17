@@ -1,14 +1,26 @@
 import type { Map as MapLibreMap } from "maplibre-gl";
+import type { RefObject } from "react";
 import { useCallback, useEffect, useRef } from "react";
 import {
 	BASE_STYLE,
+	COMUNA_ALL_LAYER_IDS,
 	COMUNA_ZOOM,
 	INITIAL_ZOOM,
+	METRO_ALL_LAYER_IDS,
 	SANTIAGO_CENTER,
 } from "./config";
-import { type HoverPinController, setupComunaHover } from "./hover";
-import { addComunaLayers, bringComunaHoverToFront } from "./layers";
-import type { HoverInfo } from "./types";
+import {
+	type HoverPinController,
+	setupComunaHover,
+	setupMetroStationClick,
+} from "./hover";
+import {
+	addComunaLayers,
+	addMetroLayers,
+	bringComunaHoverToFront,
+} from "./layers";
+import { getMetroGeoJSON } from "./server-metro";
+import type { HoverInfo, InteractionMode } from "./types";
 import { loadGeoJSON } from "./utils";
 
 /**
@@ -16,7 +28,10 @@ import { loadGeoJSON } from "./utils";
  * capas y conecta los handlers de hover. Devuelve el ref del contenedor y
  * un helper para resetear la vista.
  */
-export function useSantiagoMap(setHoverInfo: (info: HoverInfo) => void) {
+export function useSantiagoMap(
+	setHoverInfo: (info: HoverInfo) => void,
+	modeRef: RefObject<InteractionMode>,
+) {
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const mapRef = useRef<MapLibreMap | null>(null);
 	const pinnedInfoRef = useRef<HoverInfo>(null);
@@ -28,6 +43,14 @@ export function useSantiagoMap(setHoverInfo: (info: HoverInfo) => void) {
 		pinnedInfoRef.current = null;
 		setHoverInfo(null);
 	}, [setHoverInfo]);
+
+	const applyModeVisibility = useCallback((mode: InteractionMode) => {
+		const map = mapRef.current;
+		if (!map) return;
+
+		setLayerGroupVisibility(map, COMUNA_ALL_LAYER_IDS, mode === "comunas");
+		setLayerGroupVisibility(map, METRO_ALL_LAYER_IDS, mode === "metro");
+	}, []);
 
 	useEffect(() => {
 		let cancelled = false;
@@ -96,16 +119,38 @@ export function useSantiagoMap(setHoverInfo: (info: HoverInfo) => void) {
 
 			map.on("load", async () => {
 				resize();
-				const comunas = await loadGeoJSON("/data/comunas_rm.geojson");
+				const [comunas, metro] = await Promise.all([
+					loadGeoJSON("/data/comunas_rm.geojson"),
+					getMetroGeoJSON(),
+				]);
 
 				if (comunas) addComunaLayers(map, comunas);
+				if (metro) addMetroLayers(map, metro);
 				if (comunas) bringComunaHoverToFront(map);
+
+				setLayerGroupVisibility(
+					map,
+					COMUNA_ALL_LAYER_IDS,
+					modeRef.current === "comunas",
+				);
+				setLayerGroupVisibility(
+					map,
+					METRO_ALL_LAYER_IDS,
+					modeRef.current === "metro",
+				);
 
 				map.setCenter(SANTIAGO_CENTER);
 				map.setZoom(INITIAL_ZOOM);
 
 				if (comunas) {
-					hoverCleanup.push(setupComunaHover(map, pinController, COMUNA_ZOOM));
+					hoverCleanup.push(
+						setupComunaHover(map, pinController, COMUNA_ZOOM, modeRef),
+					);
+				}
+				if (metro) {
+					hoverCleanup.push(
+						setupMetroStationClick(map, pinController, modeRef),
+					);
 				}
 			});
 		})();
@@ -115,17 +160,33 @@ export function useSantiagoMap(setHoverInfo: (info: HoverInfo) => void) {
 			cleanup?.();
 			mapRef.current = null;
 		};
-	}, [setHoverInfo]);
+	}, [setHoverInfo, modeRef]);
 
-	const resetView = () => {
+	const resetView = useCallback(() => {
 		mapRef.current?.easeTo({
 			center: SANTIAGO_CENTER,
 			zoom: INITIAL_ZOOM,
 			bearing: 0,
 			pitch: 0,
-			duration: 200,
+			duration: 650,
 		});
-	};
+	}, []);
 
-	return { containerRef, clearPinned, resetView };
+	return { containerRef, clearPinned, resetView, applyModeVisibility };
+}
+
+function setLayerGroupVisibility(
+	map: MapLibreMap,
+	layerIds: readonly string[],
+	visible: boolean,
+) {
+	for (const layerId of layerIds) {
+		if (map.getLayer(layerId)) {
+			map.setLayoutProperty(
+				layerId,
+				"visibility",
+				visible ? "visible" : "none",
+			);
+		}
+	}
 }

@@ -20,6 +20,7 @@ import type {
 	FrequencyInfo,
 	FrequencyMap,
 	HoverInfo,
+	InteractionMode,
 	TravelTimeInfo,
 	TravelTimeMap,
 } from "./types";
@@ -118,6 +119,7 @@ export function setupComunaHover(
 	map: MapLibreMap,
 	pinController: HoverPinController,
 	comunaZoom: number,
+	modeRef: { current: InteractionMode },
 ) {
 	const setSelectedFilter = (feature: MapGeoJSONFeature | null) => {
 		const code = feature ? getFeatureNumber(feature, "cod_comuna") : null;
@@ -130,6 +132,7 @@ export function setupComunaHover(
 	};
 
 	const onClick = (event: MapLayerMouseEvent) => {
+		if (modeRef.current !== "comunas") return;
 		const feature = event.features?.[0];
 		if (!feature) return;
 		const coords = (feature.geometry as GeoJSON.Polygon).coordinates[0] as [
@@ -467,6 +470,51 @@ function getMetricKeyCandidates(feature: MapGeoJSONFeature) {
 
 function normalizeMetricKey(key: string) {
 	return key.trim().toLocaleLowerCase("es");
+}
+
+/**
+ * Click de estaciones de metro: tap selecciona, zoom in, y muestra info.
+ * Solo responde cuando `modeRef.current === "metro"`.
+ */
+export function setupMetroStationClick(
+	map: MapLibreMap,
+	pinController: HoverPinController,
+	modeRef: { current: InteractionMode },
+) {
+	const onClick = (event: MapLayerMouseEvent) => {
+		if (modeRef.current !== "metro") return;
+		const feature = event.features?.[0];
+		if (!feature) return;
+
+		const name = getFeatureString(feature, "name");
+		const lineName = getFeatureString(feature, "line_name");
+		const lineColor = getFeatureString(feature, "line_color") || "#0f8f98";
+		const stopId = getFeatureString(feature, "stop_id");
+		const coords = (feature.geometry as GeoJSON.Point).coordinates as [
+			number,
+			number,
+		];
+
+		map.flyTo({ center: coords, zoom: 15, pitch: 45, duration: 650 });
+
+		const info: Exclude<HoverInfo, null> = {
+			kind: lineName || "Metro",
+			title: name || "Estación",
+			description: `Estación de ${lineName || "Metro de Santiago"}`,
+			details: [stopId ? `Código: ${stopId}` : ""].filter(Boolean),
+			pinned: true,
+			accent: lineColor,
+		};
+
+		pinController.pin(info, () => {
+			// No extra cleanup needed for metro stations
+		});
+	};
+
+	map.on("click", "metro-stations", onClick);
+	return () => {
+		map.off("click", "metro-stations", onClick);
+	};
 }
 
 /** Renderiza un popup-card consistente para cualquier `HoverInfo`. */
