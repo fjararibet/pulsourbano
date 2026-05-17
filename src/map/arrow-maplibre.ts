@@ -51,29 +51,54 @@ function hexToRgba(hex: string, alpha: number): string {
 	return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
 }
 
+type CometStop = readonly [position: number, alpha: number];
+
+const COMET_SHAPE: readonly CometStop[] = [
+	[-0.14, 0],
+	[-0.05, 0.35],
+	[0, 0.95],
+	[0.05, 0.35],
+	[0.14, 0],
+];
+
+const COMET_TAIL_EXTENT = (COMET_SHAPE.at(-1) as CometStop)[0];
+
+function cometAlphaAt(absPos: number, progress: number): number {
+	const rel = absPos - progress;
+	const first = COMET_SHAPE[0] as CometStop;
+	const last = COMET_SHAPE.at(-1) as CometStop;
+	if (rel <= first[0] || rel >= last[0]) return 0;
+	for (let i = 1; i < COMET_SHAPE.length; i++) {
+		const cur = COMET_SHAPE[i] as CometStop;
+		if (rel <= cur[0]) {
+			const prev = COMET_SHAPE[i - 1] as CometStop;
+			const t = (rel - prev[0]) / (cur[0] - prev[0]);
+			return prev[1] + (cur[1] - prev[1]) * t;
+		}
+	}
+	return 0;
+}
+
 function createCometGradient(
 	progress: number,
 	color: string,
 ): ExpressionSpecification {
-	return [
-		"interpolate",
-		["linear"],
-		["line-progress"],
-		0,
-		hexToRgba(color, 0),
-		Math.max(0, progress - 0.14),
-		hexToRgba(color, 0),
-		Math.max(0, progress - 0.05),
-		hexToRgba(color, 0.35),
-		progress,
-		hexToRgba(color, 0.95),
-		Math.min(1, progress + 0.05),
-		hexToRgba(color, 0.35),
-		Math.min(1, progress + 0.14),
-		hexToRgba(color, 0),
-		1,
-		hexToRgba(color, 0),
-	] as ExpressionSpecification;
+	// Emit stops only at shape anchors inside (0,1) plus the endpoints —
+	// clamping anchors to [0,1] like the old version collapsed duplicates and
+	// left the bright head stuck at the tip when progress reached 1.
+	const positions = new Set<number>([0, 1]);
+	for (const [rel] of COMET_SHAPE) {
+		const abs = rel + progress;
+		if (abs > 0 && abs < 1) positions.add(abs);
+	}
+
+	const sorted = Array.from(positions).sort((a, b) => a - b);
+	const expr: unknown[] = ["interpolate", ["linear"], ["line-progress"]];
+	for (const pos of sorted) {
+		expr.push(pos, hexToRgba(color, cometAlphaAt(pos, progress)));
+	}
+
+	return expr as ExpressionSpecification;
 }
 
 export function createArrowMapLibreManager(
@@ -121,7 +146,10 @@ export function createArrowMapLibreManager(
 
 		const elapsedSeconds = (time - startedAt) / 1000;
 		const cycle = Math.max(0.001, highlightSpeed);
-		const waveProgress = (elapsedSeconds % cycle) / cycle;
+		const t = (elapsedSeconds % cycle) / cycle;
+		// Overshoot [0,1] by the tail extent so the head fades off the end
+		// instead of stopping there.
+		const waveProgress = t * (1 + 2 * COMET_TAIL_EXTENT) - COMET_TAIL_EXTENT;
 
 		setPaintPropertyIfLayerExists(
 			map,
