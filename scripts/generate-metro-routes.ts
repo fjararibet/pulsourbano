@@ -9,7 +9,7 @@
  *
  * Usage: npx tsx scripts/generate-metro-routes.ts
  */
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
+import { readFileSync, readdirSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { resolve, join } from "node:path";
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
@@ -39,20 +39,6 @@ function shapeSeconds(coords: [number, number][]): number {
   const km = shapeKm(coords);
   const avgSpeedKmh = 32;
   return (km / avgSpeedKmh) * 3600;
-}
-
-function polygonCentroid(coords: number[][][]): [number, number] {
-  let sumLng = 0;
-  let sumLat = 0;
-  let count = 0;
-  for (const ring of coords) {
-    for (const [lng = 0, lat = 0] of ring) {
-      sumLng += lng;
-      sumLat += lat;
-      count++;
-    }
-  }
-  return count > 0 ? [sumLng / count, sumLat / count] : [-70.65, -33.45];
 }
 
 function nearestStation(
@@ -90,7 +76,6 @@ interface GraphEdge {
   distanceKm: number;
 }
 
-// Build adjacency list connecting stations that are adjacent on the same line
 function buildMetroGraph(
   stations: MetroStation[],
   lines: MetroLine[],
@@ -103,19 +88,16 @@ function buildMetroGraph(
 
   for (const line of lines) {
     const coords = line.coordinates;
-    // For each consecutive pair of stations on the line, find which stations are nearby
     const stationOnLine = stations.filter((s) =>
       s.line_id.split(",").includes(line.route_id)
     );
 
-    // Sort stations on this line by their order along the line
     stationOnLine.sort((a, b) => {
       const idxA = findClosestIndex(a.coordinates, coords);
       const idxB = findClosestIndex(b.coordinates, coords);
       return idxA - idxB;
     });
 
-    // Connect consecutive stations on the same line
     for (let i = 0; i < stationOnLine.length - 1; i++) {
       const from = stationOnLine[i]!;
       const to = stationOnLine[i + 1]!;
@@ -160,7 +142,6 @@ function findClosestIndex(
   return minIdx;
 }
 
-// Simple BFS to find shortest path between stations
 function findMetroPath(
   fromId: string,
   toId: string,
@@ -193,7 +174,6 @@ function findMetroPath(
   return [];
 }
 
-// Concatenate edges into a single coordinate array
 function edgesToCoords(edges: GraphEdge[]): [number, number][] {
   if (edges.length === 0) return [];
   const coords: [number, number][] = [];
@@ -208,67 +188,29 @@ function edgesToCoords(edges: GraphEdge[]): [number, number][] {
   return coords;
 }
 
-// ─── commune centroids ────────────────────────────────────────────────────────
+// Load centroids from existing auto route files
+function loadCentroidsFromRoutes(): Map<string, [number, number]> {
+  const routes = readdirSync(resolve(process.cwd(), "src/data/routes"));
+  const autoRoutes = routes.filter((f: string) => f.endsWith("_auto.json"));
 
-interface ComunaPolygon {
-  name: string;
-  coords: number[][][];
+  const centroids = new Map<string, [number, number]>();
+
+  for (const r of autoRoutes) {
+    const withoutMode = r.slice(0, -9); // Remove _auto.json
+    const decoded = decodeURIComponent(withoutMode);
+    // Origin is FIRST component (before first underscore)
+    const firstSep = decoded.indexOf("_");
+    const origen = decoded.slice(0, firstSep);
+
+    const d = JSON.parse(readFileSync(resolve(process.cwd(), "src/data/routes", r), "utf8"));
+
+    if (!centroids.has(origen)) {
+      centroids.set(origen, d.shape[0]);
+    }
+  }
+
+  return centroids;
 }
-
-// Minimal commune data with centroids pre-computed
-const COMUNAS: { name: string; centroid: [number, number] }[] = [
-  { name: "San Joaquín", centroid: [-70.629, -33.490] },
-  { name: "San Miguel", centroid: [-70.649, -33.497] },
-  { name: "San Ramón", centroid: [-70.639, -33.510] },
-  { name: "Independencia", centroid: [-70.664, -33.415] },
-  { name: "La Cisterna", centroid: [-70.668, -33.534] },
-  { name: "Peñalolén", centroid: [-70.540, -33.480] },
-  { name: "Providencia", centroid: [-70.600, -33.435] },
-  { name: "La Reina", centroid: [-70.530, -33.450] },
-  { name: "Calera de Tango", centroid: [-70.780, -33.620] },
-  { name: "Colina", centroid: [-70.670, -33.200] },
-  { name: "Santiago", centroid: [-70.660, -33.450] },
-  { name: "Lampa", centroid: [-70.900, -33.280] },
-  { name: "Vitacura", centroid: [-70.590, -33.390] },
-  { name: "Las Condes", centroid: [-70.550, -33.410] },
-  { name: "Lo Barnechea", centroid: [-70.510, -33.360] },
-  { name: "La Florida", centroid: [-70.580, -33.520] },
-  { name: "Maipú", centroid: [-70.770, -33.510] },
-  { name: "Puente Alto", centroid: [-70.580, -33.600] },
-  { name: "San Bernardo", centroid: [-70.700, -33.590] },
-  { name: "Buin", centroid: [-70.740, -33.610] },
-  { name: "Padre Hurtado", centroid: [-70.800, -33.550] },
-  { name: "La Pintana", centroid: [-70.640, -33.570] },
-  { name: "San José de Maipo", centroid: [-70.450, -33.630] },
-  { name: "Pirque", centroid: [-70.520, -33.630] },
-  { name: "Providencia", centroid: [-70.600, -33.435] },
-  { name: "Ñuñoa", centroid: [-70.590, -33.460] },
-  { name: "Macul", centroid: [-70.610, -33.480] },
-  { name: "San Joaquín", centroid: [-70.629, -33.490] },
-  { name: "Pedro Aguirre Cerda", centroid: [-70.670, -33.470] },
-  { name: "Cerro Navia", centroid: [-70.720, -33.440] },
-  { name: "Conchalí", centroid: [-70.700, -33.410] },
-  { name: " Huechuraba", centroid: [-70.680, -33.380] },
-  { name: "Recoleta", centroid: [-70.640, -33.420] },
-  { name: "Quinta Normal", centroid: [-70.700, -33.440] },
-  { name: "Cerro Navia", centroid: [-70.720, -33.440] },
-  { name: "Renca", centroid: [-70.730, -33.420] },
-  { name: "Quilicura", centroid: [-70.730, -33.360] },
-  { name: "Pudahuel", centroid: [-70.760, -33.440] },
-  { name: "Lo Prado", centroid: [-70.720, -33.460] },
-  { name: "Estación Central", centroid: [-70.690, -33.460] },
-  { name: "Cerrillos", centroid: [-70.710, -33.500] },
-  { name: "Maipú", centroid: [-70.770, -33.510] },
-  { name: "Santiago", centroid: [-70.660, -33.450] },
-  { name: "La Granja", centroid: [-70.610, -33.510] },
-  { name: "La Pintana", centroid: [-70.640, -33.570] },
-  { name: "San Ramón", centroid: [-70.639, -33.510] },
-  { name: "Lo Espejo", centroid: [-70.700, -33.520] },
-  { name: "El Bosque", centroid: [-70.690, -33.530] },
-  { name: "La Cisterna", centroid: [-70.668, -33.534] },
-  { name: "Lo Espejo", centroid: [-70.700, -33.520] },
-  { name: "Cerro Navia", centroid: [-70.720, -33.440] },
-];
 
 // ─── main ─────────────────────────────────────────────────────────────────────
 
@@ -280,7 +222,6 @@ async function main() {
     readFileSync(resolve(process.cwd(), "public/data/metro.geojson"), "utf8")
   );
 
-  // Extract lines and stations
   const lines: MetroLine[] = metroGeo.features
     .filter((f: any) => f.geometry?.type === "LineString")
     .map((f: any) => ({
@@ -300,24 +241,31 @@ async function main() {
   console.log(`  Lines: ${lines.length}`);
   console.log(`  Stations: ${stations.length}`);
 
-  // Build graph
   const graph = buildMetroGraph(stations, lines);
 
-  // Output directory
+  // Load centroids from existing auto routes
+  const centroids = loadCentroidsFromRoutes();
+  console.log(`  Comunas: ${centroids.size}`);
+
+  // Show sample centroids to verify they're correct
+  console.log(`  Vitacura centroid: ${JSON.stringify(centroids.get("Vitacura"))}`);
+  console.log(`  Santiago centroid: ${JSON.stringify(centroids.get("Santiago"))}`);
+
   const outDir = resolve(process.cwd(), "src/data/routes");
   if (!existsSync(outDir)) {
     mkdirSync(outDir, { recursive: true });
   }
 
-  // Generate routes for each pair
   let count = 0;
   const start = Date.now();
 
-  for (const origen of COMUNAS) {
-    for (const destino of COMUNAS) {
-      if (origen.name !== destino.name) {
-        const origenStation = nearestStation(origen.centroid, stations);
-        const destinoStation = nearestStation(destino.centroid, stations);
+  const comunas = [...centroids.entries()];
+
+  for (const [origen, origenCentroid] of comunas) {
+    for (const [destino, destinoCentroid] of comunas) {
+      if (origen !== destino) {
+        const origenStation = nearestStation(origenCentroid, stations);
+        const destinoStation = nearestStation(destinoCentroid, stations);
 
         const pathEdges = findMetroPath(
           origenStation.stop_id,
@@ -328,20 +276,23 @@ async function main() {
         let shape: [number, number][];
         let time: number;
 
-        if (pathEdges.length === 0 && origenStation.stop_id !== destinoStation.stop_id) {
-          shape = [origen.centroid, destino.centroid];
-          time = haversineKm(origen.centroid, destino.centroid) / 32 * 3600;
+        if (
+          pathEdges.length === 0 &&
+          origenStation.stop_id !== destinoStation.stop_id
+        ) {
+          shape = [origenCentroid, destinoCentroid];
+          time = (haversineKm(origenCentroid, destinoCentroid) / 32) * 3600;
         } else if (pathEdges.length === 0) {
-          shape = [origen.centroid];
+          shape = [origenCentroid];
           time = 0;
         } else {
           const pathCoords = edgesToCoords(pathEdges);
-          shape = [origen.centroid, ...pathCoords, destino.centroid];
+          shape = [origenCentroid, ...pathCoords, destinoCentroid];
           const walkingTime = 2 * 5 * 60;
           time = shapeSeconds(pathCoords) + walkingTime;
         }
 
-        const fileName = `${encodeURIComponent(origen.name)}_${encodeURIComponent(destino.name)}_metro.json`;
+        const fileName = `${encodeURIComponent(origen)}_${encodeURIComponent(destino)}_metro.json`;
         writeFileSync(
           join(outDir, fileName),
           JSON.stringify({ shape, time: Math.round(time) })
