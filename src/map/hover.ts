@@ -9,7 +9,6 @@ import maplibregl from "maplibre-gl";
 import {
 	BUS_COLOR,
 	COMUNA_COLOR,
-	COMUNA_HOVER_LAYER_IDS,
 	COMUNA_INTERACTION_LAYER_ID,
 	COMUNA_SELECTED_LAYER_IDS,
 	EMPTY_BUS_HOVER_FILTER,
@@ -114,28 +113,14 @@ export function setupHoverLayer(
 }
 
 /**
- * Hover/click de comunas desde una capa invisible, para que el resaltado
- * funcione aunque la capa visual de límites esté apagada.
+ * Click de comunas: tap selecciona, zoom in, y resalta la comuna.
+ * Sin estado de hover — mobile first.
  */
 export function setupComunaHover(
 	map: MapLibreMap,
-	setHoverInfo: (info: HoverInfo) => void,
 	pinController: HoverPinController,
 	comunaZoom: number,
 ) {
-	let hoveredCode: number | null = null;
-
-	const setHoverFilter = (feature: MapGeoJSONFeature | null) => {
-		const code = feature ? getFeatureNumber(feature, "cod_comuna") : null;
-		hoveredCode = code;
-		const filter: FilterSpecification = code
-			? ["==", ["get", "cod_comuna"], code]
-			: EMPTY_COMUNA_HOVER_FILTER;
-		for (const layerId of COMUNA_HOVER_LAYER_IDS) {
-			if (map.getLayer(layerId)) map.setFilter(layerId, filter);
-		}
-	};
-
 	const setSelectedFilter = (feature: MapGeoJSONFeature | null) => {
 		const code = feature ? getFeatureNumber(feature, "cod_comuna") : null;
 		const filter: FilterSpecification = code
@@ -144,29 +129,6 @@ export function setupComunaHover(
 		for (const layerId of COMUNA_SELECTED_LAYER_IDS) {
 			if (map.getLayer(layerId)) map.setFilter(layerId, filter);
 		}
-	};
-
-	const clearComunaEffects = () => {
-		setHoverFilter(null);
-		setSelectedFilter(null);
-		hoveredCode = null;
-		map.getCanvas().style.cursor = "";
-	};
-
-	const clearHover = () => {
-		if (hoveredCode === null) return;
-		setHoverFilter(null);
-		if (!pinController.isPinned()) setHoverInfo(null);
-	};
-
-	const onMove = (event: MapLayerMouseEvent) => {
-		if (pinController.isPinned()) return;
-		const feature = event.features?.[0];
-		if (!feature) return;
-		const info = formatComunaHover(feature, false);
-		setHoverFilter(feature);
-		map.getCanvas().style.cursor = "pointer";
-		setHoverInfo(info);
 	};
 
 	const onClick = (event: MapLayerMouseEvent) => {
@@ -185,24 +147,16 @@ export function setupComunaHover(
 		const info = formatComunaHover(feature, true);
 		pinController.pin(info, () => {
 			setSelectedFilter(null);
-			hoveredCode = null;
-			map.getCanvas().style.cursor = "";
 		});
 
-		setHoverFilter(null);
 		setSelectedFilter(feature);
-		map.getCanvas().style.cursor = "pointer";
 	};
 
-	map.on("mousemove", COMUNA_INTERACTION_LAYER_ID, onMove);
-	map.on("mouseleave", COMUNA_INTERACTION_LAYER_ID, clearHover);
 	map.on("click", COMUNA_INTERACTION_LAYER_ID, onClick);
 
 	return () => {
-		map.off("mousemove", COMUNA_INTERACTION_LAYER_ID, onMove);
-		map.off("mouseleave", COMUNA_INTERACTION_LAYER_ID, clearHover);
 		map.off("click", COMUNA_INTERACTION_LAYER_ID, onClick);
-		clearComunaEffects();
+		setSelectedFilter(null);
 	};
 }
 

@@ -105,9 +105,7 @@ export function useSantiagoMap(setHoverInfo: (info: HoverInfo) => void) {
 				map.setZoom(INITIAL_ZOOM);
 
 				if (comunas) {
-					hoverCleanup.push(
-						setupComunaHover(map, setHoverInfo, pinController, COMUNA_ZOOM),
-					);
+					hoverCleanup.push(setupComunaHover(map, pinController, COMUNA_ZOOM));
 				}
 			});
 		})();

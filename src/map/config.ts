@@ -26,12 +26,6 @@ export const COMUNA_COLOR = "#6f5bd5";
 /** Capa invisible que mantiene el hover de comunas siempre disponible. */
 export const COMUNA_INTERACTION_LAYER_ID = "comunas-hitbox";
 
-/** Capas visuales que resaltan la comuna bajo el cursor. */
-export const COMUNA_HOVER_LAYER_IDS = [
-	"comunas-hover-fill",
-	"comunas-hover-outline",
-] as const;
-
 /** Capas visuales de la comuna seleccionada (pin active). */
 export const COMUNA_SELECTED_LAYER_IDS = [
 	"comunas-selected-fill",

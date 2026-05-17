@@ -7,7 +7,6 @@ import {
 	BUS_ARROW_ICON_ID,
 	BUS_COLOR,
 	COMUNA_COLOR,
-	COMUNA_HOVER_LAYER_IDS,
 	COMUNA_INTERACTION_LAYER_ID,
 	COMUNA_SELECTED_COLOR,
 	COMUNA_SELECTED_LAYER_IDS,
@@ -60,27 +59,6 @@ export function addComunaLayers(
 		},
 	});
 	map.addLayer({
-		id: "comunas-hover-fill",
-		type: "fill",
-		source: "comunas-rm",
-		filter: EMPTY_COMUNA_HOVER_FILTER,
-		paint: {
-			"fill-color": COMUNA_COLOR,
-			"fill-opacity": 0.34,
-		},
-	});
-	map.addLayer({
-		id: "comunas-hover-outline",
-		type: "line",
-		source: "comunas-rm",
-		filter: EMPTY_COMUNA_HOVER_FILTER,
-		paint: {
-			"line-color": COMUNA_COLOR,
-			"line-width": ["interpolate", ["linear"], ["zoom"], 9, 2.4, 13, 4.2],
-			"line-opacity": 1,
-		},
-	});
-	map.addLayer({
 		id: "comunas-selected-fill",
 		type: "fill",
 		source: "comunas-rm",
@@ -105,9 +83,6 @@ export function addComunaLayers(
 
 /** Mantiene el resaltado de comuna por encima de las demás capas. */
 export function bringComunaHoverToFront(map: MapLibreMap) {
-	for (const layerId of COMUNA_HOVER_LAYER_IDS) {
-		if (map.getLayer(layerId)) map.moveLayer(layerId);
-	}
 	for (const layerId of COMUNA_SELECTED_LAYER_IDS) {
 		if (map.getLayer(layerId)) map.moveLayer(layerId);
 	}
