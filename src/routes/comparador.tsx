@@ -616,6 +616,9 @@ function ComparadorPage() {
 										<th className="px-5 py-3 text-left font-bold text-[#5b777c]">
 											Modo
 										</th>
+										<th className="px-5 py-3 text-center font-bold text-[#5b777c]">
+											%
+										</th>
 										<th className="px-5 py-3 text-right font-bold text-[#5b777c]">
 											Viajes
 										</th>
@@ -634,31 +637,48 @@ function ComparadorPage() {
 									</tr>
 								</thead>
 								<tbody>
-									{simStatsModo.map((row) => (
-										<tr
-											key={row.modo ?? "∅"}
-											className="border-b border-[#eef4eb] last:border-0"
-										>
-											<td className="px-5 py-3 font-medium text-[#102f37]">
-												{row.modoNombre ?? "—"}
-											</td>
-											<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
-												{Math.round(row.n_viajes).toLocaleString("es-CL")}
-											</td>
-											<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
-												{row.porcentaje}%
-											</td>
-											<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
-												{(row.velocidad_promedio / 1000).toFixed(1)}
-											</td>
-											<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
-												{row.tiempo_promedio_min.toFixed(0)}
-											</td>
-											<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
-												{(row.distancia_promedio_km / 1000).toFixed(1)}
-											</td>
-										</tr>
-									))}
+									{simStatsModo.map((row) => {
+										const modo = row.modo ?? "";
+										const currentPct = Math.round(row.porcentaje * 10) / 10;
+										return (
+											<tr
+												key={modo}
+												className="border-b border-[#eef4eb] last:border-0"
+											>
+												<td className="px-5 py-3 font-medium text-[#102f37]">
+													{row.modoNombre ?? "—"}
+												</td>
+												<td className="px-5 py-3 text-center">
+													<div className="flex items-center justify-center gap-2">
+														<span className="w-12 text-sm font-medium text-[#102f37]">
+															{currentPct}%
+														</span>
+														<div className="relative h-2 w-20 rounded-full bg-[#eef4eb]">
+															<div
+																className="absolute top-0 left-0 h-full rounded-full bg-[#168a76]"
+																style={{ width: `${currentPct}%` }}
+															/>
+														</div>
+													</div>
+												</td>
+												<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
+													{Math.round(row.n_viajes).toLocaleString("es-CL")}
+												</td>
+												<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
+													{row.porcentaje}%
+												</td>
+												<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
+													{(row.velocidad_promedio / 1000).toFixed(1)}
+												</td>
+												<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
+													{row.tiempo_promedio_min.toFixed(0)}
+												</td>
+												<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
+													{(row.distancia_promedio_km / 1000).toFixed(1)}
+												</td>
+											</tr>
+										);
+									})}
 								</tbody>
 							</table>
 						</div>
