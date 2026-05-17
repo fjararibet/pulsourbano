@@ -20,6 +20,10 @@ import {
 	LAYER_TOGGLES,
 	LOGICAL_LAYERS,
 	ORIGEN_COLOR,
+	ROUTE_ARROW_COLOR,
+	ROUTE_ARROW_ICON_ID,
+	ROUTE_ARROW_LAYER_IDS,
+	ROUTE_ARROW_SOURCE_ID,
 } from "./config";
 import type { LayerVisibility } from "./types";
 
@@ -164,6 +168,217 @@ export function updateComunaSelectionLayers(
 	for (const layerId of COMUNA_DESTINO_LAYER_IDS) {
 		if (map.getLayer(layerId)) map.setFilter(layerId, destinoFilter);
 	}
+}
+
+/** Capas de flecha de ruta origen-destino con efecto 3D (sombra, glow, animación). */
+export function addRouteArrowLayers(map: MapLibreMap) {
+	if (map.getSource(ROUTE_ARROW_SOURCE_ID)) return;
+
+	map.addSource(ROUTE_ARROW_SOURCE_ID, {
+		type: "geojson",
+		data: EMPTY_FEATURE_COLLECTION,
+		lineMetrics: true,
+	});
+
+	ensureRouteArrowIcon(map);
+
+	map.addLayer({
+		id: "route-arrow-shadow",
+		type: "line",
+		source: ROUTE_ARROW_SOURCE_ID,
+		filter: ["==", ["geometry-type"], "LineString"],
+		paint: {
+			"line-color": "#000000",
+			"line-width": ["interpolate", ["linear"], ["zoom"], 10, 8, 14, 16],
+			"line-opacity": 0.2,
+			"line-blur": 8,
+		},
+	});
+
+	map.addLayer({
+		id: "route-arrow-glow",
+		type: "line",
+		source: ROUTE_ARROW_SOURCE_ID,
+		filter: ["==", ["geometry-type"], "LineString"],
+		paint: {
+			"line-color": ROUTE_ARROW_COLOR,
+			"line-width": ["interpolate", ["linear"], ["zoom"], 10, 6, 14, 12],
+			"line-opacity": 0.45,
+			"line-blur": 6,
+		},
+	});
+
+	map.addLayer({
+		id: "route-arrow-base",
+		type: "line",
+		source: ROUTE_ARROW_SOURCE_ID,
+		filter: ["==", ["geometry-type"], "LineString"],
+		layout: {
+			"line-cap": "round",
+			"line-join": "round",
+		},
+		paint: {
+			"line-color": "#b45309",
+			"line-width": ["interpolate", ["linear"], ["zoom"], 10, 2.5, 14, 5],
+			"line-opacity": 0.65,
+		},
+	});
+
+	map.addLayer({
+		id: "route-arrow-core",
+		type: "line",
+		source: ROUTE_ARROW_SOURCE_ID,
+		filter: ["==", ["geometry-type"], "LineString"],
+		layout: {
+			"line-cap": "round",
+			"line-join": "round",
+		},
+		paint: {
+			"line-gradient": createRouteArrowGradient(0.5, "#ffffff"),
+			"line-width": ["interpolate", ["linear"], ["zoom"], 10, 3.5, 14, 7],
+			"line-opacity": 0.95,
+		},
+	});
+
+	map.addLayer({
+		id: "route-arrow-symbols",
+		type: "symbol",
+		source: ROUTE_ARROW_SOURCE_ID,
+		filter: ["==", ["geometry-type"], "LineString"],
+		layout: {
+			"symbol-placement": "line",
+			"symbol-spacing": 140,
+			"icon-image": ROUTE_ARROW_ICON_ID,
+			"icon-rotation-alignment": "map",
+			"icon-keep-upright": false,
+			"icon-size": ["interpolate", ["linear"], ["zoom"], 10, 0.7, 14, 1.2],
+			"icon-allow-overlap": true,
+			"icon-ignore-placement": true,
+		},
+		paint: {
+			"icon-opacity": 0.9,
+		},
+	});
+
+	map.addLayer({
+		id: "route-arrow-head",
+		type: "symbol",
+		source: ROUTE_ARROW_SOURCE_ID,
+		filter: ["==", ["geometry-type"], "Point"],
+		layout: {
+			"icon-image": ROUTE_ARROW_ICON_ID,
+			"icon-rotate": ["get", "bearing"],
+			"icon-rotation-alignment": "map",
+			"icon-size": ["interpolate", ["linear"], ["zoom"], 10, 1.3, 14, 2.2],
+			"icon-allow-overlap": true,
+			"icon-ignore-placement": true,
+		},
+		paint: {
+			"icon-opacity": 1,
+		},
+	});
+}
+
+export function updateRouteArrowData(
+	map: MapLibreMap,
+	data: GeoJSON.FeatureCollection,
+) {
+	const source = map.getSource(ROUTE_ARROW_SOURCE_ID);
+	if (source && "setData" in source) {
+		(source as GeoJSONSource).setData(data);
+	}
+}
+
+export function clearRouteArrow(map: MapLibreMap) {
+	updateRouteArrowData(map, EMPTY_FEATURE_COLLECTION);
+}
+
+export function bringRouteArrowToFront(map: MapLibreMap) {
+	for (const layerId of ROUTE_ARROW_LAYER_IDS) {
+		if (map.getLayer(layerId)) map.moveLayer(layerId);
+	}
+}
+
+/** Dibuja el ícono de flecha para la ruta origen-destino. */
+export function ensureRouteArrowIcon(map: MapLibreMap) {
+	if (map.hasImage(ROUTE_ARROW_ICON_ID)) return;
+
+	const pixelRatio = 2;
+	const width = 32;
+	const height = 24;
+	const canvas = document.createElement("canvas");
+	canvas.width = width * pixelRatio;
+	canvas.height = height * pixelRatio;
+	const ctx = canvas.getContext("2d");
+	if (!ctx) return;
+
+	ctx.scale(pixelRatio, pixelRatio);
+	ctx.fillStyle = ROUTE_ARROW_COLOR;
+	ctx.beginPath();
+	ctx.moveTo(2, 6);
+	ctx.lineTo(24, 12);
+	ctx.lineTo(2, 18);
+	ctx.lineTo(7, 12);
+	ctx.closePath();
+	ctx.fill();
+
+	ctx.strokeStyle = "rgba(255,255,255,0.92)";
+	ctx.lineWidth = 1.6;
+	ctx.stroke();
+
+	map.addImage(
+		ROUTE_ARROW_ICON_ID,
+		ctx.getImageData(0, 0, canvas.width, canvas.height),
+		{ pixelRatio },
+	);
+}
+
+/** Inicia la animación de gradiente que fluye a lo largo de la flecha. */
+export function startRouteArrowAnimation(map: MapLibreMap) {
+	let frameId = 0;
+	const startedAt = performance.now();
+
+	const animate = (time: number) => {
+		const elapsedSeconds = (time - startedAt) / 1000;
+		const waveProgress = (elapsedSeconds % 1.8) / 1.8;
+
+		setPaintPropertyIfLayerExists(
+			map,
+			"route-arrow-core",
+			"line-gradient",
+			createRouteArrowGradient(waveProgress, ROUTE_ARROW_COLOR),
+		);
+
+		frameId = requestAnimationFrame(animate);
+	};
+
+	frameId = requestAnimationFrame(animate);
+	return () => cancelAnimationFrame(frameId);
+}
+
+function createRouteArrowGradient(
+	progress: number,
+	color: string,
+): ExpressionSpecification {
+	return [
+		"interpolate",
+		["linear"],
+		["line-progress"],
+		0,
+		hexToRgba(color, 0),
+		Math.max(0, progress - 0.14),
+		hexToRgba(color, 0),
+		Math.max(0, progress - 0.05),
+		hexToRgba(color, 0.35),
+		progress,
+		hexToRgba(color, 0.95),
+		Math.min(1, progress + 0.05),
+		hexToRgba(color, 0.35),
+		Math.min(1, progress + 0.14),
+		hexToRgba(color, 0),
+		1,
+		hexToRgba(color, 0),
+	] as ExpressionSpecification;
 }
 
 /** Capas del Metro: halo blanco, línea coloreada y estaciones. */

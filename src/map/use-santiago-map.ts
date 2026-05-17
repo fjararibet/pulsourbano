@@ -16,11 +16,21 @@ import {
 } from "./hover";
 import {
 	addComunaLayers,
+	addRouteArrowLayers,
 	bringComunaHoverToFront,
+	bringRouteArrowToFront,
+	clearRouteArrow,
+	startRouteArrowAnimation,
 	updateComunaSelectionLayers,
+	updateRouteArrowData,
 } from "./layers";
 import type { HoverInfo } from "./types";
-import { loadGeoJSON } from "./utils";
+import {
+	createArcLineString,
+	createArrowHeadFeature,
+	getPolygonCentroid,
+	loadGeoJSON,
+} from "./utils";
 
 /**
  * Inicializa MapLibre, carga los GeoJSON de Metro/Buses/Ciclovías, monta las
@@ -41,6 +51,7 @@ export function useSantiagoMap(
 	const clearPinnedEffectsRef = useRef<(() => void) | null>(null);
 	const dualSelectRef = useRef(dualSelect);
 	const comunasRef = useRef<GeoJSON.FeatureCollection | null>(null);
+	const routeArrowAnimCleanupRef = useRef<(() => void) | null>(null);
 	dualSelectRef.current = dualSelect;
 
 	const clearPinned = useCallback(() => {
@@ -109,6 +120,8 @@ export function useSantiagoMap(
 			cleanup = () => {
 				pinnedInfoRef.current = null;
 				clearPinnedEffectsRef.current = null;
+				routeArrowAnimCleanupRef.current?.();
+				routeArrowAnimCleanupRef.current = null;
 				for (const fn of hoverCleanup) fn();
 				if (debugWindow?.__simMap === map) delete debugWindow.__simMap;
 				ro.disconnect();
@@ -117,11 +130,26 @@ export function useSantiagoMap(
 
 			map.on("load", async () => {
 				resize();
+
+				// Activar terreno 3D y luz direccional para relieve real
+				try {
+					map.setTerrain({ source: "terrain-dem", exaggeration: 1.5 });
+					map.setLight({
+						anchor: "viewport",
+						color: "#ffffff",
+						intensity: 0.65,
+					});
+				} catch {
+					// Si el navegador no soporta WebGL para terreno, continuar sin
+				}
+
 				const comunas = await loadGeoJSON("/data/comunas_rm.geojson");
 				comunasRef.current = comunas;
 
 				if (comunas) addComunaLayers(map, comunas);
 				if (comunas) bringComunaHoverToFront(map);
+				addRouteArrowLayers(map);
+				bringRouteArrowToFront(map);
 
 				map.setCenter(SANTIAGO_CENTER);
 				map.setZoom(INITIAL_ZOOM);
@@ -203,6 +231,34 @@ export function useSantiagoMap(
 					bearing: MAP_DETAIL_BEARING,
 					duration: 650,
 				});
+
+				// Generar flecha de ruta origen-destino
+				const origenCentroid = getPolygonCentroid(origenFeature);
+				const destinoCentroid = getPolygonCentroid(destinoFeature);
+				if (origenCentroid && destinoCentroid) {
+					const arc = createArcLineString(origenCentroid, destinoCentroid);
+					const coords = arc.geometry.coordinates;
+					const secondToLast = coords[coords.length - 2] as
+						| [number, number]
+						| undefined;
+					const last = coords[coords.length - 1] as
+						| [number, number]
+						| undefined;
+					if (last && secondToLast) {
+						const dx = last[0] - secondToLast[0];
+						const dy = last[1] - secondToLast[1];
+						const bearing = ((-Math.atan2(dy, dx) * 180) / Math.PI + 360) % 360;
+						const arrowHead = createArrowHeadFeature(last, bearing);
+
+						updateRouteArrowData(map, {
+							type: "FeatureCollection",
+							features: [arc, arrowHead],
+						});
+
+						routeArrowAnimCleanupRef.current?.();
+						routeArrowAnimCleanupRef.current = startRouteArrowAnimation(map);
+					}
+				}
 			}
 		}
 
@@ -212,6 +268,16 @@ export function useSantiagoMap(
 			(prevOrigenRef.current || prevDestinoRef.current)
 		) {
 			resetView();
+			clearRouteArrow(map);
+			routeArrowAnimCleanupRef.current?.();
+			routeArrowAnimCleanupRef.current = null;
+		}
+
+		if (origen && !destino && prevDestinoRef.current) {
+			// Se quitó el destino: limpiar flecha
+			clearRouteArrow(map);
+			routeArrowAnimCleanupRef.current?.();
+			routeArrowAnimCleanupRef.current = null;
 		}
 
 		prevOrigenRef.current = origen;

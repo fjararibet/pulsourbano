@@ -33,6 +33,25 @@ export const BUS_ARROW_ICON_ID = "bus-route-arrow";
 /** Color base de la capa de comunas RM. */
 export const COMUNA_COLOR = "#6f5bd5";
 
+/** Color de la flecha de ruta origen-destino. */
+export const ROUTE_ARROW_COLOR = "#f59e0b";
+
+/** Identificador del ícono de flecha para la ruta origen-destino. */
+export const ROUTE_ARROW_ICON_ID = "route-arrow-head";
+
+/** ID de la fuente GeoJSON de la flecha de ruta. */
+export const ROUTE_ARROW_SOURCE_ID = "route-arrow";
+
+/** Capas visuales de la flecha de ruta. */
+export const ROUTE_ARROW_LAYER_IDS = [
+	"route-arrow-shadow",
+	"route-arrow-glow",
+	"route-arrow-base",
+	"route-arrow-core",
+	"route-arrow-symbols",
+	"route-arrow-head",
+] as const;
+
 /** Capa invisible que mantiene el hover de comunas siempre disponible. */
 export const COMUNA_INTERACTION_LAYER_ID = "comunas-hitbox";
 
