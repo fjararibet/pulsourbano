@@ -34,9 +34,10 @@ import {
 	clearRouteArrow,
 	updateComunaSelectionLayers,
 } from "./layers";
+import { getComunasGeoJSON } from "./server-comunas";
 import { getMetroGeoJSON } from "./server-metro";
 import type { HoverInfo, InteractionMode } from "./types";
-import { getPolygonCentroid, loadGeoJSON } from "./utils";
+import { getPolygonCentroid } from "./utils";
 
 type DualSelect = {
 	origen: string | null;
@@ -192,7 +193,7 @@ export function useSantiagoMap(
 				} catch {}
 
 				const [comunas, metro] = await Promise.all([
-					loadGeoJSON("/data/comunas_rm.geojson"),
+					getComunasGeoJSON(),
 					getMetroGeoJSON(),
 				]);
 				comunasRef.current = comunas;
