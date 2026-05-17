@@ -93,6 +93,13 @@ const MODE_PROFILES: ModeProfile[] = [
 		transportSpeed: 0.45,
 	},
 	{
+		costing: "metro",
+		color: "#dc2626",
+		lateralOffset: 0.0,
+		routeUsage: 0.65,
+		transportSpeed: 0.7,
+	},
+	{
 		costing: "bicycle",
 		color: "#10b981",
 		lateralOffset: 0.15,
@@ -103,7 +110,7 @@ const MODE_PROFILES: ModeProfile[] = [
 		costing: "pedestrian",
 		color: "#8b5cf6",
 		lateralOffset: -0.55,
-		routeUsage: 0.10,
+		routeUsage: 0.1,
 		transportSpeed: 0.12,
 	},
 ];
