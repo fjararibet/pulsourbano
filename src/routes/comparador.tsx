@@ -11,10 +11,7 @@ import type {
 	StatsRow,
 	TiempoMedioRow,
 } from "#/lib/comparador/comparador-types";
-import {
-	getSliderRange,
-	redistributeBySliders,
-} from "#/lib/comparador/redist";
+import { redistributeGeneric, redistributeModo } from "#/lib/comparador/redist";
 
 // ── tipos ─────────────────────────────────────────────
 
@@ -175,35 +172,22 @@ const getStatsPorModo = createServerFn({ method: "POST" })
 	.inputValidator(validateOrigenDestino)
 	.handler(async ({ data }): Promise<ModoRow[]> => {
 		const query = `
-		 WITH cats AS (
-		   SELECT v.viaje,
-		     CASE
-		       WHEN v.modoAgregado IN ('1','6','17','18', '10', '7', '5', '15')
-		         THEN 'Auto'
-		       WHEN v.modoAgregado IN ('2','3','11','12','13','14') THEN 'Bus'
-		       WHEN v.modoAgregado IN ('4','16') THEN 'Metro/Tren'
-		       WHEN v.modoAgregado IN ('8','9') THEN 'No Motorizado'
-		       ELSE 'Otro'
-		     END AS cat_modo,
-		     d.distEuclidiana,
-		     v.tiempoViaje
-		   FROM viaje v
-		   LEFT JOIN distancia_viaje d ON d.viaje = v.viaje
-		   LEFT JOIN comuna co ON co.id = v.comunaOrigen
-		   LEFT JOIN comuna cd ON cd.id = v.comunaDestino
-		   WHERE co.comuna = ?1 AND cd.comuna = ?2
-		     AND v.tiempoViaje > 0 AND d.distEuclidiana > 0
-		 )
 		 SELECT
-		   cat_modo AS modo,
-		   cat_modo AS modoNombre,
+		   v.modoAgregado AS modo,
+		   m.modo AS modoNombre,
 		   COUNT(*) AS n_viajes,
 		   ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (), 1) AS porcentaje,
-		   ROUND(AVG(distEuclidiana * 60.0 / tiempoViaje / 1000), 1) AS velocidad_promedio,
-		   ROUND(AVG(tiempoViaje), 1) AS tiempo_promedio_min,
-		   ROUND(AVG(distEuclidiana), 2) / 1000 AS distancia_promedio_km
-		 FROM cats
-		 GROUP BY cat_modo
+		   ROUND(AVG(d.distEuclidiana * 60.0 / v.tiempoViaje), 1) AS velocidad_promedio,
+		   ROUND(AVG(v.tiempoViaje), 1) AS tiempo_promedio_min,
+		   ROUND(AVG(d.distEuclidiana), 2) AS distancia_promedio_km
+		 FROM viaje v
+		 LEFT JOIN distancia_viaje d ON d.viaje = v.viaje
+		 LEFT JOIN comuna co ON co.id = v.comunaOrigen
+		 LEFT JOIN comuna cd ON cd.id = v.comunaDestino
+		 LEFT JOIN modo m ON m.id = v.modoAgregado
+		 WHERE co.comuna = ?1 AND cd.comuna = ?2
+		   AND v.tiempoViaje > 0 AND d.distEuclidiana > 0
+		 GROUP BY v.modoAgregado
 		 ORDER BY n_viajes DESC`;
 		try {
 			const stmt = env.EOD2012.prepare(query) as unknown as {
@@ -396,46 +380,43 @@ function ComparadorPage() {
 		destino,
 		resumen,
 		statsModo,
+		statsProposito,
+		statsPeriodo,
+		statsTiempoMedio,
 	} = Route.useLoaderData();
 	const navigate = Route.useNavigate();
 
-	const [sliderState, setSliderState] = React.useState<
-		Record<string, { delta: number; locked: boolean }>
-	>({});
+	const [modoExcluir, setModoExcluir] = React.useState<string | null>(null);
 
-	const [userAdjustedModes, setUserAdjustedModes] = React.useState<Set<string>>(
-		new Set(),
-	);
+	const removedModo = modoExcluir
+		? statsModo.find((m) => m.modo === modoExcluir)
+		: null;
+	const removedTrips = removedModo?.n_viajes ?? 0;
 
-	const initialStatsModoMap = React.useMemo(
-		() => new Map(statsModo.map((m) => [m.modo ?? "", m.porcentaje])),
-		[statsModo],
-	);
+	const simStatsModo = modoExcluir
+		? redistributeModo(statsModo, modoExcluir)
+		: statsModo;
+	const simStatsProposito = modoExcluir
+		? redistributeGeneric(statsProposito, removedTrips)
+		: statsProposito;
+	const simStatsPeriodo = modoExcluir
+		? redistributeGeneric(statsPeriodo, removedTrips)
+		: statsPeriodo;
+	const simStatsTiempoMedio = modoExcluir
+		? redistributeGeneric(statsTiempoMedio, removedTrips)
+		: statsTiempoMedio;
 
-	const simStatsModo = redistributeBySliders(
-		statsModo,
-		sliderState,
-		userAdjustedModes,
-		total,
-	);
-
-	const simTotal = total;
+	const simTotal = modoExcluir ? total - removedTrips : total;
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		const form = new FormData(e.currentTarget);
 		const o = form.get("origen") as string;
 		const d = form.get("destino") as string;
-		setSliderState({});
-		setUserAdjustedModes(new Set());
+		setModoExcluir(null);
 		if (o && d) {
 			navigate({ search: { origen: o, destino: d } });
 		}
-	};
-
-	const _handleReset = () => {
-		setSliderState({});
-		setUserAdjustedModes(new Set());
 	};
 
 	return (
@@ -513,42 +494,13 @@ function ComparadorPage() {
 							<strong className="text-[#102f37]">
 								{simTotal.toLocaleString("es-CL")}
 							</strong>
-							{Object.entries(sliderState).some(([modo, s]) => {
-								const initial =
-									Math.round(
-										(statsModo.find((m) => m.modo === modo)?.porcentaje ?? 0) *
-											10,
-									) / 10;
-								return s.delta !== initial || s.locked;
-							}) && (
+							{modoExcluir && (
 								<span className="ml-2 text-xs text-[#168a76]">
 									(simulación)
 								</span>
 							)}
 						</span>
 					</div>
-
-					{Object.entries(sliderState).some(([modo, s]) => {
-						const initial =
-							Math.round(
-								(statsModo.find((m) => m.modo === modo)?.porcentaje ?? 0) * 10,
-							) / 10;
-						return s.delta !== initial || s.locked;
-					}) && (
-						<div className="mb-4 rounded-xl border border-[#168a76] bg-[#168a76]/10 p-4">
-							<p className="text-sm font-bold text-[#168a76]">
-								🔁 Simulación activa — ajusta los sliders para redistribuir
-								viajes
-							</p>
-							<button
-								type="button"
-								onClick={() => setSliderState({})}
-								className="mt-2 text-xs font-medium text-[#102f37] underline hover:text-[#168a76]"
-							>
-								✕ Reiniciar simulación
-							</button>
-						</div>
-					)}
 
 					<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
 						<div className="rounded-2xl border border-white/60 bg-white/70 p-5 shadow-[0_16px_50px_rgba(16,47,55,0.1)] backdrop-blur-sm">
@@ -588,53 +540,45 @@ function ComparadorPage() {
 						</div>
 					</div>
 
-					<div className="mt-6 grid gap-6 md:grid-cols-4">
+					<div className="mt-6 grid gap-6 md:grid-cols-5">
+						<div className="rounded-2xl border border-white/60 bg-white/70 p-4 shadow-[0_16px_50px_rgba(16,47,55,0.1)] backdrop-blur-sm text-center">
+							<p className="text-xs font-bold uppercase tracking-wider text-[#5b777c]">
+								Bicicleta
+							</p>
+							<p className="mt-1 text-2xl font-black text-[#168a76]">
+								{resumen.n_viajes_bicicleta.toLocaleString("es-CL")}
+							</p>
+						</div>
 						<div className="rounded-2xl border border-white/60 bg-white/70 p-4 shadow-[0_16px_50px_rgba(16,47,55,0.1)] backdrop-blur-sm text-center">
 							<p className="text-xs font-bold uppercase tracking-wider text-[#5b777c]">
 								Auto
 							</p>
 							<p className="mt-1 text-2xl font-black text-[#168a76]">
-								{Math.round(
-									simStatsModo
-										.filter((m) => m.modo === "Auto")
-										.reduce((s, m) => s + m.n_viajes, 0),
-								).toLocaleString("es-CL")}
+								{resumen.n_viajes_auto.toLocaleString("es-CL")}
 							</p>
 						</div>
 						<div className="rounded-2xl border border-white/60 bg-white/70 p-4 shadow-[0_16px_50px_rgba(16,47,55,0.1)] backdrop-blur-sm text-center">
 							<p className="text-xs font-bold uppercase tracking-wider text-[#5b777c]">
-								Bus
+								Micro/Bus
 							</p>
 							<p className="mt-1 text-2xl font-black text-[#168a76]">
-								{Math.round(
-									simStatsModo
-										.filter((m) => m.modo === "Bus")
-										.reduce((s, m) => s + m.n_viajes, 0),
-								).toLocaleString("es-CL")}
+								{resumen.n_viajes_micro.toLocaleString("es-CL")}
 							</p>
 						</div>
 						<div className="rounded-2xl border border-white/60 bg-white/70 p-4 shadow-[0_16px_50px_rgba(16,47,55,0.1)] backdrop-blur-sm text-center">
 							<p className="text-xs font-bold uppercase tracking-wider text-[#5b777c]">
-								Metro/Tren
+								Metro
 							</p>
 							<p className="mt-1 text-2xl font-black text-[#168a76]">
-								{Math.round(
-									simStatsModo
-										.filter((m) => m.modo === "Metro/Tren")
-										.reduce((s, m) => s + m.n_viajes, 0),
-								).toLocaleString("es-CL")}
+								{resumen.n_viajes_metro.toLocaleString("es-CL")}
 							</p>
 						</div>
 						<div className="rounded-2xl border border-white/60 bg-white/70 p-4 shadow-[0_16px_50px_rgba(16,47,55,0.1)] backdrop-blur-sm text-center">
 							<p className="text-xs font-bold uppercase tracking-wider text-[#5b777c]">
-								No Motorizado
+								A Pie
 							</p>
 							<p className="mt-1 text-2xl font-black text-[#168a76]">
-								{Math.round(
-									simStatsModo
-										.filter((m) => m.modo === "No Motorizado")
-										.reduce((s, m) => s + m.n_viajes, 0),
-								).toLocaleString("es-CL")}
+								{resumen.n_viajes_pie.toLocaleString("es-CL")}
 							</p>
 						</div>
 					</div>
@@ -647,259 +591,82 @@ function ComparadorPage() {
 						<div className="mt-6 overflow-hidden rounded-2xl border border-white/60 bg-white/70 shadow-[0_16px_50px_rgba(16,47,55,0.1)] backdrop-blur-sm">
 							<div className="border-b border-[#d0e0d8] px-5 py-3 flex items-center justify-between">
 								<h3 className="text-sm font-bold text-[#102f37]">
-									Simulación de Distribución Modal
+									Por Modo de Transporte
 								</h3>
-								<button
-									type="button"
-									onClick={() => setSliderState({})}
-									className="flex items-center gap-1.5 rounded-full bg-[#102f37] px-3 py-1.5 text-xs font-bold text-white transition hover:bg-[#1c4851] active:translate-y-0"
-								>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										strokeWidth="2.5"
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										role="img"
-										aria-label="Reiniciar simulación"
-									>
-										<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-										<path d="M3 3v5h5" />
-									</svg>
-									Reset
-								</button>
+								<p className="text-xs text-[#5b777c]">
+									Simulación deshabilitada
+								</p>
 							</div>
-							<div className="divide-y divide-[#eef4eb]">
-								{simStatsModo.map((row) => {
-									const modo = row.modo ?? "";
-const currentPct = Math.round(row.porcentaje * 10) / 10;
-									const initialPct =
-										Math.round((initialStatsModoMap.get(modo) ?? 0) * 10) / 10;
-									const state = sliderState[modo];
-									const isLocked = state?.locked ?? false;
-									const isAdjusted = userAdjustedModes.has(modo);
-									const range = getSliderRange(
-										modo,
-										statsModo,
-										sliderState,
-										userAdjustedModes,
-									);
-
-									const handleChange = (val: number) => {
-										const clamped = Math.max(
-											range.min,
-											Math.min(range.max, val),
-										);
-										setSliderState((prev) => ({
-											...prev,
-											[modo]: {
-												delta: clamped,
-												locked: isLocked,
-											},
-										}));
-										setUserAdjustedModes((prev) => {
-											const next = new Set(prev);
-											next.add(modo);
-											return next;
-										});
-									};
-
-									return (
-										<div
-											key={modo}
-											className="flex items-center gap-4 px-5 py-3"
+							<table className="w-full text-sm">
+								<thead>
+									<tr className="border-b border-[#d0e0d8]">
+										<th className="px-5 py-3 text-left font-bold text-[#5b777c]">
+											Modo
+										</th>
+										<th className="px-5 py-3 text-right font-bold text-[#5b777c]">
+											Viajes
+										</th>
+										<th className="px-5 py-3 text-right font-bold text-[#5b777c]">
+											%
+										</th>
+										<th className="px-5 py-3 text-right font-bold text-[#5b777c]">
+											Vel. km/h
+										</th>
+										<th className="px-5 py-3 text-right font-bold text-[#5b777c]">
+											Tiempo min
+										</th>
+										<th className="px-5 py-3 text-right font-bold text-[#5b777c]">
+											Dist. km
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									{simStatsModo.map((row) => (
+										<tr
+											key={row.modo ?? "∅"}
+											className="border-b border-[#eef4eb] last:border-0"
 										>
-											<div className="w-36 flex-shrink-0">
-												<span className="text-sm font-medium text-[#102f37]">
-													{row.modoNombre ?? "—"}
-												</span>
-											</div>
-											<div className="flex-1">
-												<div className="flex items-center gap-3">
-													<div className="relative h-2 flex-1 rounded-full bg-[#eef4eb]">
-														<div
-															className="absolute top-0 left-0 h-full rounded-full bg-[#168a76]/40 transition-all"
-															style={{
-																width: `${Math.min(currentPct, range.max) - range.min}%`,
-																left: `${range.min}%`,
-															}}
-														/>
-														<input
-															type="range"
-															min={Math.round(range.min * 10) / 10}
-															max={Math.round(range.max * 10) / 10}
-															step="0.1"
-															value={currentPct}
-															disabled={isLocked}
-															onChange={(e) =>
-																handleChange(Number(e.target.value))
-															}
-															className={`absolute inset-0 h-full w-full cursor-pointer opacity-0 ${
-																isLocked ? "cursor-not-allowed" : "cursor-pointer"
-															}`}
-														/>
-														<div
-															className={`pointer-events-none absolute top-1/2 h-3 w-3 -translate-y-1/2 rounded-full border-2 border-white shadow transition-all ${
-																isLocked
-																	? "bg-[#102f37]"
-																	: isAdjusted
-																		? "bg-[#168a76]"
-																		: "bg-[#d0e0d8]"
-															}`}
-															style={{ left: `calc(${currentPct}% - 6px)` }}
-														/>
-													</div>
-													<span className="w-14 text-right text-sm font-medium text-[#102f37]">
-														{Math.round(currentPct * 10) / 10}%
-													</span>
-													<button
-														type="button"
-														onClick={() =>
-															setSliderState((prev) => ({
-																...prev,
-																[modo]: {
-																	delta: currentPct,
-																	locked: !isLocked,
-																},
-															}))
-														}
-														className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border text-xs transition ${
-															isLocked
-																? "border-[#102f37] bg-[#102f37] text-white"
-																: "border-[#d0e0d8] text-[#d0e0d8] hover:border-[#168a76] hover:text-[#168a76]"
-														}`}
-													>
-														🔒
-													</button>
-												</div>
-												{isLocked ? (
-													<p className="mt-0.5 text-xs text-[#5b777c]">
-														Bloqueado en {Math.round(initialPct * 10) / 10}%
-													</p>
-												) : isAdjusted ? (
-													<p className="mt-0.5 text-xs text-[#5b777c]">
-														{Math.round(initialPct * 10) / 10}% →{" "}
-														{Math.round(currentPct * 10) / 10}% (
-														{Math.round(row.n_viajes).toLocaleString("es-CL")} viajes)
-													</p>
-												) : null}
-											</div>
-										</div>
-									);
-})}
-							</div>
+											<td className="px-5 py-3 font-medium text-[#102f37]">
+												{row.modoNombre ?? "—"}
+											</td>
+											<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
+												{Math.round(row.n_viajes).toLocaleString("es-CL")}
+											</td>
+											<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
+												{row.porcentaje}%
+											</td>
+											<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
+												{(row.velocidad_promedio / 1000).toFixed(1)}
+											</td>
+											<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
+												{row.tiempo_promedio_min.toFixed(0)}
+											</td>
+											<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
+												{(row.distancia_promedio_km / 1000).toFixed(1)}
+											</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
 						</div>
-						<div className="mt-6 grid gap-6 md:grid-cols-2">
-							<div className="overflow-hidden rounded-2xl border border-white/60 bg-white/70 shadow-[0_16px_50px_rgba(16,47,55,0.1)] backdrop-blur-sm">
-								<div className="border-b border-[#d0e0d8] px-5 py-3">
-									<h3 className="text-sm font-bold text-[#102f37]">
-										Por Propósito
-										{Object.entries(sliderState).some(([modo, s]) => {
-											const initial =
-												Math.round(
-													(statsModo.find((m) => m.modo === modo)
-														?.porcentaje ?? 0) * 10,
-												) / 10;
-											return s.delta !== initial || s.locked;
-										}) && (
-											<span className="ml-2 text-xs text-[#168a76]">
-												(simulado)
-											</span>
-										)}
-									</h3>
-								</div>
-								<table className="w-full text-sm">
-									<tbody>
-										{statsProposito.map((row) => (
-											<tr
-												key={row.proposito ?? "∅"}
-												className="border-b border-[#eef4eb] last:border-0"
-											>
-												<td className="px-5 py-3 font-medium text-[#102f37]">
-													{row.proposito ?? "—"}
-												</td>
-												<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
-													{Math.round(row.n_viajes).toLocaleString("es-CL")}
-												</td>
-												<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
-													{row.porcentaje}%
-												</td>
-											</tr>
-										))}
-									</tbody>
-								</table>
-							</div>
+					)}
 
-							<div className="overflow-hidden rounded-2xl border border-white/60 bg-white/70 shadow-[0_16px_50px_rgba(16,47,55,0.1)] backdrop-blur-sm">
-								<div className="border-b border-[#d0e0d8] px-5 py-3">
-									<h3 className="text-sm font-bold text-[#102f37]">
-										Por Horario
-										{Object.entries(sliderState).some(([modo, s]) => {
-											const initial =
-												Math.round(
-													(statsModo.find((m) => m.modo === modo)
-														?.porcentaje ?? 0) * 10,
-												) / 10;
-											return s.delta !== initial || s.locked;
-										}) && (
-											<span className="ml-2 text-xs text-[#168a76]">
-												(simulado)
-											</span>
-										)}
-									</h3>
-								</div>
-								<table className="w-full text-sm">
-									<tbody>
-										{statsPeriodo.map((row) => (
-											<tr
-												key={row.periodo ?? "∅"}
-												className="border-b border-[#eef4eb] last:border-0"
-											>
-												<td className="px-5 py-3 font-medium text-[#102f37]">
-													{row.periodo ?? "—"}
-												</td>
-												<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
-													{Math.round(row.n_viajes).toLocaleString("es-CL")}
-												</td>
-												<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
-													{row.porcentaje}%
-												</td>
-											</tr>
-										))}
-									</tbody>
-								</table>
-							</div>
-						</div>
-
-						<div className="mt-6 overflow-hidden rounded-2xl border border-white/60 bg-white/70 shadow-[0_16px_50px_rgba(16,47,55,0.1)] backdrop-blur-sm">
+					<div className="mt-6 grid gap-6 md:grid-cols-2">
+						<div className="overflow-hidden rounded-2xl border border-white/60 bg-white/70 shadow-[0_16px_50px_rgba(16,47,55,0.1)] backdrop-blur-sm">
 							<div className="border-b border-[#d0e0d8] px-5 py-3">
 								<h3 className="text-sm font-bold text-[#102f37]">
-									Por Tiempo de Viaje
-									{Object.entries(sliderState).some(([modo, s]) => {
-										const initial =
-											Math.round(
-												(statsModo.find((m) => m.modo === modo)
-													?.porcentaje ?? 0) * 10,
-											) / 10;
-										return s.delta !== initial || s.locked;
-									}) && (
-										<span className="ml-2 text-xs text-[#168a76]">
-											(simulado)
-										</span>
-									)}
+									Por Propósito
 								</h3>
 							</div>
 							<table className="w-full text-sm">
 								<tbody>
-									{statsTiempoMedio.map((row) => (
+									{simStatsProposito.map((row) => (
 										<tr
-											key={row.tiempoMedio ?? "∅"}
+											key={row.proposito ?? "∅"}
 											className="border-b border-[#eef4eb] last:border-0"
 										>
 											<td className="px-5 py-3 font-medium text-[#102f37]">
-												{row.tiempoMedio ?? "—"}
+												{row.proposito ?? "—"}
 											</td>
 											<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
 												{Math.round(row.n_viajes).toLocaleString("es-CL")}
@@ -912,9 +679,70 @@ const currentPct = Math.round(row.porcentaje * 10) / 10;
 								</tbody>
 							</table>
 						</div>
-					</section>
-				)}
-			</main>
-		);
-	}
+
+						<div className="overflow-hidden rounded-2xl border border-white/60 bg-white/70 shadow-[0_16px_50px_rgba(16,47,55,0.1)] backdrop-blur-sm">
+							<div className="border-b border-[#d0e0d8] px-5 py-3">
+								<h3 className="text-sm font-bold text-[#102f37]">
+									Por Horario
+								</h3>
+							</div>
+							<table className="w-full text-sm">
+								<tbody>
+									{simStatsPeriodo.map((row) => (
+										<tr
+											key={row.periodo ?? "∅"}
+											className="border-b border-[#eef4eb] last:border-0"
+										>
+											<td className="px-5 py-3 font-medium text-[#102f37]">
+												{row.periodo ?? "—"}
+											</td>
+											<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
+												{Math.round(row.n_viajes).toLocaleString("es-CL")}
+											</td>
+											<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
+												{row.porcentaje}%
+											</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+					<div className="mt-6 overflow-hidden rounded-2xl border border-white/60 bg-white/70 shadow-[0_16px_50px_rgba(16,47,55,0.1)] backdrop-blur-sm">
+						<div className="border-b border-[#d0e0d8] px-5 py-3">
+							<h3 className="text-sm font-bold text-[#102f37]">
+								Por Tiempo de Viaje
+								{modoExcluir && (
+									<span className="ml-2 text-xs text-[#168a76]">
+										(simulado)
+									</span>
+								)}
+							</h3>
+						</div>
+						<table className="w-full text-sm">
+							<tbody>
+								{simStatsTiempoMedio.map((row) => (
+									<tr
+										key={row.tiempoMedio ?? "∅"}
+										className="border-b border-[#eef4eb] last:border-0"
+									>
+										<td className="px-5 py-3 font-medium text-[#102f37]">
+											{row.tiempoMedio ?? "—"}
+										</td>
+										<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
+											{Math.round(row.n_viajes).toLocaleString("es-CL")}
+										</td>
+										<td className="px-5 py-3 text-right tabular-nums text-[#102f37]">
+											{row.porcentaje}%
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+				</section>
+			)}
+		</main>
+	);
 }
