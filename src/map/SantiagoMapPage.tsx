@@ -299,6 +299,22 @@ export function SantiagoMapPage() {
 									Destino: {selections.destino}
 								</span>
 							</div>
+							<div className="mt-3 flex flex-col gap-1.5 border-t border-[#dce8e3] pt-3">
+								<p className="m-0 text-[9px] font-black uppercase tracking-[0.18em] text-[#5b777c]">
+									Rutas
+								</p>
+								{ROUTE_MODES.map((route) => (
+									<div key={route.key} className="flex items-center gap-2">
+										<span
+											className="h-1 w-8 shrink-0 rounded-full"
+											style={{ backgroundColor: route.color }}
+										/>
+										<span className="text-xs font-semibold text-[#102f37]">
+											{route.label}
+										</span>
+									</div>
+								))}
+							</div>
 						</div>
 					) : mode === "comunas" && selections.origen && !selections.destino ? (
 						<div className="flex flex-col gap-2">
@@ -341,35 +357,9 @@ export function SantiagoMapPage() {
 							</p>
 						</div>
 					) : (
-						<div className="flex flex-col gap-2">
-							{!selections.origen ? (
-								<p className="m-0 text-center text-xs font-medium text-[#5b777c]">
-									Selecciona una comuna de origen
-								</p>
-							) : (
-								<div className="flex flex-col gap-2">
-									<p className="m-0 text-center text-xs font-medium text-[#5b777c]">
-										Origen y destino seleccionados
-									</p>
-									<div className="mt-3 flex flex-col gap-1.5">
-										<p className="m-0 text-[9px] font-black uppercase tracking-[0.18em] text-[#5b777c]">
-											Rutas
-										</p>
-										{ROUTE_MODES.map((mode) => (
-											<div key={mode.key} className="flex items-center gap-2">
-												<span
-													className="h-2.5 w-2.5 shrink-0 rounded-full"
-													style={{ backgroundColor: mode.color }}
-												/>
-												<span className="text-xs font-semibold text-[#102f37]">
-													{mode.label}
-												</span>
-											</div>
-										))}
-									</div>
-								</div>
-							)}
-						</div>
+						<p className="m-0 text-center text-xs font-medium text-[#5b777c]">
+							Selecciona una comuna de origen
+						</p>
 					)}
 				</div>
 			</section>
