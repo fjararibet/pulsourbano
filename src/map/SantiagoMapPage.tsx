@@ -2,7 +2,9 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import type { Map as MapLibreMap } from "maplibre-gl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { DESTINO_COLOR, ORIGEN_COLOR } from "./config";
+import { MapLegend } from "./Legend";
 import { clearODData, setODData } from "./layers";
+import { NoiseGauge } from "./NoiseGauge";
 import { getComunaOD } from "./server-comunas";
 import type { HoverInfo, InteractionMode } from "./types";
 import { useSantiagoMap } from "./use-santiago-map";
@@ -163,6 +165,7 @@ export function SantiagoMapPage() {
 
 	const hasSelection =
 		mode === "comunas" && (selections.origen || selections.destino);
+	const noiseDb = mode === "noise" ? (hoverInfo?.noiseDb ?? null) : null;
 
 	return (
 		<main className="relative h-[100svh] w-full overflow-hidden bg-[#edf4e8] text-[#102f37]">
@@ -204,6 +207,17 @@ export function SantiagoMapPage() {
 				>
 					Metro
 				</button>
+				<button
+					type="button"
+					onClick={() => changeMode("noise")}
+					className={`px-3 py-1.5 text-xs font-bold transition ${
+						mode === "noise"
+							? "bg-[#dc2626] text-white"
+							: "text-[#5b777c] hover:bg-[#f1f7f4]"
+					}`}
+				>
+					Ruido
+				</button>
 			</div>
 
 			<section className="pointer-events-none absolute bottom-0 left-0 right-0 z-10 flex flex-col items-end gap-2 p-2 sm:pointer-events-auto sm:inset-y-0 sm:left-0 sm:right-auto sm:w-80 sm:items-start sm:overflow-y-auto sm:border-r sm:border-white/70 sm:bg-white/90 sm:p-4 sm:shadow-[4px_0_24px_rgba(16,47,55,0.1)] sm:backdrop-blur-xl">
@@ -221,6 +235,21 @@ export function SantiagoMapPage() {
 				) : null}
 
 				<div className="pointer-events-auto w-full rounded-2xl border border-white/70 bg-white/90 px-4 py-3 shadow-[0_-12px_40px_rgba(16,47,55,0.16)] backdrop-blur-xl sm:rounded-none sm:border-0 sm:bg-transparent sm:shadow-none sm:backdrop-blur-none">
+					{mode === "noise" ? (
+						<div className="mb-3 flex items-center gap-3 sm:hidden">
+							<NoiseGauge db={noiseDb} compact />
+							<div className="min-w-0">
+								<p className="m-0 text-[9px] font-black uppercase tracking-[0.18em] text-[#5b777c]">
+									Medidor dB(A)
+								</p>
+								<p className="m-0 mt-1 text-xs font-bold text-[#315a61]">
+									{noiseDb !== null
+										? "Promedio comunal seleccionado"
+										: "Toca una comuna con datos"}
+								</p>
+							</div>
+						</div>
+					) : null}
 					{hoverInfo && !selections.origen ? (
 						<div className="flex gap-3">
 							<span
@@ -261,6 +290,11 @@ export function SantiagoMapPage() {
 										</button>
 									</div>
 								</div>
+								{hoverInfo.description ? (
+									<p className="m-0 mt-1 text-sm font-bold leading-snug text-[#315a61]">
+										{hoverInfo.description}
+									</p>
+								) : null}
 								{hoverInfo.details?.length ? (
 									<div className="mt-2 flex flex-wrap gap-1">
 										{hoverInfo.details.map((detail) => (
@@ -278,6 +312,10 @@ export function SantiagoMapPage() {
 					) : mode === "metro" ? (
 						<p className="m-0 text-center text-xs font-medium text-[#5b777c]">
 							Selecciona una estación de metro
+						</p>
+					) : mode === "noise" ? (
+						<p className="m-0 text-center text-xs font-medium text-[#5b777c]">
+							Toca una comuna con datos de ruido
 						</p>
 					) : mode === "comunas" && selections.origen && selections.destino ? (
 						<div className="flex flex-col gap-2">
@@ -363,6 +401,8 @@ export function SantiagoMapPage() {
 					)}
 				</div>
 			</section>
+
+			<MapLegend mode={mode} hoverInfo={hoverInfo} />
 		</main>
 	);
 }

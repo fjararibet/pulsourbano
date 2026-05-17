@@ -9,7 +9,10 @@ export const Route = createRootRoute({
 			{ name: "viewport", content: "width=device-width, initial-scale=1" },
 			{ title: "Pulso Urbano" },
 		],
-		links: [{ rel: "stylesheet", href: appCss }],
+		links: [
+			{ rel: "stylesheet", href: appCss },
+			{ rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+		],
 	}),
 	notFoundComponent: NotFound,
 	shellComponent: RootDocument,
