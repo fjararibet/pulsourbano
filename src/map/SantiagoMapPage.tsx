@@ -12,6 +12,7 @@ import { useSantiagoMap } from "./use-santiago-map";
 const ROUTE_MODES = [
 	{ key: "auto", label: "Auto", color: "#f59e0b" },
 	{ key: "bus", label: "Bus", color: "#3b82f6" },
+	{ key: "metro", label: "Metro", color: "#ef4444" },
 	{ key: "bicycle", label: "Bicicleta", color: "#10b981" },
 	{ key: "pedestrian", label: "Peatón", color: "#8b5cf6" },
 ] as const;

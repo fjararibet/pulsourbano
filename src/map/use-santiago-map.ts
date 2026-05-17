@@ -94,7 +94,7 @@ const MODE_PROFILES: ModeProfile[] = [
 	},
 	{
 		costing: "metro",
-		color: "#dc2626",
+		color: "#ef4444",
 		lateralOffset: 0.0,
 		routeUsage: 0.65,
 		transportSpeed: 0.7,

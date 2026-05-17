@@ -39,6 +39,7 @@ const COSTING_COLORS: Record<CostingMode, string> = {
 	bus: "#3b82f6",
 	bicycle: "#10b981",
 	pedestrian: "#8b5cf6",
+	metro: "#ef4444",
 };
 
 function hexToRgba(hex: string, alpha: number): string {
