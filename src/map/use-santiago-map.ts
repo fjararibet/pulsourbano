@@ -60,11 +60,15 @@ export function useSantiagoMap(
 	setHoverInfo: (info: HoverInfo) => void,
 	simulationInput: QuickSimulationInput,
 	odData: Array<{ comuna: string; trips: number }> | null,
+	odMode: boolean,
+	onSelectOrigin: ((name: string) => void) | null,
 ) {
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const mapRef = useRef<MapLibreMap | null>(null);
 	const visibleLayersRef = useRef(visibleLayers);
 	const simulationInputRef = useRef(simulationInput);
+	const odModeRef = useRef(odMode);
+	const onSelectOriginRef = useRef(onSelectOrigin);
 	const pinnedInfoRef = useRef<HoverInfo>(null);
 	const clearPinnedEffectsRef = useRef<(() => void) | null>(null);
 	const comunasRef = useRef<GeoJSON.FeatureCollection | null>(null);
@@ -86,6 +90,14 @@ export function useSantiagoMap(
 	useEffect(() => {
 		simulationInputRef.current = simulationInput;
 	}, [simulationInput]);
+
+	useEffect(() => {
+		odModeRef.current = odMode;
+	}, [odMode]);
+
+	useEffect(() => {
+		onSelectOriginRef.current = onSelectOrigin;
+	}, [onSelectOrigin]);
 
 	useEffect(() => {
 		const map = mapRef.current;
@@ -201,7 +213,14 @@ export function useSantiagoMap(
 
 				if (comunas) {
 					hoverCleanup.push(
-						setupComunaHover(map, popup, setHoverInfo, pinController),
+						setupComunaHover(
+							map,
+							popup,
+							setHoverInfo,
+							pinController,
+							() => odModeRef.current,
+							() => onSelectOriginRef.current,
+						),
 					);
 				}
 

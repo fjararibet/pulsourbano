@@ -1,6 +1,6 @@
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useState } from "react";
-import { getComunasList, getDestinosDesdeComuna } from "#/map/server-od";
+import { getDestinosDesdeComuna } from "#/map/server-od";
 import { QuickSimulationPanel } from "#/simulation/QuickSimulationPanel";
 import { DEFAULT_QUICK_SIMULATION_INPUT } from "#/simulation/quick-simulation";
 import { DEFAULT_VISIBLE_LAYERS, LAYER_TOGGLES } from "./config";
@@ -21,7 +21,6 @@ export function SantiagoMapPage() {
 		DEFAULT_QUICK_SIMULATION_INPUT,
 	);
 	const [odMode, setOdMode] = useState(false);
-	const [comunasList, setComunasList] = useState<string[]>([]);
 	const [selectedOrigin, setSelectedOrigin] = useState("");
 	const [odData, setOdData] = useState<Array<{
 		comuna: string;
@@ -33,6 +32,8 @@ export function SantiagoMapPage() {
 		setHoverInfo,
 		simulationInput,
 		odData,
+		odMode,
+		setSelectedOrigin,
 	);
 
 	const activeLayerCount = Object.values(visibleLayers).filter(Boolean).length;
@@ -47,10 +48,6 @@ export function SantiagoMapPage() {
 		document.addEventListener("keydown", handleKeyDown);
 		return () => document.removeEventListener("keydown", handleKeyDown);
 	}, [clearPinned]);
-
-	useEffect(() => {
-		getComunasList().then(setComunasList);
-	}, []);
 
 	useEffect(() => {
 		if (!selectedOrigin) {
@@ -180,28 +177,19 @@ export function SantiagoMapPage() {
 						</div>
 						{odMode && (
 							<div className="mt-2">
-								<select
-									value={selectedOrigin}
-									onChange={(e) => setSelectedOrigin(e.target.value)}
-									className="w-full rounded-xl border border-[#b9d7d1] bg-white px-3 py-2 text-sm text-[#102f37] outline-none ring-0 focus:border-[#5bb6a6]"
-								>
-									<option value="">Selecciona comuna origen…</option>
-									{comunasList.map((c) => (
-										<option key={c} value={c}>
-											{c}
-										</option>
-									))}
-								</select>
 								{odLoading && (
-									<p className="mt-2 text-xs text-[#5b777c]">
-										Cargando viajes…
-									</p>
+									<p className="text-xs text-[#5b777c]">Cargando viajes…</p>
 								)}
 								{!odLoading && odData && odData.length > 0 && (
-									<p className="mt-2 text-xs text-[#5b777c]">
+									<p className="text-xs text-[#5b777c]">
 										{odData.length} destinos · máx:{" "}
 										{Math.round(odData[0]?.trips ?? 0).toLocaleString("es-CL")}{" "}
 										viajes
+									</p>
+								)}
+								{!odLoading && !odData && (
+									<p className="text-xs text-[#168a76]">
+										Haz click en una comuna del mapa para ver sus destinos
 									</p>
 								)}
 							</div>

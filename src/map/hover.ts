@@ -114,12 +114,16 @@ export function setupHoverLayer(
 /**
  * Hover/click de comunas desde una capa invisible, para que el resaltado
  * funcione aunque la capa visual de límites esté apagada.
+ * `getOdMode` and `getOnSelectOrigin` are getter functions so the latest
+ * values are read on each click (setup happens once on map load).
  */
 export function setupComunaHover(
 	map: MapLibreMap,
 	popup: Popup,
 	setHoverInfo: (info: HoverInfo) => void,
 	pinController: HoverPinController,
+	getOdMode: () => boolean,
+	getOnSelectOrigin: () => ((name: string) => void) | null,
 ) {
 	let activeCode: number | null = null;
 
@@ -161,6 +165,14 @@ export function setupComunaHover(
 	const onClick = (event: MapLayerMouseEvent) => {
 		const feature = event.features?.[0];
 		if (!feature) return;
+		const comunaName = getFeatureString(feature, "Comuna");
+
+		const onSelectOrigin = getOnSelectOrigin();
+		if (getOdMode() && onSelectOrigin && comunaName) {
+			onSelectOrigin(comunaName);
+			return;
+		}
+
 		const info = formatComunaHover(feature, true);
 		setComunaFilter(feature);
 		pinController.pin(info, clearComunaEffects);
