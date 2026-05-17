@@ -16,6 +16,7 @@ const ROUTE_MODES = [
 
 export function SantiagoMapPage() {
 	const [hoverInfo, setHoverInfo] = useState<HoverInfo>(null);
+	const [mapReady, setMapReady] = useState(false);
 	const [mode, setMode] = useState<InteractionMode>("comunas");
 	const modeRef = useRef<InteractionMode>("comunas");
 	modeRef.current = mode;
@@ -30,41 +31,41 @@ export function SantiagoMapPage() {
 		zoom: number;
 	} | null>(null);
 
-	const handleSelectComuna = useCallback((name: string) => {
-		if (showOD && mapRef.current) {
-			clearODData(mapRef.current);
-			setShowOD(false);
-		}
-		setSelections((prev) => {
-			if (prev.origen === name) return { origen: null, destino: null };
-			if (prev.destino === name) return { ...prev, destino: null };
-			if (!prev.origen) return { ...prev, origen: name };
-			if (name === prev.origen) return prev;
-			return { ...prev, destino: name };
-		});
-	}, [showOD]);
+	const handleSelectComuna = useCallback(
+		(name: string) => {
+			if (showOD && mapRef.current) {
+				clearODData(mapRef.current);
+				setShowOD(false);
+			}
+			setSelections((prev) => {
+				if (prev.origen === name) return { origen: null, destino: null };
+				if (prev.destino === name) return { ...prev, destino: null };
+				if (!prev.origen) return { ...prev, origen: name };
+				if (name === prev.origen) return prev;
+				return { ...prev, destino: name };
+			});
+		},
+		[showOD],
+	);
 
 	const clearSelections = useCallback(() => {
 		setSelections({ origen: null, destino: null });
 	}, []);
 
-	const {
-		containerRef,
-		clearPinned,
-		resetView,
-		applyModeVisibility,
-	} = useSantiagoMap(
-		setHoverInfo,
-		{
-			origen: selections.origen,
-			destino: selections.destino,
-			onSelectComuna: handleSelectComuna,
-			onMapReady: (map) => {
-				mapRef.current = map;
+	const { containerRef, clearPinned, resetView, applyModeVisibility } =
+		useSantiagoMap(
+			setHoverInfo,
+			{
+				origen: selections.origen,
+				destino: selections.destino,
+				onSelectComuna: handleSelectComuna,
+				onMapReady: (map) => {
+					mapRef.current = map;
+					setMapReady(true);
+				},
 			},
-		},
-		modeRef,
-	);
+			modeRef,
+		);
 
 	const clearPinnedWithReset = useCallback(() => {
 		savedViewRef.current = null;
@@ -149,7 +150,7 @@ export function SantiagoMapPage() {
 			}
 			return;
 		}
-	}, [selections.origen, selections.destino]);
+	}, [selections.origen, selections.destino, showOD]);
 
 	const changeMode = (nextMode: InteractionMode) => {
 		modeRef.current = nextMode;
@@ -168,6 +169,17 @@ export function SantiagoMapPage() {
 			<div className="absolute inset-0 z-0">
 				<div ref={containerRef} className="h-full w-full" />
 			</div>
+
+			{!mapReady && (
+				<div className="absolute inset-0 z-20 flex items-center justify-center bg-[#edf4e8]">
+					<div className="flex flex-col items-center gap-3">
+						<div className="h-8 w-8 animate-spin rounded-full border-4 border-[#b9d7d1] border-t-[#24525b]" />
+						<span className="text-sm font-medium text-[#5b777c]">
+							Cargando mapa...
+						</span>
+					</div>
+				</div>
+			)}
 
 			<div className="absolute top-2 right-2 z-20 flex overflow-hidden rounded-full border border-white/70 bg-white/90 shadow-lg backdrop-blur-xl sm:top-4 sm:right-4">
 				<button
@@ -226,20 +238,19 @@ export function SantiagoMapPage() {
 										</p>
 									</div>
 									<div className="flex items-center gap-2">
-										{hoverInfo.kind === "Comuna RM" &&
-											!selections.origen && (
-												<button
-													type="button"
-													onClick={handleToggleOD}
-													className={`shrink-0 rounded-full border px-2 py-0.5 text-sm font-bold transition ${
-														showOD
-															? "border-[#e67e22] bg-[#e67e22] text-white"
-															: "border-[#b9d7d1] text-[#24525b] hover:border-[#e67e22]"
-													}`}
-												>
-													Destinos regulares
-												</button>
-											)}
+										{hoverInfo.kind === "Comuna RM" && !selections.origen && (
+											<button
+												type="button"
+												onClick={handleToggleOD}
+												className={`shrink-0 rounded-full border px-2 py-0.5 text-sm font-bold transition ${
+													showOD
+														? "border-[#e67e22] bg-[#e67e22] text-white"
+														: "border-[#b9d7d1] text-[#24525b] hover:border-[#e67e22]"
+												}`}
+											>
+												Destinos regulares
+											</button>
+										)}
 										<button
 											type="button"
 											onClick={clearPinnedWithReset}
