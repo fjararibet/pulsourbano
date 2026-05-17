@@ -150,10 +150,10 @@ function drawArrow(
 			if (pt) context.lineTo(pt[0], pt[1]);
 		}
 		context.shadowColor = "rgba(0,0,0,0.22)";
-		context.shadowBlur = 12 * dpr;
-		context.shadowOffsetY = 4 * dpr;
-		context.strokeStyle = "rgba(0,0,0,0)";
-		context.lineWidth = 0;
+		context.shadowBlur = 16 * dpr;
+		context.shadowOffsetY = 6 * dpr;
+		context.strokeStyle = "rgba(0,0,0,0.12)";
+		context.lineWidth = 8 * dpr;
 		context.stroke();
 		context.shadowColor = "transparent";
 		context.shadowBlur = 0;
