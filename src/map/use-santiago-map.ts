@@ -2,6 +2,12 @@ import type { Map as MapLibreMap } from "maplibre-gl";
 import maplibregl from "maplibre-gl";
 import { useCallback, useEffect, useRef } from "react";
 import {
+	type ArrowHandle,
+	type ArrowScene,
+	arcLineString,
+	createArrowScene,
+} from "./ArrowScene";
+import {
 	BASE_STYLE,
 	COMUNA_ZOOM,
 	INITIAL_ZOOM,
@@ -22,13 +28,8 @@ import {
 	clearRouteArrow,
 	updateComunaSelectionLayers,
 } from "./layers";
-import {
-	hideRouteArrowOverlay,
-	initRouteArrowOverlay,
-	showRouteArrowOverlay,
-} from "./RouteArrowOverlay";
 import type { HoverInfo } from "./types";
-import { createArcLineString, getPolygonCentroid, loadGeoJSON } from "./utils";
+import { getPolygonCentroid, loadGeoJSON } from "./utils";
 
 /**
  * Inicializa MapLibre, carga los GeoJSON de Metro/Buses/Ciclovías, monta las
@@ -50,7 +51,8 @@ export function useSantiagoMap(
 	const dualSelectRef = useRef(dualSelect);
 	const comunasRef = useRef<GeoJSON.FeatureCollection | null>(null);
 	const routeArrowAnimCleanupRef = useRef<(() => void) | null>(null);
-	const arrowOverlayCleanupRef = useRef<(() => void) | null | undefined>(null);
+	const arrowSceneRef = useRef<ArrowScene | null>(null);
+	const routeArrowHandleRef = useRef<ArrowHandle | null>(null);
 	const mapReadyRef = useRef(false);
 	dualSelectRef.current = dualSelect;
 
@@ -122,8 +124,9 @@ export function useSantiagoMap(
 				clearPinnedEffectsRef.current = null;
 				routeArrowAnimCleanupRef.current?.();
 				routeArrowAnimCleanupRef.current = null;
-				arrowOverlayCleanupRef.current?.();
-				arrowOverlayCleanupRef.current = null;
+				routeArrowHandleRef.current = null;
+				arrowSceneRef.current?.dispose();
+				arrowSceneRef.current = null;
 				for (const fn of hoverCleanup) fn();
 				if (debugWindow?.__simMap === map) delete debugWindow.__simMap;
 				ro.disconnect();
@@ -149,10 +152,7 @@ export function useSantiagoMap(
 				addRouteArrowLayers(map);
 				bringRouteArrowToFront(map);
 				if (containerRef.current) {
-					arrowOverlayCleanupRef.current = initRouteArrowOverlay(
-						map,
-						containerRef.current,
-					);
+					arrowSceneRef.current = createArrowScene(map, containerRef.current);
 				}
 
 				map.setCenter(SANTIAGO_CENTER);
@@ -241,27 +241,10 @@ export function useSantiagoMap(
 				// Generar flecha de ruta origen-destino (canvas overlay 3D)
 				const origenCentroid = getPolygonCentroid(origenFeature);
 				const destinoCentroid = getPolygonCentroid(destinoFeature);
-				if (origenCentroid && destinoCentroid) {
-					const arc = createArcLineString(origenCentroid, destinoCentroid);
-					const coords = arc.geometry.coordinates;
-					const secondToLast = coords[coords.length - 2] as
-						| [number, number]
-						| undefined;
-					const last = coords[coords.length - 1] as
-						| [number, number]
-						| undefined;
-					if (last && secondToLast) {
-						const dx = last[0] - secondToLast[0];
-						const dy = last[1] - secondToLast[1];
-						const bearing = ((-Math.atan2(dy, dx) * 180) / Math.PI + 360) % 360;
-
-						showRouteArrowOverlay(
-							map,
-							coords as [number, number][],
-							bearing,
-							last,
-						);
-					}
+				if (origenCentroid && destinoCentroid && arrowSceneRef.current) {
+					const points = arcLineString(origenCentroid, destinoCentroid);
+					routeArrowHandleRef.current?.remove();
+					routeArrowHandleRef.current = arrowSceneRef.current.add({ points });
 				}
 			}
 		}
@@ -273,7 +256,8 @@ export function useSantiagoMap(
 		) {
 			resetView();
 			clearRouteArrow(map);
-			hideRouteArrowOverlay();
+			routeArrowHandleRef.current?.remove();
+			routeArrowHandleRef.current = null;
 			routeArrowAnimCleanupRef.current?.();
 			routeArrowAnimCleanupRef.current = null;
 		}
@@ -281,7 +265,8 @@ export function useSantiagoMap(
 		if (origen && !destino && prevDestinoRef.current) {
 			// Se quitó el destino: limpiar flecha
 			clearRouteArrow(map);
-			hideRouteArrowOverlay();
+			routeArrowHandleRef.current?.remove();
+			routeArrowHandleRef.current = null;
 			routeArrowAnimCleanupRef.current?.();
 			routeArrowAnimCleanupRef.current = null;
 		}
