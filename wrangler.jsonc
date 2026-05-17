@@ -29,4 +29,11 @@
 			"migrations_dir": "drizzle"
 		},
 	],
+	"kv_namespaces": [
+		{
+			"binding": "ESGRIMAKV",
+			"id": "f263ca8708864578ba374e7fec1b02e7",
+			"remote": true
+		}
+	],
 }

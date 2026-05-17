@@ -16,6 +16,8 @@ export type TravelTimeMap = Record<
 
 export const getTravelTimes = createServerFn({ method: "GET" }).handler(
 	async (): Promise<TravelTimeMap> => {
+		const cached = await env.ESGRIMAKV.get<TravelTimeMap>("sim:travel_times");
+		if (cached) return cached;
 		const { results } = await env.DTPMGEO.prepare(
 			"SELECT route_key, mean_minutes, mean_km, avg_kmh, samples FROM bus_travel_times",
 		).all<Row>();
@@ -28,6 +30,9 @@ export const getTravelTimes = createServerFn({ method: "GET" }).handler(
 				samples: row.samples,
 			};
 		}
+		await env.ESGRIMAKV.put("sim:travel_times", JSON.stringify(map), {
+			expirationTtl: 600,
+		});
 		return map;
 	},
 );

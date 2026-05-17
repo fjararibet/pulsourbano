@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as EodRouteImport } from './routes/eod'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiCacheClearRouteImport } from './routes/api/cache-clear'
 
 const EodRoute = EodRouteImport.update({
   id: '/eod',
@@ -22,31 +23,40 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCacheClearRoute = ApiCacheClearRouteImport.update({
+  id: '/api/cache-clear',
+  path: '/api/cache-clear',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/eod': typeof EodRoute
+  '/api/cache-clear': typeof ApiCacheClearRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/eod': typeof EodRoute
+  '/api/cache-clear': typeof ApiCacheClearRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/eod': typeof EodRoute
+  '/api/cache-clear': typeof ApiCacheClearRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/eod'
+  fullPaths: '/' | '/eod' | '/api/cache-clear'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/eod'
-  id: '__root__' | '/' | '/eod'
+  to: '/' | '/eod' | '/api/cache-clear'
+  id: '__root__' | '/' | '/eod' | '/api/cache-clear'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EodRoute: typeof EodRoute
+  ApiCacheClearRoute: typeof ApiCacheClearRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +75,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/cache-clear': {
+      id: '/api/cache-clear'
+      path: '/api/cache-clear'
+      fullPath: '/api/cache-clear'
+      preLoaderRoute: typeof ApiCacheClearRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EodRoute: EodRoute,
+  ApiCacheClearRoute: ApiCacheClearRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
