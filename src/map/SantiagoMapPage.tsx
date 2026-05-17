@@ -7,6 +7,13 @@ import { getComunaOD } from "./server-comunas";
 import type { HoverInfo, InteractionMode } from "./types";
 import { useSantiagoMap } from "./use-santiago-map";
 
+const ROUTE_MODES = [
+	{ key: "auto", label: "Auto", color: "#f59e0b" },
+	{ key: "bus", label: "Bus", color: "#3b82f6" },
+	{ key: "bicycle", label: "Bicicleta", color: "#10b981" },
+	{ key: "pedestrian", label: "Peatón", color: "#8b5cf6" },
+] as const;
+
 export function SantiagoMapPage() {
 	const [hoverInfo, setHoverInfo] = useState<HoverInfo>(null);
 	const [mode, setMode] = useState<InteractionMode>("comunas");
@@ -329,9 +336,27 @@ export function SantiagoMapPage() {
 									Selecciona una comuna de origen
 								</p>
 							) : (
-								<p className="m-0 text-center text-xs font-medium text-[#5b777c]">
-									Selecciona una comuna de destino
-								</p>
+								<div className="flex flex-col gap-2">
+									<p className="m-0 text-center text-xs font-medium text-[#5b777c]">
+										Origen y destino seleccionados
+									</p>
+									<div className="mt-3 flex flex-col gap-1.5">
+										<p className="m-0 text-[9px] font-black uppercase tracking-[0.18em] text-[#5b777c]">
+											Rutas
+										</p>
+										{ROUTE_MODES.map((mode) => (
+											<div key={mode.key} className="flex items-center gap-2">
+												<span
+													className="h-2.5 w-2.5 shrink-0 rounded-full"
+													style={{ backgroundColor: mode.color }}
+												/>
+												<span className="text-xs font-semibold text-[#102f37]">
+													{mode.label}
+												</span>
+											</div>
+										))}
+									</div>
+								</div>
 							)}
 						</div>
 					)}
