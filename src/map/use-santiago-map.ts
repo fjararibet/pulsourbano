@@ -1,9 +1,12 @@
 import type { Map as MapLibreMap } from "maplibre-gl";
+import maplibregl from "maplibre-gl";
 import { useCallback, useEffect, useRef } from "react";
 import {
 	BASE_STYLE,
 	COMUNA_ZOOM,
 	INITIAL_ZOOM,
+	MAP_DETAIL_BEARING,
+	MAP_DETAIL_PITCH,
 	SANTIAGO_CENTER,
 } from "./config";
 import {
@@ -37,6 +40,7 @@ export function useSantiagoMap(
 	const pinnedInfoRef = useRef<HoverInfo>(null);
 	const clearPinnedEffectsRef = useRef<(() => void) | null>(null);
 	const dualSelectRef = useRef(dualSelect);
+	const comunasRef = useRef<GeoJSON.FeatureCollection | null>(null);
 	dualSelectRef.current = dualSelect;
 
 	const clearPinned = useCallback(() => {
@@ -114,6 +118,7 @@ export function useSantiagoMap(
 			map.on("load", async () => {
 				resize();
 				const comunas = await loadGeoJSON("/data/comunas_rm.geojson");
+				comunasRef.current = comunas;
 
 				if (comunas) addComunaLayers(map, comunas);
 				if (comunas) bringComunaHoverToFront(map);
@@ -144,15 +149,7 @@ export function useSantiagoMap(
 		};
 	}, [setHoverInfo]);
 
-	const origen = dualSelect?.origen ?? null;
-	const destino = dualSelect?.destino ?? null;
-	useEffect(() => {
-		const map = mapRef.current;
-		if (!map) return;
-		updateComunaSelectionLayers(map, origen, destino);
-	}, [origen, destino]);
-
-	const resetView = () => {
+	const resetView = useCallback(() => {
 		mapRef.current?.easeTo({
 			center: SANTIAGO_CENTER,
 			zoom: INITIAL_ZOOM,
@@ -160,7 +157,51 @@ export function useSantiagoMap(
 			pitch: 0,
 			duration: 200,
 		});
-	};
+	}, []);
+
+	const origen = dualSelect?.origen ?? null;
+	const destino = dualSelect?.destino ?? null;
+	const prevOrigenRef = useRef<string | null>(null);
+	const prevDestinoRef = useRef<string | null>(null);
+
+	useEffect(() => {
+		const map = mapRef.current;
+		if (!map) return;
+		updateComunaSelectionLayers(map, origen, destino);
+
+		if (destino && destino !== prevDestinoRef.current) {
+			const feature = comunasRef.current?.features.find(
+				(f) =>
+					// biome-ignore lint/suspicious/noExplicitAny: GeoJSON property is dynamic
+					(f.properties as any)?.Comuna === destino,
+			);
+			if (feature && feature.geometry.type === "Polygon") {
+				const coords = feature.geometry.coordinates[0] as [number, number][];
+				const bounds = coords.reduce(
+					(b, [lng, lat]) => b.extend([lng, lat]),
+					new maplibregl.LngLatBounds(coords[0], coords[0]),
+				);
+				map.fitBounds(bounds, {
+					padding: 48,
+					maxZoom: COMUNA_ZOOM,
+					pitch: MAP_DETAIL_PITCH,
+					bearing: MAP_DETAIL_BEARING,
+					duration: 650,
+				});
+			}
+		}
+
+		if (
+			!origen &&
+			!destino &&
+			(prevOrigenRef.current || prevDestinoRef.current)
+		) {
+			resetView();
+		}
+
+		prevOrigenRef.current = origen;
+		prevDestinoRef.current = destino;
+	}, [origen, destino, resetView]);
 
 	return { containerRef, clearPinned, resetView };
 }
