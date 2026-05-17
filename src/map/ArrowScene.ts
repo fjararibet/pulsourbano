@@ -1,3 +1,4 @@
+// biome-ignore-all lint/style/noNonNullAssertion: Float32Array indices are bounded by `n` (the polyline length) on every access in this file; the assertions reflect a true invariant, not a guess.
 import type { Map as MapLibreMap } from "maplibre-gl";
 
 export interface ArrowStyle {
@@ -18,7 +19,6 @@ export interface ArrowStyle {
 	/** Comet tail length as a fraction of the arrow. */
 	tailFraction?: number;
 	glow?: boolean;
-	shadow?: boolean;
 	arrowhead?: boolean;
 }
 
@@ -34,9 +34,16 @@ const DEFAULT_STYLE: ResolvedStyle = {
 	highlightWidth: 2.8,
 	tailFraction: 0.18,
 	glow: true,
-	shadow: true,
 	arrowhead: true,
 };
+
+// Cap device pixel ratio: the arrow overlay is decorative, halving pixel work
+// on HiDPI displays is invisible at typical viewing distances.
+const MAX_DPR = 1.5;
+// Target 30fps for the comet animation — still reads as smooth motion, halves
+// CPU work versus 60fps.
+const TARGET_FPS = 30;
+const FRAME_INTERVAL_MS = 1000 / TARGET_FPS;
 
 export interface ArrowConfig {
 	/** Polyline in [lng, lat] pairs. */
@@ -59,6 +66,13 @@ interface InternalArrow {
 	points: [number, number][];
 	style: ResolvedStyle;
 	startedAt: number;
+	// Cached interleaved screen-space coords (length = points.length * 2).
+	// Rebuilt only when the camera changes or `points` changes.
+	flat: Float32Array | null;
+	elevated: Float32Array | null;
+	// Cumulative pixel length along `elevated` (length = points.length).
+	cumLen: Float32Array | null;
+	total: number;
 }
 
 export function createArrowScene(
@@ -81,11 +95,28 @@ export function createArrowScene(
 		throw new Error("ArrowScene: 2D canvas context unavailable");
 	}
 
+	// Offscreen layer that pre-renders the static parts (glow + base + arrowhead).
+	// Per frame we just blit this and stroke the moving comet on top.
+	const staticCanvas = document.createElement("canvas");
+	const staticCtx = staticCanvas.getContext("2d");
+	if (!staticCtx) {
+		canvas.remove();
+		throw new Error("ArrowScene: offscreen 2D context unavailable");
+	}
+
+	let dpr = 1;
+	let projectionsDirty = true;
+	let staticDirty = true;
+
 	const resize = () => {
 		const rect = container.getBoundingClientRect();
-		const dpr = window.devicePixelRatio || 1;
+		dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
 		canvas.width = Math.round(rect.width * dpr);
 		canvas.height = Math.round(rect.height * dpr);
+		staticCanvas.width = canvas.width;
+		staticCanvas.height = canvas.height;
+		projectionsDirty = true;
+		staticDirty = true;
 	};
 	resize();
 	const ro = new ResizeObserver(resize);
@@ -95,18 +126,147 @@ export function createArrowScene(
 	let nextId = 1;
 	let rafId: number | null = null;
 	let disposed = false;
+	let lastFrameTime = 0;
 
-	const renderAll = (now: number) => {
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
+	const projectArrow = (arrow: InternalArrow) => {
+		const n = arrow.points.length;
+		if (n < 2) {
+			arrow.total = 0;
+			return;
+		}
+		if (!arrow.flat || arrow.flat.length !== n * 2) {
+			arrow.flat = new Float32Array(n * 2);
+			arrow.elevated = new Float32Array(n * 2);
+			arrow.cumLen = new Float32Array(n);
+		}
+		const flat = arrow.flat;
+		const elevated = arrow.elevated as Float32Array;
+		const cumLen = arrow.cumLen as Float32Array;
+
+		for (let i = 0; i < n; i++) {
+			const pt = arrow.points[i] as [number, number];
+			const proj = map.project([pt[0], pt[1]]);
+			flat[i * 2] = proj.x * dpr;
+			flat[i * 2 + 1] = proj.y * dpr;
+		}
+
+		let totalFlat = 0;
+		for (let i = 1; i < n; i++) {
+			const dx = flat[i * 2]! - flat[(i - 1) * 2]!;
+			const dy = flat[i * 2 + 1]! - flat[(i - 1) * 2 + 1]!;
+			totalFlat += Math.sqrt(dx * dx + dy * dy);
+		}
+		if (totalFlat <= 0) {
+			arrow.total = 0;
+			return;
+		}
+
+		const peak = Math.min(
+			totalFlat * arrow.style.archHeight,
+			canvas.height * arrow.style.archMax,
+		);
+
+		if (peak <= 0) {
+			elevated.set(flat);
+		} else {
+			let acc = 0;
+			for (let i = 0; i < n; i++) {
+				if (i > 0) {
+					const dx = flat[i * 2]! - flat[(i - 1) * 2]!;
+					const dy = flat[i * 2 + 1]! - flat[(i - 1) * 2 + 1]!;
+					acc += Math.sqrt(dx * dx + dy * dy);
+				}
+				const t = acc / totalFlat;
+				const elev = Math.sin(t * Math.PI) * peak;
+				elevated[i * 2] = flat[i * 2]!;
+				elevated[i * 2 + 1] = flat[i * 2 + 1]! - elev;
+			}
+		}
+
+		cumLen[0] = 0;
+		let total = 0;
+		for (let i = 1; i < n; i++) {
+			const dx = elevated[i * 2]! - elevated[(i - 1) * 2]!;
+			const dy = elevated[i * 2 + 1]! - elevated[(i - 1) * 2 + 1]!;
+			total += Math.sqrt(dx * dx + dy * dy);
+			cumLen[i] = total;
+		}
+		arrow.total = total;
+	};
+
+	const reprojectAll = () => {
+		for (const arrow of arrows.values()) projectArrow(arrow);
+		projectionsDirty = false;
+		staticDirty = true;
+	};
+
+	const renderStaticLayer = () => {
+		staticCtx.clearRect(0, 0, staticCanvas.width, staticCanvas.height);
+		staticCtx.lineCap = "round";
+		staticCtx.lineJoin = "round";
+
 		for (const arrow of arrows.values()) {
-			drawArrow(ctx, canvas, map, arrow, now);
+			const { elevated, style } = arrow;
+			const n = arrow.points.length;
+			if (!elevated || n < 2 || arrow.total <= 0) continue;
+
+			const baseColor = withAlpha(style.color, 0.85);
+			const glowStroke = withAlpha(style.color, 0.35);
+
+			if (style.glow) {
+				strokeTypedPath(staticCtx, elevated, n);
+				staticCtx.strokeStyle = glowStroke;
+				staticCtx.lineWidth = (style.thickness + 5.5) * dpr;
+				staticCtx.stroke();
+			}
+
+			strokeTypedPath(staticCtx, elevated, n);
+			staticCtx.strokeStyle = baseColor;
+			staticCtx.lineWidth = style.thickness * dpr;
+			staticCtx.stroke();
+
+			if (style.arrowhead) {
+				const tipX = elevated[(n - 1) * 2]!;
+				const tipY = elevated[(n - 1) * 2 + 1]!;
+				const fromX = elevated[(n - 2) * 2]!;
+				const fromY = elevated[(n - 2) * 2 + 1]!;
+				drawArrowHead(
+					staticCtx,
+					tipX,
+					tipY,
+					fromX,
+					fromY,
+					(style.thickness + 1) * dpr,
+					style.color,
+				);
+			}
+		}
+		staticDirty = false;
+	};
+
+	const renderComets = (now: number) => {
+		ctx.lineCap = "round";
+		ctx.lineJoin = "round";
+		for (const arrow of arrows.values()) {
+			drawCometFromCache(ctx, arrow, now, dpr);
 		}
 	};
 
-	const tick = () => {
+	const renderAll = (now: number) => {
+		if (projectionsDirty) reprojectAll();
+		if (staticDirty) renderStaticLayer();
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		ctx.drawImage(staticCanvas, 0, 0);
+		renderComets(now);
+	};
+
+	const tick = (now: number) => {
 		rafId = null;
 		if (disposed || arrows.size === 0) return;
-		renderAll(performance.now());
+		if (now - lastFrameTime >= FRAME_INTERVAL_MS) {
+			lastFrameTime = now;
+			renderAll(now);
+		}
 		rafId = requestAnimationFrame(tick);
 	};
 
@@ -116,11 +276,14 @@ export function createArrowScene(
 		}
 	};
 
-	const onMapRender = () => {
-		if (disposed || arrows.size === 0) return;
-		renderAll(performance.now());
+	// Camera moves invalidate the projection cache; the RAF loop picks it up on its next frame.
+	const onCameraChange = () => {
+		projectionsDirty = true;
 	};
-	map.on("render", onMapRender);
+	map.on("move", onCameraChange);
+	map.on("zoom", onCameraChange);
+	map.on("rotate", onCameraChange);
+	map.on("pitch", onCameraChange);
 
 	return {
 		add(config) {
@@ -129,9 +292,14 @@ export function createArrowScene(
 				points: config.points.map((p) => [p[0], p[1]] as [number, number]),
 				style: { ...DEFAULT_STYLE, ...config.style },
 				startedAt: performance.now(),
+				flat: null,
+				elevated: null,
+				cumLen: null,
+				total: 0,
 			});
+			projectionsDirty = true;
+			staticDirty = true;
 			ensureLoop();
-			map.triggerRepaint();
 
 			return {
 				update(patch) {
@@ -141,25 +309,30 @@ export function createArrowScene(
 						arrow.points = patch.points.map(
 							(p) => [p[0], p[1]] as [number, number],
 						);
+						arrow.flat = null;
+						arrow.elevated = null;
+						arrow.cumLen = null;
 					}
 					if (patch.style) {
 						arrow.style = { ...arrow.style, ...patch.style };
 					}
-					map.triggerRepaint();
+					projectionsDirty = true;
+					staticDirty = true;
 				},
 				remove() {
 					if (!arrows.delete(id)) return;
+					staticDirty = true;
 					if (arrows.size === 0) {
 						ctx.clearRect(0, 0, canvas.width, canvas.height);
+						staticCtx.clearRect(0, 0, staticCanvas.width, staticCanvas.height);
 					}
-					map.triggerRepaint();
 				},
 			};
 		},
 		clear() {
 			arrows.clear();
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
-			map.triggerRepaint();
+			staticCtx.clearRect(0, 0, staticCanvas.width, staticCanvas.height);
 		},
 		dispose() {
 			if (disposed) return;
@@ -169,7 +342,10 @@ export function createArrowScene(
 				rafId = null;
 			}
 			ro.disconnect();
-			map.off("render", onMapRender);
+			map.off("move", onCameraChange);
+			map.off("zoom", onCameraChange);
+			map.off("rotate", onCameraChange);
+			map.off("pitch", onCameraChange);
 			canvas.remove();
 		},
 	};
@@ -216,143 +392,27 @@ export function arcLineString(
 	return points;
 }
 
-function drawArrow(
+function strokeTypedPath(
 	ctx: CanvasRenderingContext2D,
-	canvas: HTMLCanvasElement,
-	map: MapLibreMap,
-	arrow: InternalArrow,
-	now: number,
-) {
-	const { points, style, startedAt } = arrow;
-	if (points.length < 2) return;
-
-	const dpr = window.devicePixelRatio || 1;
-	const h = canvas.height;
-
-	const screenPoints: [number, number][] = [];
-	for (const [lng, lat] of points) {
-		const p = map.project([lng, lat]);
-		screenPoints.push([p.x * dpr, p.y * dpr]);
-	}
-	if (screenPoints.length < 2) return;
-
-	const totalLen = polylineLength(screenPoints);
-	if (totalLen <= 0) return;
-
-	const peak = Math.min(totalLen * style.archHeight, h * style.archMax);
-	const elevated: [number, number][] = [];
-	let acc = 0;
-	let prev: [number, number] | null = null;
-	for (const cur of screenPoints) {
-		if (prev) {
-			const sdx = cur[0] - prev[0];
-			const sdy = cur[1] - prev[1];
-			acc += Math.sqrt(sdx * sdx + sdy * sdy);
-		}
-		const t = acc / totalLen;
-		const elev = Math.sin(t * Math.PI) * peak;
-		elevated.push([cur[0], cur[1] - elev]);
-		prev = cur;
-	}
-
-	const baseColor = withAlpha(style.color, 0.85);
-	const glowStroke = withAlpha(style.color, 0.35);
-	const glowShadow = withAlpha(style.color, 0.55);
-	const arrowheadGlow = withAlpha(style.color, 0.6);
-
-	ctx.save();
-	ctx.lineCap = "round";
-	ctx.lineJoin = "round";
-
-	if (style.shadow) {
-		strokePolyline(ctx, screenPoints);
-		ctx.shadowColor = "rgba(0,0,0,0.22)";
-		ctx.shadowBlur = 16 * dpr;
-		ctx.shadowOffsetY = 6 * dpr;
-		ctx.strokeStyle = "rgba(0,0,0,0.12)";
-		ctx.lineWidth = (style.thickness + 3.5) * dpr;
-		ctx.stroke();
-		ctx.shadowColor = "transparent";
-		ctx.shadowBlur = 0;
-		ctx.shadowOffsetY = 0;
-	}
-
-	if (style.glow) {
-		strokePolyline(ctx, elevated);
-		ctx.shadowColor = glowShadow;
-		ctx.shadowBlur = 18 * dpr;
-		ctx.strokeStyle = glowStroke;
-		ctx.lineWidth = (style.thickness + 5.5) * dpr;
-		ctx.stroke();
-		ctx.shadowColor = "transparent";
-		ctx.shadowBlur = 0;
-	}
-
-	strokePolyline(ctx, elevated);
-	ctx.strokeStyle = baseColor;
-	ctx.lineWidth = style.thickness * dpr;
-	ctx.stroke();
-
-	drawHighlight(ctx, elevated, style, startedAt, now, dpr);
-
-	if (style.arrowhead) {
-		const tip = elevated[elevated.length - 1];
-		const before = elevated[elevated.length - 2];
-		if (tip && before) {
-			drawArrowHead(
-				ctx,
-				tip[0],
-				tip[1],
-				before[0],
-				before[1],
-				(style.thickness + 1) * dpr,
-				style.color,
-				arrowheadGlow,
-			);
-		}
-	}
-
-	ctx.restore();
-}
-
-function strokePolyline(
-	ctx: CanvasRenderingContext2D,
-	points: [number, number][],
+	coords: Float32Array,
+	n: number,
 ) {
 	ctx.beginPath();
-	let started = false;
-	for (const pt of points) {
-		if (!started) {
-			ctx.moveTo(pt[0], pt[1]);
-			started = true;
-		} else {
-			ctx.lineTo(pt[0], pt[1]);
-		}
+	ctx.moveTo(coords[0]!, coords[1]!);
+	for (let i = 1; i < n; i++) {
+		ctx.lineTo(coords[i * 2]!, coords[i * 2 + 1]!);
 	}
 }
 
-function drawHighlight(
+function drawCometFromCache(
 	ctx: CanvasRenderingContext2D,
-	elevated: [number, number][],
-	style: ResolvedStyle,
-	startedAt: number,
+	arrow: InternalArrow,
 	now: number,
 	dpr: number,
 ) {
-	const cumLen: number[] = [0];
-	let running = 0;
-	let prev: [number, number] | null = null;
-	for (const cur of elevated) {
-		if (prev) {
-			const dx = cur[0] - prev[0];
-			const dy = cur[1] - prev[1];
-			running += Math.sqrt(dx * dx + dy * dy);
-			cumLen.push(running);
-		}
-		prev = cur;
-	}
-	const total = running;
-	if (total <= 0) return;
+	const { elevated, cumLen, total, style, startedAt } = arrow;
+	const n = arrow.points.length;
+	if (!elevated || !cumLen || total <= 0 || n < 2) return;
 
 	const elapsed = (now - startedAt) / 1000;
 	const cycle = Math.max(0.001, style.highlightSpeed);
@@ -365,37 +425,51 @@ function drawHighlight(
 	const headLen = Math.min(total, rawHead);
 	const tailLen = Math.max(0, rawTail);
 
-	const pointAt = (d: number): [number, number] | null => {
+	// Binary search for the segment containing distance `d` along `elevated`.
+	const findSegment = (d: number): number => {
 		const clamped = Math.max(0, Math.min(total, d));
-		for (let i = 1; i < cumLen.length; i++) {
-			const segEnd = cumLen[i];
-			const segStart = cumLen[i - 1];
-			const a = elevated[i - 1];
-			const b = elevated[i];
-			if (segEnd === undefined || segStart === undefined || !a || !b) continue;
-			if (segEnd >= clamped) {
-				const segLen = segEnd - segStart;
-				const local = segLen > 0 ? (clamped - segStart) / segLen : 0;
-				return [a[0] + (b[0] - a[0]) * local, a[1] + (b[1] - a[1]) * local];
-			}
+		let lo = 1;
+		let hi = n - 1;
+		while (lo < hi) {
+			const mid = (lo + hi) >> 1;
+			if (cumLen[mid]! < clamped) lo = mid + 1;
+			else hi = mid;
 		}
-		return elevated[elevated.length - 1] ?? null;
+		return lo;
 	};
 
-	const tailPoint = pointAt(tailLen);
-	const headPoint = pointAt(headLen);
-	if (!tailPoint || !headPoint) return;
+	const interpolate = (
+		d: number,
+		i: number,
+		out: [number, number],
+	): [number, number] => {
+		const clamped = Math.max(0, Math.min(total, d));
+		const segEnd = cumLen[i]!;
+		const segStart = cumLen[i - 1]!;
+		const ax = elevated[(i - 1) * 2]!;
+		const ay = elevated[(i - 1) * 2 + 1]!;
+		const bx = elevated[i * 2]!;
+		const by = elevated[i * 2 + 1]!;
+		const segLen = segEnd - segStart;
+		const local = segLen > 0 ? (clamped - segStart) / segLen : 0;
+		out[0] = ax + (bx - ax) * local;
+		out[1] = ay + (by - ay) * local;
+		return out;
+	};
+
+	const tailIdx = findSegment(tailLen);
+	const headIdx = findSegment(headLen);
+	const tailPt: [number, number] = [0, 0];
+	const headPt: [number, number] = [0, 0];
+	interpolate(tailLen, tailIdx, tailPt);
+	interpolate(headLen, headIdx, headPt);
 
 	ctx.beginPath();
-	ctx.moveTo(tailPoint[0], tailPoint[1]);
-	for (let i = 0; i < cumLen.length; i++) {
-		const cl = cumLen[i];
-		const pt = elevated[i];
-		if (cl !== undefined && pt && cl > tailLen && cl < headLen) {
-			ctx.lineTo(pt[0], pt[1]);
-		}
+	ctx.moveTo(tailPt[0], tailPt[1]);
+	for (let i = tailIdx; i < headIdx; i++) {
+		ctx.lineTo(elevated[i * 2]!, elevated[i * 2 + 1]!);
 	}
-	ctx.lineTo(headPoint[0], headPoint[1]);
+	ctx.lineTo(headPt[0], headPt[1]);
 	ctx.strokeStyle = style.highlightColor;
 	ctx.lineWidth = style.highlightWidth * dpr;
 	ctx.stroke();
@@ -409,7 +483,6 @@ function drawArrowHead(
 	fromY: number,
 	size: number,
 	fillColor: string,
-	glowColor: string,
 ) {
 	const angle = Math.atan2(tipY - fromY, tipX - fromX);
 	ctx.save();
@@ -423,8 +496,6 @@ function drawArrowHead(
 	ctx.lineTo(-size * 1.8, size * 0.65);
 	ctx.closePath();
 
-	ctx.shadowColor = glowColor;
-	ctx.shadowBlur = 10;
 	ctx.fillStyle = fillColor;
 	ctx.fill();
 	ctx.strokeStyle = "rgba(255,255,255,0.9)";
@@ -432,20 +503,6 @@ function drawArrowHead(
 	ctx.stroke();
 
 	ctx.restore();
-}
-
-function polylineLength(points: [number, number][]): number {
-	let len = 0;
-	let prev: [number, number] | null = null;
-	for (const cur of points) {
-		if (prev) {
-			const dx = cur[0] - prev[0];
-			const dy = cur[1] - prev[1];
-			len += Math.sqrt(dx * dx + dy * dy);
-		}
-		prev = cur;
-	}
-	return len;
 }
 
 function withAlpha(color: string, alpha: number): string {

@@ -9,10 +9,10 @@ import {
 } from "#/lib/route-store";
 import {
 	type ArrowHandle,
-	type ArrowScene,
+	type ArrowMapLibreManager,
 	type ArrowStyle,
-	createArrowScene,
-} from "./ArrowScene";
+	createArrowMapLibreManager,
+} from "./arrow-maplibre";
 import {
 	BASE_STYLE,
 	COMUNA_ALL_LAYER_IDS,
@@ -114,7 +114,7 @@ export function useSantiagoMap(
 	const activeModeRef = modeRef ?? fallbackModeRef;
 	const comunasRef = useRef<GeoJSON.FeatureCollection | null>(null);
 	const routeArrowAnimCleanupRef = useRef<(() => void) | null>(null);
-	const arrowSceneRef = useRef<ArrowScene | null>(null);
+	const arrowManagerRef = useRef<ArrowMapLibreManager | null>(null);
 	const routeArrowHandlesRef = useRef<ArrowHandle[]>([]);
 	const mapReadyRef = useRef(false);
 	dualSelectRef.current = dualSelect;
@@ -193,8 +193,8 @@ export function useSantiagoMap(
 				routeArrowAnimCleanupRef.current?.();
 				routeArrowAnimCleanupRef.current = null;
 				routeArrowHandlesRef.current = [];
-				arrowSceneRef.current?.dispose();
-				arrowSceneRef.current = null;
+				arrowManagerRef.current?.dispose();
+				arrowManagerRef.current = null;
 				for (const fn of hoverCleanup) fn();
 				if (debugWindow?.__simMap === map) delete debugWindow.__simMap;
 				ro.disconnect();
@@ -224,9 +224,7 @@ export function useSantiagoMap(
 				addODLayers(map);
 				addRouteArrowLayers(map);
 				bringRouteArrowToFront(map);
-				if (containerRef.current) {
-					arrowSceneRef.current = createArrowScene(map, containerRef.current);
-				}
+				arrowManagerRef.current = createArrowMapLibreManager(map, "auto");
 
 				setLayerGroupVisibility(
 					map,
@@ -337,21 +335,21 @@ export function useSantiagoMap(
 					precomputePairRoutes(origen, destino);
 
 					for (const variant of ROUTE_VARIANTS) {
-						getRoute(origen, destino, variant.costing)
+						const manager = arrowManagerRef.current;
+						if (!manager) return;
+						const costing = variant.costing;
+						getRoute(origen, destino, costing)
 							.then((result) => {
-								const scene = arrowSceneRef.current;
-								if (!scene) return;
-								const handle = scene.add({
+								const mgr = arrowManagerRef.current;
+								if (!mgr) return;
+								const handle = mgr.add({
 									points: result.shape,
 									style: variant.style,
 								});
 								routeArrowHandlesRef.current.push(handle);
 							})
 							.catch((err) => {
-								console.error(
-									`Valhalla route error (${variant.costing}):`,
-									err,
-								);
+								console.error(`Valhalla route error (${costing}):`, err);
 							});
 					}
 				}

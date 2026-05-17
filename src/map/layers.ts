@@ -191,7 +191,7 @@ export function addRouteArrowLayers(map: MapLibreMap) {
 		source: ROUTE_ARROW_SOURCE_ID,
 		filter: ["==", ["geometry-type"], "LineString"],
 		paint: {
-			"line-color": "#000000",
+			"line-color": ["get", "color"],
 			"line-width": ["interpolate", ["linear"], ["zoom"], 10, 8, 14, 16],
 			"line-opacity": 0.2,
 			"line-blur": 8,
@@ -204,7 +204,7 @@ export function addRouteArrowLayers(map: MapLibreMap) {
 		source: ROUTE_ARROW_SOURCE_ID,
 		filter: ["==", ["geometry-type"], "LineString"],
 		paint: {
-			"line-color": ROUTE_ARROW_COLOR,
+			"line-color": ["get", "color"],
 			"line-width": ["interpolate", ["linear"], ["zoom"], 10, 6, 14, 12],
 			"line-opacity": 0.45,
 			"line-blur": 6,
@@ -221,7 +221,7 @@ export function addRouteArrowLayers(map: MapLibreMap) {
 			"line-join": "round",
 		},
 		paint: {
-			"line-color": "#b45309",
+			"line-color": ["get", "color"],
 			"line-width": ["interpolate", ["linear"], ["zoom"], 10, 2.5, 14, 5],
 			"line-opacity": 0.65,
 		},
@@ -237,6 +237,7 @@ export function addRouteArrowLayers(map: MapLibreMap) {
 			"line-join": "round",
 		},
 		paint: {
+			"line-color": ["get", "color"],
 			"line-gradient": createRouteArrowGradient(0.5, "#ffffff"),
 			"line-width": ["interpolate", ["linear"], ["zoom"], 10, 3.5, 14, 7],
 			"line-opacity": 0.95,
@@ -251,7 +252,7 @@ export function addRouteArrowLayers(map: MapLibreMap) {
 		layout: {
 			"symbol-placement": "line",
 			"symbol-spacing": 140,
-			"icon-image": ROUTE_ARROW_ICON_ID,
+			"icon-image": "route-arrow-head-auto",
 			"icon-rotation-alignment": "map",
 			"icon-keep-upright": false,
 			"icon-size": ["interpolate", ["linear"], ["zoom"], 10, 0.7, 14, 1.2],
@@ -259,25 +260,8 @@ export function addRouteArrowLayers(map: MapLibreMap) {
 			"icon-ignore-placement": true,
 		},
 		paint: {
+			"icon-color": ["get", "color"],
 			"icon-opacity": 0.9,
-		},
-	});
-
-	map.addLayer({
-		id: "route-arrow-head",
-		type: "symbol",
-		source: ROUTE_ARROW_SOURCE_ID,
-		filter: ["==", ["geometry-type"], "Point"],
-		layout: {
-			"icon-image": ROUTE_ARROW_ICON_ID,
-			"icon-rotate": ["get", "bearing"],
-			"icon-rotation-alignment": "map",
-			"icon-size": ["interpolate", ["linear"], ["zoom"], 10, 1.3, 14, 2.2],
-			"icon-allow-overlap": true,
-			"icon-ignore-placement": true,
-		},
-		paint: {
-			"icon-opacity": 1,
 		},
 	});
 }
@@ -302,7 +286,7 @@ export function bringRouteArrowToFront(map: MapLibreMap) {
 	}
 }
 
-/** Dibuja el ícono de flecha para la ruta origen-destino. */
+/** IDs de iconos de flecha por color. */
 export function ensureRouteArrowIcon(map: MapLibreMap) {
 	if (map.hasImage(ROUTE_ARROW_ICON_ID)) return;
 
@@ -316,7 +300,7 @@ export function ensureRouteArrowIcon(map: MapLibreMap) {
 	if (!ctx) return;
 
 	ctx.scale(pixelRatio, pixelRatio);
-	ctx.fillStyle = ROUTE_ARROW_COLOR;
+	ctx.fillStyle = "#f59e0b";
 	ctx.beginPath();
 	ctx.moveTo(2, 6);
 	ctx.lineTo(24, 12);
