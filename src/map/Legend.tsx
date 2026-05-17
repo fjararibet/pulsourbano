@@ -1,15 +1,29 @@
 import { BUS_COLOR, COMUNA_COLOR } from "./config";
+import { NoiseGauge } from "./NoiseGauge";
+import type { HoverInfo, InteractionMode } from "./types";
 
 /** Leyenda fija en la esquina inferior derecha (solo desktop). */
-export function MapLegend() {
+export function MapLegend({
+	mode,
+	hoverInfo,
+}: {
+	mode: InteractionMode;
+	hoverInfo: HoverInfo;
+}) {
 	return (
 		<aside className="pointer-events-none absolute bottom-4 right-4 z-10 hidden rounded-3xl border border-white/70 bg-white/82 p-3 text-xs font-bold text-[#244b52] shadow-[0_18px_50px_rgba(16,47,55,0.16)] backdrop-blur-xl sm:block">
-			<LegendRow color={COMUNA_COLOR} label="Comunas RM" />
-			<LegendRow color="#0f8f98" label="Metro" />
-			<LegendRow color={BUS_COLOR} label="Micros RED" />
-			<LegendRow color="#f2a900" label="Paraderos RED" dot />
-			<LegendRow color="#10a56f" label="Ciclovías" dashed />
-			<LegendRow color="#102f37" label="Estaciones" dot />
+			{mode === "noise" ? (
+				<NoiseGauge db={hoverInfo?.noiseDb ?? null} />
+			) : (
+				<>
+					<LegendRow color={COMUNA_COLOR} label="Comunas RM" />
+					<LegendRow color="#0f8f98" label="Metro" />
+					<LegendRow color={BUS_COLOR} label="Micros RED" />
+					<LegendRow color="#f2a900" label="Paraderos RED" dot />
+					<LegendRow color="#10a56f" label="Ciclovías" dashed />
+					<LegendRow color="#102f37" label="Estaciones" dot />
+				</>
+			)}
 		</aside>
 	);
 }
@@ -26,9 +40,13 @@ function LegendRow({
 	dot?: boolean;
 }) {
 	return (
-		<div className="flex items-center gap-2 py-1">
+		<div className="flex items-center gap-2 py-0.5">
 			<span
-				className={dot ? "h-2.5 w-2.5 rounded-full" : "h-1 w-8 rounded-full"}
+				className={
+					dot
+						? "h-2.5 w-2.5 shrink-0 rounded-full"
+						: "h-1 w-8 shrink-0 rounded-full"
+				}
 				style={
 					dashed
 						? {

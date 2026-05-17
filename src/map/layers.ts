@@ -17,14 +17,21 @@ import {
 	EMPTY_BUS_HOVER_FILTER,
 	EMPTY_COMUNA_HOVER_FILTER,
 	EMPTY_COMUNA_NAME_FILTER,
+	EMPTY_NOISE_COMUNA_FILTER,
 	LAYER_TOGGLES,
 	LOGICAL_LAYERS,
+	NOISE_COMUNA_HOVER_LAYER_IDS,
+	NOISE_COMUNA_INTERACTION_LAYER_ID,
+	NOISE_COMUNA_SELECTED_LAYER_IDS,
+	NOISE_COMUNA_SOURCE_ID,
+	NOISE_SELECTED_ZONE_LAYER_IDS,
 	ORIGEN_COLOR,
 	ROUTE_ARROW_COLOR,
 	ROUTE_ARROW_ICON_ID,
 	ROUTE_ARROW_LAYER_IDS,
 	ROUTE_ARROW_SOURCE_ID,
 } from "./config";
+import { createNoiseColorExpression } from "./noise";
 import type { LayerVisibility } from "./types";
 
 const EMPTY_FEATURE_COLLECTION: GeoJSON.FeatureCollection = {
@@ -625,6 +632,120 @@ export function addCyclewayLayers(
 			],
 			"line-opacity": 0.82,
 			"line-dasharray": [1.6, 1.1],
+		},
+	});
+}
+
+/**
+ * Capa visual de ruido ambiental (Lden): zonas coloreadas por su rango dB(A).
+ */
+export function addNoiseLayers(
+	map: MapLibreMap,
+	data: GeoJSON.FeatureCollection,
+) {
+	map.addSource("noise", { type: "geojson", data });
+
+	const dbColor = createNoiseColorExpression("DB_LO");
+
+	map.addLayer({
+		id: "noise-fill",
+		type: "fill",
+		source: "noise",
+		filter: EMPTY_NOISE_COMUNA_FILTER,
+		paint: {
+			"fill-color": dbColor,
+			"fill-opacity": 0.55,
+		},
+	});
+
+	map.addLayer({
+		id: "noise-outline",
+		type: "line",
+		source: "noise",
+		filter: EMPTY_NOISE_COMUNA_FILTER,
+		paint: {
+			"line-color": dbColor,
+			"line-width": ["interpolate", ["linear"], ["zoom"], 10, 0.6, 14, 1.4],
+			"line-opacity": 0.72,
+		},
+	});
+
+	map.addLayer({
+		id: NOISE_SELECTED_ZONE_LAYER_IDS[0],
+		type: "fill",
+		source: "noise",
+		filter: EMPTY_NOISE_COMUNA_FILTER,
+		paint: {
+			"fill-color": dbColor,
+			"fill-opacity": 0.9,
+		},
+	});
+}
+
+/** Capa comunal completa para hover/highlight del modo ruido. */
+export function addNoiseComunaLayers(
+	map: MapLibreMap,
+	data: GeoJSON.FeatureCollection,
+) {
+	const [hoverFillLayerId, hoverOutlineLayerId] = NOISE_COMUNA_HOVER_LAYER_IDS;
+	const [selectedFillLayerId, selectedOutlineLayerId] =
+		NOISE_COMUNA_SELECTED_LAYER_IDS;
+
+	map.addSource(NOISE_COMUNA_SOURCE_ID, { type: "geojson", data });
+
+	map.addLayer({
+		id: hoverFillLayerId,
+		type: "fill",
+		source: NOISE_COMUNA_SOURCE_ID,
+		filter: EMPTY_NOISE_COMUNA_FILTER,
+		paint: {
+			"fill-color": "#102f37",
+			"fill-opacity": 0.05,
+		},
+	});
+
+	map.addLayer({
+		id: hoverOutlineLayerId,
+		type: "line",
+		source: NOISE_COMUNA_SOURCE_ID,
+		filter: EMPTY_NOISE_COMUNA_FILTER,
+		paint: {
+			"line-color": "#102f37",
+			"line-width": ["interpolate", ["linear"], ["zoom"], 10, 2.2, 14, 4],
+			"line-opacity": 0.82,
+		},
+	});
+
+	map.addLayer({
+		id: selectedFillLayerId,
+		type: "fill",
+		source: NOISE_COMUNA_SOURCE_ID,
+		filter: EMPTY_NOISE_COMUNA_FILTER,
+		paint: {
+			"fill-color": ["coalesce", ["get", "accent"], "#dc2626"],
+			"fill-opacity": 0.12,
+		},
+	});
+
+	map.addLayer({
+		id: selectedOutlineLayerId,
+		type: "line",
+		source: NOISE_COMUNA_SOURCE_ID,
+		filter: EMPTY_NOISE_COMUNA_FILTER,
+		paint: {
+			"line-color": "#111827",
+			"line-width": ["interpolate", ["linear"], ["zoom"], 10, 3.8, 14, 6],
+			"line-opacity": 0.95,
+		},
+	});
+
+	map.addLayer({
+		id: NOISE_COMUNA_INTERACTION_LAYER_ID,
+		type: "fill",
+		source: NOISE_COMUNA_SOURCE_ID,
+		paint: {
+			"fill-color": "#000000",
+			"fill-opacity": 0,
 		},
 	});
 }

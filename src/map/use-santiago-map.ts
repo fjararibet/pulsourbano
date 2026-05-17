@@ -12,11 +12,13 @@ import {
 import {
 	BASE_STYLE,
 	COMUNA_ALL_LAYER_IDS,
+	COMUNA_BASE_LAYER_IDS,
 	COMUNA_ZOOM,
 	INITIAL_ZOOM,
 	MAP_DETAIL_BEARING,
 	MAP_DETAIL_PITCH,
 	METRO_ALL_LAYER_IDS,
+	NOISE_ALL_LAYER_IDS,
 	SANTIAGO_CENTER,
 } from "./config";
 import {
@@ -24,20 +26,24 @@ import {
 	setupComunaDualSelect,
 	setupComunaHover,
 	setupMetroStationClick,
+	setupNoiseInteraction,
 } from "./hover";
 import {
 	addComunaLayers,
 	addMetroLayers,
+	addNoiseComunaLayers,
+	addNoiseLayers,
 	addRouteArrowLayers,
 	bringComunaHoverToFront,
 	bringRouteArrowToFront,
 	clearRouteArrow,
 	updateComunaSelectionLayers,
 } from "./layers";
+import { buildNoiseComunaFeatures } from "./noise";
 import { getComunasGeoJSON } from "./server-comunas";
 import { getMetroGeoJSON } from "./server-metro";
 import type { HoverInfo, InteractionMode } from "./types";
-import { getPolygonCentroid } from "./utils";
+import { getPolygonCentroid, loadGeoJSON } from "./utils";
 
 type DualSelect = {
 	origen: string | null;
@@ -97,6 +103,10 @@ export function useSantiagoMap(
 	const arrowSceneRef = useRef<ArrowScene | null>(null);
 	const routeArrowHandlesRef = useRef<ArrowHandle[]>([]);
 	const mapReadyRef = useRef(false);
+	// Ruido: lazy loading — se carga la primera vez que se activa el modo.
+	const noiseLoadedRef = useRef(false);
+	const pinControllerRef = useRef<HoverPinController | null>(null);
+	const hoverCleanupListRef = useRef<Array<() => void>>([]);
 	dualSelectRef.current = dualSelect;
 
 	const clearPinned = useCallback(() => {
@@ -106,13 +116,49 @@ export function useSantiagoMap(
 		setHoverInfo(null);
 	}, [setHoverInfo]);
 
-	const applyModeVisibility = useCallback((mode: InteractionMode) => {
+	/** Carga noise.geojson la primera vez que se activa el modo Ruido. */
+	const loadNoiseLayer = useCallback(async () => {
 		const map = mapRef.current;
-		if (!map) return;
+		if (!map || noiseLoadedRef.current) return;
+		const noise = await loadGeoJSON("/data/noise.geojson");
+		// Guard: otro call concurrente pudo haber terminado antes.
+		if (!noise || noiseLoadedRef.current) return;
+		noiseLoadedRef.current = true;
+		addNoiseLayers(map, noise);
+		const noiseComunas = comunasRef.current
+			? buildNoiseComunaFeatures(noise, comunasRef.current)
+			: null;
+		if (noiseComunas) addNoiseComunaLayers(map, noiseComunas);
+		if (map.getLayer("comunas-outline")) map.moveLayer("comunas-outline");
+		const pin = pinControllerRef.current;
+		if (pin) {
+			hoverCleanupListRef.current.push(
+				setupNoiseInteraction(map, setHoverInfo, pin),
+			);
+		}
+		setLayerGroupVisibility(map, NOISE_ALL_LAYER_IDS, true);
+	}, [setHoverInfo]);
 
-		setLayerGroupVisibility(map, COMUNA_ALL_LAYER_IDS, mode === "comunas");
-		setLayerGroupVisibility(map, METRO_ALL_LAYER_IDS, mode === "metro");
-	}, []);
+	const applyModeVisibility = useCallback(
+		(mode: InteractionMode) => {
+			const map = mapRef.current;
+			if (!map) return;
+
+			setLayerGroupVisibility(map, COMUNA_ALL_LAYER_IDS, mode === "comunas");
+			if (mode === "noise") {
+				setLayerGroupVisibility(map, COMUNA_BASE_LAYER_IDS, true);
+			}
+			setLayerGroupVisibility(map, METRO_ALL_LAYER_IDS, mode === "metro");
+			// Ruido: ocultar/mostrar solo si ya fue cargada; si no, la carga la hace visible.
+			if (map.getSource("noise")) {
+				setLayerGroupVisibility(map, NOISE_ALL_LAYER_IDS, mode === "noise");
+			}
+			if (mode === "noise" && !noiseLoadedRef.current) {
+				void loadNoiseLayer();
+			}
+		},
+		[loadNoiseLayer],
+	);
 
 	useEffect(() => {
 		let cancelled = false;
@@ -183,6 +229,9 @@ export function useSantiagoMap(
 
 			map.on("load", async () => {
 				resize();
+				// Exponer al hook para que loadNoiseLayer pueda accederlos.
+				pinControllerRef.current = pinController;
+				hoverCleanupListRef.current = hoverCleanup;
 
 				try {
 					map.setLight({
@@ -212,6 +261,9 @@ export function useSantiagoMap(
 					COMUNA_ALL_LAYER_IDS,
 					activeModeRef.current === "comunas",
 				);
+				if (activeModeRef.current === "noise") {
+					setLayerGroupVisibility(map, COMUNA_BASE_LAYER_IDS, true);
+				}
 				setLayerGroupVisibility(
 					map,
 					METRO_ALL_LAYER_IDS,

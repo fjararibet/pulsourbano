@@ -13,9 +13,15 @@ import {
 	COMUNA_SELECTED_LAYER_IDS,
 	EMPTY_BUS_HOVER_FILTER,
 	EMPTY_COMUNA_HOVER_FILTER,
+	EMPTY_NOISE_COMUNA_FILTER,
 	MAP_DETAIL_BEARING,
 	MAP_DETAIL_PITCH,
+	NOISE_COMUNA_HOVER_LAYER_IDS,
+	NOISE_COMUNA_INTERACTION_LAYER_ID,
+	NOISE_COMUNA_SELECTED_LAYER_IDS,
+	NOISE_SELECTED_ZONE_LAYER_IDS,
 } from "./config";
+import { noiseDbColor } from "./noise";
 import type {
 	FrequencyInfo,
 	FrequencyMap,
@@ -537,6 +543,129 @@ export function setupMetroStationClick(
 	return () => {
 		map.off("click", "metro-stations", onClick);
 	};
+}
+
+/**
+ * Interacción para ruido ambiental. Usa comunas completas para hover/tap y
+ * mantiene los valores comunales aunque el cursor caiga en zonas sin relleno.
+ */
+export function setupNoiseInteraction(
+	map: MapLibreMap,
+	setHoverInfo: (info: HoverInfo) => void,
+	pinController: HoverPinController,
+) {
+	const setLayerFilters = (
+		layerIds: readonly string[],
+		feature: MapGeoJSONFeature | null,
+	) => {
+		const comuna = feature ? getFeatureString(feature, "COMUNA") : null;
+		const filter: FilterSpecification = comuna
+			? ["==", ["get", "COMUNA"], comuna]
+			: EMPTY_NOISE_COMUNA_FILTER;
+		for (const layerId of layerIds) {
+			if (map.getLayer(layerId)) map.setFilter(layerId, filter);
+		}
+	};
+	const setHoverFilter = (feature: MapGeoJSONFeature | null) => {
+		setLayerFilters(NOISE_COMUNA_HOVER_LAYER_IDS, feature);
+	};
+	const setSelectedFilter = (feature: MapGeoJSONFeature | null) => {
+		setLayerFilters(
+			[
+				"noise-outline",
+				...NOISE_SELECTED_ZONE_LAYER_IDS,
+				...NOISE_COMUNA_SELECTED_LAYER_IDS,
+			],
+			feature,
+		);
+	};
+
+	const onMove = (event: MapLayerMouseEvent) => {
+		if (pinController.isPinned()) return;
+		const feature = event.features?.[0];
+		if (!feature) return;
+		map.getCanvas().style.cursor = "pointer";
+		setHoverFilter(feature);
+	};
+
+	const onLeave = () => {
+		map.getCanvas().style.cursor = "";
+		if (pinController.isPinned()) return;
+		setHoverFilter(null);
+	};
+
+	const onClick = (event: MapLayerMouseEvent) => {
+		const feature = event.features?.[0];
+		if (!feature) return;
+		const info = formatNoiseHover(feature, true);
+		setHoverFilter(null);
+		pinController.pin(info, () => {
+			setHoverFilter(null);
+			setSelectedFilter(null);
+			setHoverInfo(null);
+		});
+		setSelectedFilter(feature);
+	};
+
+	map.on("mousemove", NOISE_COMUNA_INTERACTION_LAYER_ID, onMove);
+	map.on("mouseleave", NOISE_COMUNA_INTERACTION_LAYER_ID, onLeave);
+	map.on("click", NOISE_COMUNA_INTERACTION_LAYER_ID, onClick);
+
+	return () => {
+		map.off("mousemove", NOISE_COMUNA_INTERACTION_LAYER_ID, onMove);
+		map.off("mouseleave", NOISE_COMUNA_INTERACTION_LAYER_ID, onLeave);
+		map.off("click", NOISE_COMUNA_INTERACTION_LAYER_ID, onClick);
+		map.getCanvas().style.cursor = "";
+		setHoverFilter(null);
+		setSelectedFilter(null);
+		if (!pinController.isPinned()) setHoverInfo(null);
+	};
+}
+
+function formatNoiseHover(
+	feature: MapGeoJSONFeature,
+	pinned: boolean,
+): Exclude<HoverInfo, null> {
+	const dbPromedioComunal = getFeatureNumber(feature, "dbPromedioComunal");
+	const dbMinComunal = getFeatureNumber(feature, "dbMinComunal");
+	const dbMaxComunal = getFeatureNumber(feature, "dbMaxComunal");
+	const dbLo = getFeatureNumber(feature, "DB_LO");
+	const dbHi = getFeatureNumber(feature, "DB_HI");
+	const comunaRaw = getFeatureString(feature, "COMUNA");
+
+	const dbLabel =
+		dbPromedioComunal !== null
+			? `Promedio comunal: ${dbPromedioComunal.toFixed(1)} dB(A)`
+			: dbLo !== null && dbHi !== null
+				? `Zona de ruido: ${dbLo}-${dbHi} dB(A)`
+				: "Promedio comunal no disponible";
+	const accentColor = noiseDbColor(dbPromedioComunal ?? dbLo ?? 0);
+	const comunaLabel = comunaRaw ? noiseToTitleCase(comunaRaw) : "Zona urbana";
+	const observedRange =
+		dbMinComunal !== null && dbMaxComunal !== null
+			? `Rango observado: ${dbMinComunal}-${dbMaxComunal} dB(A)`
+			: dbLo !== null && dbHi !== null
+				? `Rango observado: ${dbLo}-${dbHi} dB(A)`
+				: null;
+
+	return {
+		kind: "Ruido ambiental",
+		title: comunaLabel,
+		description: dbLabel,
+		details: observedRange ? [observedRange] : [],
+		accent: accentColor,
+		pinned,
+		...(dbPromedioComunal !== null ? { noiseDb: dbPromedioComunal } : {}),
+	};
+}
+
+/** Convierte texto en mayúsculas a title-case: "SAN BERNARDO" → "San Bernardo". */
+function noiseToTitleCase(text: string): string {
+	return text
+		.toLowerCase()
+		.split(/\s+/)
+		.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+		.join(" ");
 }
 
 /** Renderiza un popup-card consistente para cualquier `HoverInfo`. */

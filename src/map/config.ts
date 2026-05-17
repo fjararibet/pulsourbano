@@ -84,6 +84,12 @@ export const COMUNA_ALL_LAYER_IDS = [
 	...ROUTE_ARROW_LAYER_IDS,
 ] as const;
 
+/** Capas comunales base que se mantienen visibles como referencia espacial. */
+export const COMUNA_BASE_LAYER_IDS = [
+	"comunas-fill",
+	"comunas-outline",
+] as const;
+
 /** Todas las capas físicas del grupo metro. */
 export const METRO_ALL_LAYER_IDS = [
 	"metro-line-halo",
@@ -112,6 +118,13 @@ export const EMPTY_COMUNA_HOVER_FILTER: FilterSpecification = [
 export const EMPTY_COMUNA_NAME_FILTER: FilterSpecification = [
 	"==",
 	["get", "Comuna"],
+	"",
+];
+
+/** Filtro neutro que oculta el resaltado comunal del modo ruido. */
+export const EMPTY_NOISE_COMUNA_FILTER: FilterSpecification = [
+	"==",
+	["get", "COMUNA"],
 	"",
 ];
 
@@ -175,6 +188,40 @@ export const DEFAULT_VISIBLE_LAYERS: LayerVisibility = {
  * Mapeo de "capa lógica" (la del UI) a los IDs reales de capa en MapLibre.
  * Una capa lógica puede empujar varias capas físicas (halo + línea, etc.).
  */
+/** Color representativo de la capa de ruido (botón, leyenda, accent). */
+export const NOISE_COLOR = "#ef4444";
+
+/** Fuente de comunas completas enriquecidas con promedio de ruido. */
+export const NOISE_COMUNA_SOURCE_ID = "noise-comunas";
+
+/** Capa invisible para hover por comuna completa en modo ruido. */
+export const NOISE_COMUNA_INTERACTION_LAYER_ID = "noise-comunas-hitbox";
+
+/** Capas de zonas de ruido que se refuerzan al seleccionar una comuna. */
+export const NOISE_SELECTED_ZONE_LAYER_IDS = ["noise-selected-fill"] as const;
+
+/** Capas visibles del resaltado comunal de ruido. */
+export const NOISE_COMUNA_HOVER_LAYER_IDS = [
+	"noise-comunas-hover-fill",
+	"noise-comunas-hover-outline",
+] as const;
+
+/** Capas visibles de la comuna fijada por click/tap en modo ruido. */
+export const NOISE_COMUNA_SELECTED_LAYER_IDS = [
+	"noise-comunas-selected-fill",
+	"noise-comunas-selected-outline",
+] as const;
+
+/** Todas las capas físicas del grupo ruido. */
+export const NOISE_ALL_LAYER_IDS = [
+	"noise-fill",
+	"noise-outline",
+	...NOISE_SELECTED_ZONE_LAYER_IDS,
+	...NOISE_COMUNA_HOVER_LAYER_IDS,
+	...NOISE_COMUNA_SELECTED_LAYER_IDS,
+	NOISE_COMUNA_INTERACTION_LAYER_ID,
+] as const;
+
 export const LOGICAL_LAYERS = {
 	comunas: ["comunas-fill", "comunas-outline"],
 	metro: ["metro-line-halo", "metro-lines"],
