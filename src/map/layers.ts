@@ -24,6 +24,7 @@ import {
 	NOISE_COMUNA_INTERACTION_LAYER_ID,
 	NOISE_COMUNA_SELECTED_LAYER_IDS,
 	NOISE_COMUNA_SOURCE_ID,
+	NOISE_OVERLAY_LAYER_IDS,
 	NOISE_SELECTED_ZONE_LAYER_IDS,
 	OD_ARROW_ICON_ID,
 	OD_COLOR,
@@ -177,6 +178,20 @@ export function updateComunaSelectionLayers(
 	}
 	for (const layerId of COMUNA_DESTINO_LAYER_IDS) {
 		if (map.getLayer(layerId)) map.setFilter(layerId, destinoFilter);
+	}
+}
+
+/** Muestra ruido solo dentro de las comunas seleccionadas. */
+export function updateNoiseSelectionLayers(
+	map: MapLibreMap,
+	comunas: readonly string[],
+) {
+	const selectedComunas = [...new Set(comunas.filter(Boolean))];
+	const filter: FilterSpecification = selectedComunas.length
+		? ["in", ["get", "COMUNA"], ["literal", selectedComunas]]
+		: EMPTY_NOISE_COMUNA_FILTER;
+	for (const layerId of NOISE_OVERLAY_LAYER_IDS) {
+		if (map.getLayer(layerId)) map.setFilter(layerId, filter);
 	}
 }
 
@@ -341,77 +356,6 @@ function createRouteArrowGradient(
 		1,
 		hexToRgba(color, 0),
 	] as ExpressionSpecification;
-}
-
-/** Capas del Metro: halo blanco, línea coloreada y estaciones. */
-export function addMetroLayers(
-	map: MapLibreMap,
-	data: GeoJSON.FeatureCollection,
-) {
-	map.addSource("metro", { type: "geojson", data });
-	map.addLayer({
-		id: "metro-line-halo",
-		type: "line",
-		source: "metro",
-		filter: ["==", ["geometry-type"], "LineString"],
-		paint: {
-			"line-color": "rgba(255,255,255,0.76)",
-			"line-width": ["interpolate", ["linear"], ["zoom"], 10, 5, 13, 8, 15, 12],
-			"line-opacity": 0.86,
-		},
-	});
-	map.addLayer({
-		id: "metro-lines",
-		type: "line",
-		source: "metro",
-		filter: ["==", ["geometry-type"], "LineString"],
-		paint: {
-			"line-color": ["coalesce", ["get", "color"], "#0f8f98"],
-			"line-width": [
-				"interpolate",
-				["linear"],
-				["zoom"],
-				10,
-				2.8,
-				13,
-				4.6,
-				15,
-				7,
-			],
-			"line-opacity": 0.95,
-		},
-	});
-	map.addLayer({
-		id: "metro-stations",
-		type: "circle",
-		source: "metro",
-		filter: ["==", ["geometry-type"], "Point"],
-		paint: {
-			"circle-radius": [
-				"interpolate",
-				["linear"],
-				["zoom"],
-				10,
-				3,
-				13,
-				5,
-				15,
-				7,
-			],
-			"circle-color": "#102f37",
-			"circle-stroke-width": [
-				"interpolate",
-				["linear"],
-				["zoom"],
-				10,
-				1.6,
-				14,
-				2.4,
-			],
-			"circle-stroke-color": "#ffffff",
-			"circle-opacity": 0.94,
-		},
-	});
 }
 
 /**
