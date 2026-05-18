@@ -132,6 +132,24 @@ export function getNoiseComunaStats(
 		: null;
 }
 
+export function filterComunasWithNoiseData(
+	statsByComuna: Map<string, NoiseComunaStats>,
+	comunas: GeoJSON.FeatureCollection,
+): GeoJSON.FeatureCollection {
+	return {
+		type: "FeatureCollection",
+		features: comunas.features.filter((feature) => {
+			const properties = feature.properties;
+			const comuna =
+				readStringProperty(properties, "Comuna") ||
+				readStringProperty(properties, "nombre_comuna") ||
+				readStringProperty(properties, "COMUNA");
+
+			return statsByComuna.has(normalizeComunaName(comuna));
+		}),
+	};
+}
+
 function readStringProperty(
 	properties: GeoJSON.GeoJsonProperties,
 	key: string,
