@@ -124,9 +124,13 @@ function buildNameMap(): Map<string, string> {
 async function main() {
 	console.log("Generating comuna pair stats from D1...\n");
 
-	const outDir = resolve(process.cwd(), "public/data/stats");
+	const outDir = resolve(process.cwd(), "src/data/stats");
 	if (!existsSync(outDir)) {
 		mkdirSync(outDir, { recursive: true });
+	}
+	const publicDir = resolve(process.cwd(), "public/data/stats");
+	if (!existsSync(publicDir)) {
+		mkdirSync(publicDir, { recursive: true });
 	}
 
 	const nameMap = buildNameMap();
@@ -186,10 +190,9 @@ async function main() {
 		}
 
 		const fileName = `${encodeURIComponent(origen)}_${encodeURIComponent(destino)}.json`;
-		writeFileSync(
-			join(outDir, fileName),
-			JSON.stringify({ statsModo, total, initialStatsMap }),
-		);
+		const data = JSON.stringify({ statsModo, total, initialStatsMap });
+		writeFileSync(join(outDir, fileName), data);
+		writeFileSync(join(publicDir, fileName), data);
 		count++;
 	}
 
