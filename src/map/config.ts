@@ -271,10 +271,10 @@ export const BASE_STYLE = {
 		"carto-tiles": {
 			type: "raster" as const,
 			tiles: [
-				"https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{ratio}.png",
-				"https://b.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{ratio}.png",
-				"https://c.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{ratio}.png",
-				"https://d.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{ratio}.png",
+				"https://a.basemaps.cartocdn.com/rastertiles/light_nolabels/{z}/{x}/{y}{ratio}.png",
+				"https://b.basemaps.cartocdn.com/rastertiles/light_nolabels/{z}/{x}/{y}{ratio}.png",
+				"https://c.basemaps.cartocdn.com/rastertiles/light_nolabels/{z}/{x}/{y}{ratio}.png",
+				"https://d.basemaps.cartocdn.com/rastertiles/light_nolabels/{z}/{x}/{y}{ratio}.png",
 			],
 			tileSize: 256,
 			attribution:
