@@ -242,6 +242,19 @@ export function SantiagoMapPage() {
 			)}
 
 			<section className="pointer-events-none absolute bottom-0 left-0 right-0 z-10 flex flex-col items-end gap-2 p-2 sm:pointer-events-auto sm:inset-y-0 sm:left-0 sm:right-auto sm:w-80 sm:items-start sm:overflow-y-auto sm:border-r sm:border-white/70 sm:bg-white/90 sm:p-4 sm:shadow-[4px_0_24px_rgba(16,47,55,0.1)] sm:backdrop-blur-xl">
+				{hasSelection && isCollapsed ? (
+					<button
+						type="button"
+						onClick={() => {
+							clearSelections();
+							resetView();
+						}}
+						className="pointer-events-auto rounded-full border border-[#b9d7d1] bg-white/90 px-3 py-1.5 text-xs font-bold text-[#24525b] shadow-[0_8px_24px_rgba(16,47,55,0.18)] backdrop-blur transition hover:border-[#5bb6a6] hover:bg-white sm:hidden"
+					>
+						Reiniciar
+					</button>
+				) : null}
+
 				<div className="pointer-events-auto flex max-h-[calc(100svh-1rem)] w-full flex-col rounded-2xl border border-white/70 bg-white/90 px-4 py-3 shadow-[0_-12px_40px_rgba(16,47,55,0.16)] backdrop-blur-xl sm:block sm:max-h-none sm:rounded-none sm:border-0 sm:bg-transparent sm:shadow-none sm:backdrop-blur-none">
 					<div className="sticky top-0 z-10 flex w-full items-center gap-1.5 bg-white/90 pb-1 backdrop-blur-xl sm:hidden">
 						<button
