@@ -1,6 +1,7 @@
 import type { Map as MapLibreMap } from "maplibre-gl";
 import maplibregl from "maplibre-gl";
 import { useCallback, useEffect, useRef } from "react";
+import type { ModoRow } from "#/lib/comparador/comparador-types";
 import {
 	type CostingMode,
 	getRoute,
@@ -64,6 +65,7 @@ type DualSelect = {
 	showNoiseOverlay?: boolean;
 	onNoiseStatsChange?: (stats: SelectedNoiseStats) => void;
 	onMapReady?: (map: MapLibreMap) => void;
+	tripStats?: ModoRow[];
 };
 
 interface ModeProfile {
@@ -74,18 +76,19 @@ interface ModeProfile {
 	routeUsage: number;
 	/** 0..1 relative travel speed (1 = fastest urban mode). */
 	transportSpeed: number;
+	/** `cat_modo` label emitted by /api/comparador/stats. */
+	statsKey: string;
 }
 
 // Thickness range (display units) at routeUsage 0 → 1.
-const THICKNESS_MIN = 3.0;
-const THICKNESS_MAX = 10.0;
+const THICKNESS_MIN = 2.0;
+const THICKNESS_MAX = 14.0;
 // Comet cycle period (seconds) at transportSpeed 1 → 0. Lower cycle = faster sweep.
 const CYCLE_FAST = 1.0;
 const CYCLE_SLOW = 3.4;
 
-// TODO: replace these hardcoded `routeUsage` values with real per-pair modal
-// share (e.g., from EOD 2012 trips between origen/destino). Until then we use
-// a fixed ramp so thickness orders pedestrian < bicycle < bus < auto.
+// Fallback ramp for when /api/comparador/stats has no row for the pair —
+// preserves the previous visual ordering pedestrian < bicycle < bus < auto.
 const MODE_PROFILES: ModeProfile[] = [
 	{
 		costing: "auto",
@@ -93,6 +96,7 @@ const MODE_PROFILES: ModeProfile[] = [
 		lateralOffset: 0.55,
 		routeUsage: 0.85,
 		transportSpeed: 1.0,
+		statsKey: "Auto",
 	},
 	{
 		costing: "bus",
@@ -100,6 +104,7 @@ const MODE_PROFILES: ModeProfile[] = [
 		lateralOffset: -0.35,
 		routeUsage: 0.55,
 		transportSpeed: 0.45,
+		statsKey: "Bus",
 	},
 	{
 		costing: "metro",
@@ -107,6 +112,7 @@ const MODE_PROFILES: ModeProfile[] = [
 		lateralOffset: 0.0,
 		routeUsage: 0.65,
 		transportSpeed: 0.7,
+		statsKey: "Metro/Tren",
 	},
 	{
 		costing: "bicycle",
@@ -114,16 +120,73 @@ const MODE_PROFILES: ModeProfile[] = [
 		lateralOffset: 0.15,
 		routeUsage: 0.25,
 		transportSpeed: 0.35,
+		statsKey: "No Motorizado",
 	},
 ];
 
-function arrowStyleFor(profile: ModeProfile): ArrowStyle {
-	const usage = Math.min(1, Math.max(0, profile.routeUsage));
-	const speed = Math.min(1, Math.max(0, profile.transportSpeed));
+interface NormalizedStats {
+	byMode: Map<CostingMode, { porcentaje: number; velocidad: number }>;
+	minPct: number;
+	maxPct: number;
+	minVel: number;
+	maxVel: number;
+}
+
+function normalizeStats(stats: ModoRow[] | undefined): NormalizedStats | null {
+	if (!stats || stats.length === 0) return null;
+	const byMode = new Map<
+		CostingMode,
+		{ porcentaje: number; velocidad: number }
+	>();
+	let minPct = Number.POSITIVE_INFINITY;
+	let maxPct = Number.NEGATIVE_INFINITY;
+	let minVel = Number.POSITIVE_INFINITY;
+	let maxVel = Number.NEGATIVE_INFINITY;
+	for (const profile of MODE_PROFILES) {
+		const row = stats.find((s) => s.modo === profile.statsKey);
+		if (!row || row.n_viajes <= 0) continue;
+		byMode.set(profile.costing, {
+			porcentaje: row.porcentaje,
+			velocidad: row.velocidad_promedio,
+		});
+		if (row.porcentaje < minPct) minPct = row.porcentaje;
+		if (row.porcentaje > maxPct) maxPct = row.porcentaje;
+		if (row.velocidad_promedio < minVel) minVel = row.velocidad_promedio;
+		if (row.velocidad_promedio > maxVel) maxVel = row.velocidad_promedio;
+	}
+	if (byMode.size === 0) return null;
+	return { byMode, minPct, maxPct, minVel, maxVel };
+}
+
+function arrowStyleFor(
+	profile: ModeProfile,
+	normalized: NormalizedStats | null,
+): ArrowStyle {
+	const stat = normalized?.byMode.get(profile.costing);
+
+	let usage: number;
+	if (stat && normalized) {
+		// Normalize within the active pair so the thinnest visible mode hits
+		// THICKNESS_MIN and the thickest hits THICKNESS_MAX — gives a much more
+		// pronounced spread than raw porcentaje/100 (which tops out near 0.35).
+		const span = normalized.maxPct - normalized.minPct;
+		usage = span > 0 ? (stat.porcentaje - normalized.minPct) / span : 0.5;
+	} else {
+		usage = Math.min(1, Math.max(0, profile.routeUsage));
+	}
+
+	let speedNorm: number;
+	if (stat && normalized) {
+		const span = normalized.maxVel - normalized.minVel;
+		speedNorm = span > 0 ? (stat.velocidad - normalized.minVel) / span : 0.5;
+	} else {
+		speedNorm = Math.min(1, Math.max(0, profile.transportSpeed));
+	}
+
 	return {
 		color: profile.color,
 		thickness: THICKNESS_MIN + (THICKNESS_MAX - THICKNESS_MIN) * usage,
-		highlightSpeed: CYCLE_SLOW - (CYCLE_SLOW - CYCLE_FAST) * speed,
+		highlightSpeed: CYCLE_SLOW - (CYCLE_SLOW - CYCLE_FAST) * speedNorm,
 	};
 }
 
@@ -145,11 +208,13 @@ export function useSantiagoMap(
 	const noiseStatsByComunaRef = useRef(new Map<string, NoiseComunaStats>());
 	const routeArrowAnimCleanupRef = useRef<(() => void) | null>(null);
 	const arrowManagerRef = useRef<ArrowMapLibreManager | null>(null);
-	const routeArrowHandlesRef = useRef<ArrowHandle[]>([]);
+	const routeArrowHandlesRef = useRef<Map<CostingMode, ArrowHandle>>(new Map());
+	const tripStatsRef = useRef<ModoRow[] | undefined>(dualSelect?.tripStats);
 	const mapReadyRef = useRef(false);
 	// Ruido: lazy loading — se carga la primera vez que se activa la capa.
 	const noiseLoadedRef = useRef(false);
 	dualSelectRef.current = dualSelect;
+	tripStatsRef.current = dualSelect?.tripStats;
 
 	const clearPinned = useCallback(() => {
 		clearPinnedEffectsRef.current?.();
@@ -303,7 +368,7 @@ export function useSantiagoMap(
 				clearPinnedEffectsRef.current = null;
 				routeArrowAnimCleanupRef.current?.();
 				routeArrowAnimCleanupRef.current = null;
-				routeArrowHandlesRef.current = [];
+				routeArrowHandlesRef.current.clear();
 				arrowManagerRef.current?.dispose();
 				arrowManagerRef.current = null;
 				for (const fn of hoverCleanup) fn();
@@ -426,8 +491,9 @@ export function useSantiagoMap(
 				const origenCentroid = getPolygonCentroid(origenFeature);
 				const destinoCentroid = getPolygonCentroid(destinoFeature);
 				if (origenCentroid && destinoCentroid) {
-					for (const handle of routeArrowHandlesRef.current) handle.remove();
-					routeArrowHandlesRef.current = [];
+					for (const handle of routeArrowHandlesRef.current.values())
+						handle.remove();
+					routeArrowHandlesRef.current.clear();
 
 					precomputePairRoutes(origen, destino);
 
@@ -442,9 +508,12 @@ export function useSantiagoMap(
 								const handle = mgr.add({
 									points: result.shape,
 									mode: costing,
-									style: arrowStyleFor(profile),
+									style: arrowStyleFor(
+										profile,
+										normalizeStats(tripStatsRef.current),
+									),
 								});
-								routeArrowHandlesRef.current.push(handle);
+								routeArrowHandlesRef.current.set(costing, handle);
 							})
 							.catch((err) => {
 								console.error(`Valhalla route error (${costing}):`, err);
@@ -461,16 +530,18 @@ export function useSantiagoMap(
 		) {
 			resetView();
 			clearRouteArrow(map);
-			for (const handle of routeArrowHandlesRef.current) handle.remove();
-			routeArrowHandlesRef.current = [];
+			for (const handle of routeArrowHandlesRef.current.values())
+				handle.remove();
+			routeArrowHandlesRef.current.clear();
 			routeArrowAnimCleanupRef.current?.();
 			routeArrowAnimCleanupRef.current = null;
 		}
 
 		if (origen && !destino && prevDestinoRef.current) {
 			clearRouteArrow(map);
-			for (const handle of routeArrowHandlesRef.current) handle.remove();
-			routeArrowHandlesRef.current = [];
+			for (const handle of routeArrowHandlesRef.current.values())
+				handle.remove();
+			routeArrowHandlesRef.current.clear();
 			routeArrowAnimCleanupRef.current?.();
 			routeArrowAnimCleanupRef.current = null;
 		}
@@ -478,6 +549,18 @@ export function useSantiagoMap(
 		prevOrigenRef.current = origen;
 		prevDestinoRef.current = destino;
 	}, [origen, destino, resetView]);
+
+	const tripStats = dualSelect?.tripStats;
+	useEffect(() => {
+		const handles = routeArrowHandlesRef.current;
+		if (handles.size === 0) return;
+		const normalized = normalizeStats(tripStats);
+		for (const profile of MODE_PROFILES) {
+			const handle = handles.get(profile.costing);
+			if (!handle) continue;
+			handle.update({ style: arrowStyleFor(profile, normalized) });
+		}
+	}, [tripStats]);
 
 	return {
 		containerRef,

@@ -77,6 +77,7 @@ export function SantiagoMapPage() {
 			onSelectComuna: handleSelectComuna,
 			showNoiseOverlay,
 			onNoiseStatsChange: setSelectedNoiseStats,
+			tripStats,
 			onMapReady: (map) => {
 				mapRef.current = map;
 				setMapReady(true);
