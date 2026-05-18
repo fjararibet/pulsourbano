@@ -251,10 +251,10 @@ export function addRouteArrowLayers(map: MapLibreMap) {
 		source: ROUTE_ARROW_SOURCE_ID,
 		filter: ["==", ["geometry-type"], "LineString"],
 		paint: {
-			"line-color": ["get", "color"],
-			"line-width": thicknessScale(2.4, 4.8),
-			"line-opacity": 0.2,
-			"line-blur": 8,
+			"line-color": "#0f172a",
+			"line-width": thicknessScale(1.55, 2.25),
+			"line-opacity": 0.16,
+			"line-blur": 5,
 		},
 	});
 
@@ -265,9 +265,9 @@ export function addRouteArrowLayers(map: MapLibreMap) {
 		filter: ["==", ["geometry-type"], "LineString"],
 		paint: {
 			"line-color": ["get", "color"],
-			"line-width": thicknessScale(1.8, 3.6),
-			"line-opacity": 0.45,
-			"line-blur": 6,
+			"line-width": thicknessScale(1.25, 1.75),
+			"line-opacity": 0.18,
+			"line-blur": 4,
 		},
 	});
 
@@ -282,8 +282,8 @@ export function addRouteArrowLayers(map: MapLibreMap) {
 		},
 		paint: {
 			"line-color": ["get", "color"],
-			"line-width": thicknessScale(0.75, 1.5),
-			"line-opacity": 0.65,
+			"line-width": thicknessScale(0.88, 1.2),
+			"line-opacity": 0.82,
 		},
 	});
 
@@ -307,9 +307,9 @@ export function addRouteArrowLayers(map: MapLibreMap) {
 			},
 			paint: {
 				"line-color": ["get", "color"],
-				"line-gradient": createRouteArrowGradient(0.5, "#ffffff"),
-				"line-width": thicknessScale(1.05, 2.1),
-				"line-opacity": 0.95,
+				"line-gradient": createRouteArrowGradient(0.5, "#f8fafc"),
+				"line-width": thicknessScale(0.95, 1.25),
+				"line-opacity": 0.9,
 			},
 		});
 	}
@@ -371,11 +371,11 @@ function createRouteArrowGradient(
 		Math.max(0, progress - 0.14),
 		hexToRgba(color, 0),
 		Math.max(0, progress - 0.05),
-		hexToRgba(color, 0.35),
+		hexToRgba(color, 0.32),
 		progress,
-		hexToRgba(color, 0.95),
+		hexToRgba(color, 0.86),
 		Math.min(1, progress + 0.05),
-		hexToRgba(color, 0.35),
+		hexToRgba(color, 0.32),
 		Math.min(1, progress + 0.14),
 		hexToRgba(color, 0),
 		1,

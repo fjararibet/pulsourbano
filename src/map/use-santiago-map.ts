@@ -80,9 +80,9 @@ interface ModeProfile {
 	statsKey: string;
 }
 
-// Thickness range (display units) at routeUsage 0 → 1.
-const THICKNESS_MIN = 2.0;
-const THICKNESS_MAX = 14.0;
+// Thickness range (display units) at routeUsage 0 -> 1.
+const THICKNESS_MIN = 1.0;
+const THICKNESS_MAX = 4.4;
 // Comet cycle period (seconds) at transportSpeed 1 → 0. Lower cycle = faster sweep.
 const CYCLE_FAST = 1.0;
 const CYCLE_SLOW = 3.4;
@@ -92,7 +92,7 @@ const CYCLE_SLOW = 3.4;
 const MODE_PROFILES: ModeProfile[] = [
 	{
 		costing: "auto",
-		color: "#f59e0b",
+		color: "#b45309",
 		lateralOffset: 0.55,
 		routeUsage: 0.85,
 		transportSpeed: 1.0,
@@ -100,7 +100,7 @@ const MODE_PROFILES: ModeProfile[] = [
 	},
 	{
 		costing: "bus",
-		color: "#3b82f6",
+		color: "#1d4ed8",
 		lateralOffset: -0.35,
 		routeUsage: 0.55,
 		transportSpeed: 0.45,
@@ -108,7 +108,7 @@ const MODE_PROFILES: ModeProfile[] = [
 	},
 	{
 		costing: "metro",
-		color: "#ef4444",
+		color: "#be123c",
 		lateralOffset: 0.0,
 		routeUsage: 0.65,
 		transportSpeed: 0.7,
@@ -116,7 +116,7 @@ const MODE_PROFILES: ModeProfile[] = [
 	},
 	{
 		costing: "bicycle",
-		color: "#10b981",
+		color: "#047857",
 		lateralOffset: 0.15,
 		routeUsage: 0.25,
 		transportSpeed: 0.35,

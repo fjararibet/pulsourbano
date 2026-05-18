@@ -6,7 +6,7 @@ import type {
 import type { CostingMode } from "#/lib/route-store";
 import { ROUTE_ARROW_CORE_LAYER_BY_MODE } from "./config";
 
-const HIGHLIGHT_COLOR = "#ffffff";
+const HIGHLIGHT_COLOR = "#f8fafc";
 
 export interface ArrowStyle {
 	color?: string;
@@ -35,10 +35,10 @@ export interface ArrowMapLibreManager {
 }
 
 const COSTING_COLORS: Record<CostingMode, string> = {
-	auto: "#f59e0b",
-	bus: "#3b82f6",
-	bicycle: "#10b981",
-	metro: "#ef4444",
+	auto: "#b45309",
+	bus: "#1d4ed8",
+	bicycle: "#047857",
+	metro: "#be123c",
 };
 
 function hexToRgba(hex: string, alpha: number): string {
@@ -54,9 +54,9 @@ type CometStop = readonly [position: number, alpha: number];
 
 const COMET_SHAPE: readonly CometStop[] = [
 	[-0.14, 0],
-	[-0.05, 0.2],
-	[0, 0.55],
-	[0.05, 0.2],
+	[-0.05, 0.28],
+	[0, 0.78],
+	[0.05, 0.28],
 	[0.14, 0],
 ];
 
