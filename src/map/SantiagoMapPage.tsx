@@ -3,6 +3,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import type { Map as MapLibreMap } from "maplibre-gl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ModoRow } from "#/lib/comparador/comparador-types";
+import { redistributePercentages } from "#/lib/comparador/sliders";
 import { getComparadorStats } from "#/routes/api/comparador/stats.fn";
 import { DESTINO_COLOR, ORIGEN_COLOR } from "./config";
 import { MapLegend } from "./Legend";
@@ -41,6 +42,7 @@ export function SantiagoMapPage() {
 		useState<SelectedNoiseStats>(EMPTY_NOISE_STATS);
 	const [tripStats, setTripStats] = useState<ModoRow[]>([]);
 	const [tripStatsLoading, setTripStatsLoading] = useState(false);
+	const [modePercentages, setModePercentages] = useState<number[] | null>(null);
 	const mapRef = useRef<MapLibreMap | null>(null);
 	const savedViewRef = useRef<{
 		center: [number, number];
@@ -145,6 +147,7 @@ export function SantiagoMapPage() {
 		if (!selections.origen || !selections.destino) {
 			setTripStats([]);
 			setTripStatsLoading(false);
+			setModePercentages(null);
 			return;
 		}
 		let cancelled = false;
@@ -159,11 +162,19 @@ export function SantiagoMapPage() {
 			.then((result) => {
 				if (cancelled) return;
 				setTripStats(result.statsModo);
+				setModePercentages(
+					ROUTE_MODES.map(
+						(route) =>
+							result.statsModo.find((s) => s.modo === route.statsKey)
+								?.porcentaje ?? 0,
+					),
+				);
 			})
 			.catch((err) => {
 				if (cancelled) return;
 				console.error("[getComparadorStats] client error:", err);
 				setTripStats([]);
+				setModePercentages(null);
 			})
 			.finally(() => {
 				if (cancelled) return;
@@ -358,10 +369,11 @@ export function SantiagoMapPage() {
 									<p className="m-0 text-[9px] font-black uppercase tracking-[0.18em] text-[#5b777c]">
 										Rutas
 									</p>
-									{ROUTE_MODES.map((route) => {
+									{ROUTE_MODES.map((route, i) => {
 										const stat = tripStats.find(
 											(s) => s.modo === route.statsKey,
 										);
+										const value = modePercentages?.[i] ?? 0;
 										return (
 											<ModeStatsRow
 												key={route.key}
@@ -369,6 +381,19 @@ export function SantiagoMapPage() {
 												label={route.label}
 												stat={stat}
 												loading={tripStatsLoading}
+												value={value}
+												disabled={
+													tripStatsLoading || modePercentages === null
+												}
+												onChange={(v) =>
+													setModePercentages((prev) =>
+														redistributePercentages(
+															prev ?? ROUTE_MODES.map(() => 0),
+															i,
+															v,
+														),
+													)
+												}
 											/>
 										);
 									})}
@@ -461,13 +486,20 @@ function ModeStatsRow({
 	label,
 	stat,
 	loading,
+	value,
+	disabled,
+	onChange,
 }: {
 	color: string;
 	label: string;
 	stat: ModoRow | undefined;
 	loading: boolean;
+	value: number;
+	disabled: boolean;
+	onChange: (v: number) => void;
 }) {
 	const hasStat = Boolean(stat && stat.n_viajes > 0);
+	const rounded = Math.round(value * 10) / 10;
 	return (
 		<div className="flex items-start gap-2">
 			<span
@@ -477,14 +509,26 @@ function ModeStatsRow({
 			<div className="min-w-0 flex-1">
 				<div className="flex items-baseline justify-between gap-2">
 					<span className="text-xs font-semibold text-[#102f37]">{label}</span>
-					{hasStat && stat ? (
-						<span className="text-[10px] font-bold text-[#24525b]">
-							{stat.porcentaje}% · {stat.n_viajes.toLocaleString("es-CL")}{" "}
-							viajes
-						</span>
-					) : null}
+					<span className="text-[10px] font-bold text-[#24525b]">
+						{rounded.toFixed(1)}%
+						{hasStat && stat
+							? ` · ${stat.n_viajes.toLocaleString("es-CL")} viajes`
+							: null}
+					</span>
 				</div>
-				<p className="m-0 text-[10px] font-medium text-[#5b777c]">
+				<input
+					type="range"
+					min={0}
+					max={100}
+					step={0.1}
+					value={rounded}
+					disabled={disabled}
+					onChange={(e) => onChange(Number(e.target.value))}
+					className="mt-1 h-1 w-full cursor-pointer appearance-none rounded-full bg-[#eef4eb] accent-[#24525b] disabled:cursor-not-allowed disabled:opacity-50"
+					style={{ accentColor: color }}
+					aria-label={`Porcentaje de ${label}`}
+				/>
+				<p className="m-0 mt-1 text-[10px] font-medium text-[#5b777c]">
 					{loading
 						? "Cargando…"
 						: hasStat && stat
