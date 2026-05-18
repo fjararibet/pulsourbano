@@ -89,6 +89,7 @@ export function NoiseGauge({ db, compact = false }: NoiseGaugeProps) {
 	const rotation = needleAngle - 270;
 	const label = hasValue ? `${db.toFixed(1)} dB(A)` : "— dB(A)";
 	const activeColor = hasValue ? "#dc2626" : "#94a3b8";
+	const textColor = hasValue ? "var(--noise-gauge-text)" : "#9ca3af";
 	const width = compact ? 112 : 148;
 	const height = compact ? 90 : 118;
 
@@ -113,7 +114,7 @@ export function NoiseGauge({ db, compact = false }: NoiseGaugeProps) {
 					dominantBaseline="middle"
 					fontSize="13"
 					fontWeight="800"
-					fill={hasValue ? "#244b52" : "#9ca3af"}
+					fill={textColor}
 					fontFamily="system-ui, -apple-system, sans-serif"
 				>
 					dB
@@ -158,7 +159,7 @@ export function NoiseGauge({ db, compact = false }: NoiseGaugeProps) {
 			{/* Valor dB escrito bajo la aguja */}
 			<p
 				className={`-mt-2 text-[12px] font-black tabular-nums leading-none tracking-tight ${
-					hasValue ? "text-[#102f37]" : "text-[#9ca3af]"
+					hasValue ? "text-[#102f37] dark:text-[#e8f3f6]" : "text-[#9ca3af]"
 				}`}
 			>
 				{label}

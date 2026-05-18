@@ -1,3 +1,4 @@
+import { Monitor, Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 
 type ThemeMode = "light" | "dark" | "auto";
@@ -64,8 +65,11 @@ export default function ThemeToggle() {
 
 	const label =
 		mode === "auto"
-			? "Theme mode: auto (system). Click to switch to light mode."
-			: `Theme mode: ${mode}. Click to switch mode.`;
+			? "Tema: automático según el sistema. Cambiar a modo claro."
+			: `Tema: ${mode === "dark" ? "oscuro" : "claro"}. Cambiar modo.`;
+	const Icon = mode === "auto" ? Monitor : mode === "dark" ? Moon : Sun;
+	const text =
+		mode === "auto" ? "Automático" : mode === "dark" ? "Oscuro" : "Claro";
 
 	return (
 		<button
@@ -73,9 +77,10 @@ export default function ThemeToggle() {
 			onClick={toggleMode}
 			aria-label={label}
 			title={label}
-			className="rounded-full border border-[#b9d7d1] bg-white/90 px-3 py-1.5 text-sm font-semibold text-[#24525b] shadow-[0_8px_22px_rgba(16,47,55,0.14)] backdrop-blur transition hover:-translate-y-0.5 hover:bg-white dark:border-white/15 dark:bg-[#0b1720]/88 dark:text-[#d8f6ff] dark:shadow-[0_8px_24px_rgba(0,0,0,0.35)] dark:hover:bg-[#122432]/92"
+			className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#b9d7d1] bg-white/90 text-[#24525b] shadow-[0_8px_22px_rgba(16,47,55,0.14)] backdrop-blur transition hover:-translate-y-0.5 hover:bg-white dark:border-white/15 dark:bg-[#0b1720]/88 dark:text-[#d8f6ff] dark:shadow-[0_8px_24px_rgba(0,0,0,0.35)] dark:hover:bg-[#122432]/92"
 		>
-			{mode === "auto" ? "Auto" : mode === "dark" ? "Dark" : "Light"}
+			<Icon className="h-4 w-4" aria-hidden="true" />
+			<span className="sr-only">{text}</span>
 		</button>
 	);
 }

@@ -18,6 +18,7 @@ body {
 	font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
 	background: #edf4e8;
 	color: #102f37;
+	--noise-gauge-text: #244b52;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
@@ -25,6 +26,7 @@ body {
 html.dark body {
 	background: #071118;
 	color: #e8f3f6;
+	--noise-gauge-text: #e8f3f6;
 }
 
 button {

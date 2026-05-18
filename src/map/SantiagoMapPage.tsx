@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, RotateCcw } from "lucide-react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { Map as MapLibreMap } from "maplibre-gl";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -242,26 +242,26 @@ export function SantiagoMapPage() {
 				</div>
 			)}
 
-			<div className="absolute right-3 top-3 z-20 sm:right-4 sm:top-4">
-				<ThemeToggle />
-			</div>
-
-			<section className="pointer-events-none absolute bottom-0 left-0 right-0 z-10 flex flex-col items-end gap-2 p-2 sm:pointer-events-auto sm:inset-y-0 sm:left-0 sm:right-auto sm:w-80 sm:items-start sm:overflow-y-auto sm:border-r sm:border-white/70 sm:bg-white/90 sm:p-4 sm:shadow-[4px_0_24px_rgba(16,47,55,0.1)] sm:backdrop-blur-xl">
-				{hasSelection && isCollapsed ? (
-					<button
-						type="button"
-						onClick={() => {
-							clearSelections();
-							resetView();
-						}}
-						className="pointer-events-auto rounded-full border border-[#b9d7d1] bg-white/90 px-3 py-1.5 text-xs font-bold text-[#24525b] shadow-[0_8px_24px_rgba(16,47,55,0.18)] backdrop-blur transition hover:border-[#5bb6a6] hover:bg-white sm:hidden"
-					>
-						Reiniciar
-					</button>
-				) : null}
-
-				<div className="pointer-events-auto flex max-h-[calc(100svh-1rem)] w-full flex-col rounded-2xl border border-white/70 bg-white/90 px-4 py-3 shadow-[0_-12px_40px_rgba(16,47,55,0.16)] backdrop-blur-xl sm:block sm:max-h-none sm:rounded-none sm:border-0 sm:bg-transparent sm:shadow-none sm:backdrop-blur-none">
-					<div className="sticky top-0 z-10 flex w-full items-center gap-1.5 bg-white/90 pb-1 backdrop-blur-xl sm:hidden">
+			<section className="pointer-events-none absolute bottom-0 left-0 right-0 z-10 flex flex-col items-end gap-2 p-2 sm:pointer-events-auto sm:inset-y-0 sm:left-0 sm:right-auto sm:w-80 sm:items-start sm:overflow-y-auto sm:border-r sm:border-white/70 sm:bg-white/90 sm:p-4 sm:shadow-[4px_0_24px_rgba(16,47,55,0.1)] sm:backdrop-blur-xl sm:dark:border-white/10 sm:dark:bg-[#08141c]/88 sm:dark:shadow-[4px_0_30px_rgba(0,0,0,0.38)]">
+				<div className="pointer-events-auto flex max-h-[calc(100svh-1rem)] w-full flex-col rounded-2xl border border-white/70 bg-white/90 px-4 py-3 shadow-[0_-12px_40px_rgba(16,47,55,0.16)] backdrop-blur-xl dark:border-white/10 dark:bg-[#08141c]/90 dark:shadow-[0_-12px_42px_rgba(0,0,0,0.42)] sm:block sm:max-h-none sm:rounded-none sm:border-0 sm:bg-transparent sm:shadow-none sm:backdrop-blur-none sm:dark:bg-transparent sm:dark:shadow-none">
+					<div className="mb-2 flex items-center justify-end gap-2 sm:mb-3">
+						{hasSelection ? (
+							<button
+								type="button"
+								onClick={() => {
+									clearSelections();
+									resetView();
+								}}
+								className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#b9d7d1] bg-white/90 text-[#24525b] shadow-[0_8px_24px_rgba(16,47,55,0.12)] transition hover:border-[#5bb6a6] hover:bg-white dark:border-white/15 dark:bg-[#0d1b26]/85 dark:text-[#d8f6ff] dark:shadow-[0_8px_24px_rgba(0,0,0,0.28)] dark:hover:bg-[#142838]"
+								aria-label="Reiniciar selección"
+								title="Reiniciar selección"
+							>
+								<RotateCcw className="h-4 w-4" aria-hidden="true" />
+							</button>
+						) : null}
+						<ThemeToggle />
+					</div>
+					<div className="sticky top-0 z-10 flex w-full items-center gap-1.5 bg-white/90 pb-1 backdrop-blur-xl dark:bg-[#08141c]/90 sm:hidden">
 						<button
 							type="button"
 							onClick={() => setIsCollapsed((v) => !v)}
@@ -275,28 +275,30 @@ export function SantiagoMapPage() {
 											className="h-2 w-2 shrink-0 rounded-full"
 											style={{ backgroundColor: ORIGEN_COLOR }}
 										/>
-										<span className="truncate text-xs font-bold text-[#102f37]">
+										<span className="truncate text-xs font-bold text-[#102f37] dark:text-[#e8f3f6]">
 											{selections.origen}
 										</span>
 										{selections.destino ? (
 											<>
-												<span className="text-[10px] text-[#5b777c]">→</span>
+												<span className="text-[10px] text-[#5b777c] dark:text-[#9fb4bd]">
+													→
+												</span>
 												<span
 													className="h-2 w-2 shrink-0 rounded-full"
 													style={{ backgroundColor: DESTINO_COLOR }}
 												/>
-												<span className="truncate text-xs font-bold text-[#102f37]">
+												<span className="truncate text-xs font-bold text-[#102f37] dark:text-[#e8f3f6]">
 													{selections.destino}
 												</span>
 											</>
 										) : (
-											<span className="truncate text-[10px] text-[#5b777c]">
+											<span className="truncate text-[10px] text-[#5b777c] dark:text-[#9fb4bd]">
 												→ elige destino
 											</span>
 										)}
 									</>
 								) : (
-									<span className="text-xs font-medium text-[#5b777c]">
+									<span className="text-xs font-medium text-[#5b777c] dark:text-[#9fb4bd]">
 										Selecciona una comuna
 									</span>
 								)}
@@ -309,7 +311,7 @@ export function SantiagoMapPage() {
 								className={`shrink-0 rounded-full border px-1.5 py-0.5 text-[10px] font-bold leading-tight transition ${
 									showOD
 										? "border-[#e67e22] bg-[#e67e22] text-white"
-										: "border-[#b9d7d1] text-[#24525b] hover:border-[#e67e22]"
+										: "border-[#b9d7d1] text-[#24525b] hover:border-[#e67e22] dark:border-white/15 dark:text-[#d8f6ff] dark:hover:border-[#e67e22]"
 								}`}
 							>
 								Destinos regulares
@@ -322,36 +324,21 @@ export function SantiagoMapPage() {
 							aria-label={isCollapsed ? "Expandir panel" : "Colapsar panel"}
 						>
 							{isCollapsed ? (
-								<ChevronUp className="h-4 w-4 text-[#5b777c]" />
+								<ChevronUp className="h-4 w-4 text-[#5b777c] dark:text-[#9fb4bd]" />
 							) : (
-								<ChevronDown className="h-4 w-4 text-[#5b777c]" />
+								<ChevronDown className="h-4 w-4 text-[#5b777c] dark:text-[#9fb4bd]" />
 							)}
 						</button>
 					</div>
 					<div
 						className={`${isCollapsed ? "hidden" : "mt-2 overflow-y-auto pr-1"} sm:mt-0 sm:block sm:overflow-visible sm:pr-0`}
 					>
-						{hasSelection ? (
-							<div className="mb-3 flex justify-end sm:mb-4">
-								<button
-									type="button"
-									onClick={() => {
-										clearSelections();
-										resetView();
-									}}
-									className="rounded-full border border-[#b9d7d1] bg-white/90 px-3 py-1.5 text-xs font-bold text-[#24525b] shadow-[0_8px_24px_rgba(16,47,55,0.12)] transition hover:border-[#5bb6a6] hover:bg-white"
-								>
-									Reiniciar
-								</button>
-							</div>
-						) : null}
-
-						<div className="mb-3 flex items-center justify-between gap-3 rounded-2xl bg-[#f1f7f4] p-2.5 sm:mb-4">
+						<div className="mb-3 flex items-center justify-between gap-3 rounded-2xl bg-[#f1f7f4] p-2.5 dark:bg-white/[0.06] sm:mb-4">
 							<div className="min-w-0">
-								<p className="m-0 text-[9px] font-black uppercase tracking-[0.18em] text-[#5b777c]">
+								<p className="m-0 text-[9px] font-black uppercase tracking-[0.18em] text-[#5b777c] dark:text-[#9fb4bd]">
 									Capa de ruido
 								</p>
-								<p className="m-0 mt-1 text-xs font-bold text-[#315a61]">
+								<p className="m-0 mt-1 text-xs font-bold text-[#315a61] dark:text-[#d6e8ee]">
 									Muestra dB(A) por comuna
 								</p>
 							</div>
@@ -362,15 +349,15 @@ export function SantiagoMapPage() {
 								className={`shrink-0 rounded-full border px-3 py-1.5 text-xs font-bold transition ${
 									showNoiseOverlay
 										? "border-[#dc2626] bg-[#dc2626] text-white"
-										: "border-[#b9d7d1] bg-white/80 text-[#24525b] hover:border-[#dc2626]"
+										: "border-[#b9d7d1] bg-white/80 text-[#24525b] hover:border-[#dc2626] dark:border-white/15 dark:bg-[#0d1b26]/80 dark:text-[#d8f6ff] dark:hover:border-[#dc2626]"
 								}`}
 							>
-								{showNoiseOverlay ? "ON" : "OFF"}
+								{showNoiseOverlay ? "Activo" : "Inactivo"}
 							</button>
 						</div>
 
 						{showNoiseOverlay ? (
-							<div className="mb-3 flex items-center gap-3 rounded-2xl border border-red-100 bg-red-50/70 p-2.5 sm:mb-4 sm:flex-col sm:items-center">
+							<div className="mb-3 flex items-center gap-3 rounded-2xl border border-red-100 bg-red-50/70 p-2.5 dark:border-red-400/20 dark:bg-red-950/22 sm:mb-4 sm:flex-col sm:items-center">
 								<div className="sm:hidden">
 									<NoiseGauge db={activeNoiseDb} compact />
 								</div>
@@ -378,10 +365,10 @@ export function SantiagoMapPage() {
 									<NoiseGauge db={activeNoiseDb} />
 								</div>
 								<div className="min-w-0">
-									<p className="m-0 text-[9px] font-black uppercase tracking-[0.18em] text-[#5b777c]">
+									<p className="m-0 text-[9px] font-black uppercase tracking-[0.18em] text-[#5b777c] dark:text-[#fca5a5]">
 										Ruido dB(A)
 									</p>
-									<p className="m-0 mt-1 text-xs font-bold text-[#315a61]">
+									<p className="m-0 mt-1 text-xs font-bold text-[#315a61] dark:text-[#fee2e2]">
 										{activeNoiseDb !== null
 											? "Promedio de comuna seleccionada"
 											: hasSelection
@@ -410,8 +397,8 @@ export function SantiagoMapPage() {
 									destino={selections.destino}
 									stats={selectedNoiseStats}
 								/>
-								<div className="mt-3 flex flex-col gap-1.5 border-t border-[#dce8e3] pt-3">
-									<p className="m-0 text-[9px] font-black uppercase tracking-[0.18em] text-[#5b777c]">
+								<div className="mt-3 flex flex-col gap-1.5 border-t border-[#dce8e3] pt-3 dark:border-white/10">
+									<p className="m-0 text-[9px] font-black uppercase tracking-[0.18em] text-[#5b777c] dark:text-[#9fb4bd]">
 										Rutas
 									</p>
 									{ROUTE_MODES.map((route, i) => {
@@ -455,7 +442,7 @@ export function SantiagoMapPage() {
 										className="h-3 w-3 shrink-0 rounded-full"
 										style={{ backgroundColor: ORIGEN_COLOR }}
 									/>
-									<span className="text-sm font-bold text-[#102f37]">
+									<span className="text-sm font-bold text-[#102f37] dark:text-[#e8f3f6]">
 										{selections.origen}
 									</span>
 									<button
@@ -464,7 +451,7 @@ export function SantiagoMapPage() {
 										className={`hidden shrink-0 rounded-full border px-2 py-0.5 text-sm font-bold transition sm:inline-flex ${
 											showOD
 												? "border-[#e67e22] bg-[#e67e22] text-white"
-												: "border-[#b9d7d1] text-[#24525b] hover:border-[#e67e22]"
+												: "border-[#b9d7d1] text-[#24525b] hover:border-[#e67e22] dark:border-white/15 dark:text-[#d8f6ff] dark:hover:border-[#e67e22]"
 										}`}
 									>
 										Destinos regulares
@@ -478,7 +465,7 @@ export function SantiagoMapPage() {
 												destino: null,
 											}))
 										}
-										className="ml-auto shrink-0 rounded-full p-1 text-[10px] font-bold text-[#5b777c] transition hover:bg-[#eef4f1] hover:text-[#24525b]"
+										className="ml-auto shrink-0 rounded-full p-1 text-[10px] font-bold text-[#5b777c] transition hover:bg-[#eef4f1] hover:text-[#24525b] dark:text-[#9fb4bd] dark:hover:bg-white/10 dark:hover:text-[#d8f6ff]"
 										aria-label="Quitar origen"
 									>
 										x
@@ -490,12 +477,12 @@ export function SantiagoMapPage() {
 									destino={null}
 									stats={selectedNoiseStats}
 								/>
-								<p className="m-0 text-center text-xs font-medium text-[#5b777c]">
+								<p className="m-0 text-center text-xs font-medium text-[#5b777c] dark:text-[#9fb4bd]">
 									Selecciona una comuna de destino
 								</p>
 							</div>
 						) : (
-							<p className="m-0 text-center text-xs font-medium text-[#5b777c]">
+							<p className="m-0 text-center text-xs font-medium text-[#5b777c] dark:text-[#9fb4bd]">
 								Selecciona una comuna de origen
 							</p>
 						)}
@@ -523,7 +510,7 @@ function SelectedComunaLine({
 				className="h-3 w-3 shrink-0 rounded-full"
 				style={{ backgroundColor: color }}
 			/>
-			<span className="text-sm font-bold text-[#102f37]">
+			<span className="text-sm font-bold text-[#102f37] dark:text-[#e8f3f6]">
 				{label}: {name}
 			</span>
 		</div>
@@ -557,8 +544,10 @@ function ModeStatsRow({
 			/>
 			<div className="min-w-0 flex-1">
 				<div className="flex items-baseline justify-between gap-2">
-					<span className="text-xs font-semibold text-[#102f37]">{label}</span>
-					<span className="text-[10px] font-bold text-[#24525b]">
+					<span className="text-xs font-semibold text-[#102f37] dark:text-[#e8f3f6]">
+						{label}
+					</span>
+					<span className="text-[10px] font-bold text-[#24525b] dark:text-[#a9dce6]">
 						{rounded.toFixed(1)}%
 					</span>
 				</div>
@@ -570,11 +559,11 @@ function ModeStatsRow({
 					value={rounded}
 					disabled={disabled}
 					onChange={(e) => onChange(Number(e.target.value))}
-					className="mt-1 h-1 w-full cursor-pointer appearance-none rounded-full bg-[#eef4eb] accent-[#24525b] disabled:cursor-not-allowed disabled:opacity-50"
+					className="mt-1 h-1 w-full cursor-pointer appearance-none rounded-full bg-[#eef4eb] accent-[#24525b] disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white/12"
 					style={{ accentColor: color }}
 					aria-label={`Porcentaje de ${label}`}
 				/>
-				<p className="m-0 mt-1 text-[10px] font-medium text-[#5b777c]">
+				<p className="m-0 mt-1 text-[10px] font-medium text-[#5b777c] dark:text-[#9fb4bd]">
 					{loading
 						? "Cargando…"
 						: hasStat && stat
@@ -598,14 +587,16 @@ function EmissionsPanel({
 	hasData: boolean;
 }) {
 	return (
-		<div className="mt-3 flex flex-col gap-2 border-t border-[#dce8e3] pt-3">
-			<p className="m-0 text-[9px] font-black uppercase tracking-[0.18em] text-[#5b777c]">
+		<div className="mt-3 flex flex-col gap-2 border-t border-[#dce8e3] pt-3 dark:border-white/10">
+			<p className="m-0 text-[9px] font-black uppercase tracking-[0.18em] text-[#5b777c] dark:text-[#9fb4bd]">
 				Impacto ambiental
 			</p>
 			{loading ? (
-				<p className="m-0 text-[10px] font-medium text-[#5b777c]">Cargando…</p>
+				<p className="m-0 text-[10px] font-medium text-[#5b777c] dark:text-[#9fb4bd]">
+					Cargando…
+				</p>
 			) : !hasData ? (
-				<p className="m-0 text-[10px] font-medium text-[#5b777c]">
+				<p className="m-0 text-[10px] font-medium text-[#5b777c] dark:text-[#9fb4bd]">
 					Sin datos para esta combinación
 				</p>
 			) : (
@@ -634,28 +625,36 @@ function EmissionsPanel({
 					/>
 				</div>
 			)}
-			<div className="mt-1 rounded-xl bg-[#f1f7f4] p-2.5">
-				<p className="m-0 text-[9px] font-black uppercase tracking-[0.18em] text-[#5b777c]">
+			<div className="mt-1 rounded-xl bg-[#f1f7f4] p-2.5 dark:bg-white/[0.06]">
+				<p className="m-0 text-[9px] font-black uppercase tracking-[0.18em] text-[#5b777c] dark:text-[#9fb4bd]">
 					Cómo se calcula
 				</p>
-				<ul className="m-0 mt-1.5 list-disc space-y-1 pl-3.5 text-[10px] leading-snug text-[#5b777c]">
+				<ul className="m-0 mt-1.5 list-disc space-y-1 pl-3.5 text-[10px] leading-snug text-[#5b777c] dark:text-[#9fb4bd]">
 					<li>
-						<span className="font-bold text-[#102f37]">CO₂:</span> distancia
-						(km) ÷ 15 km/L × 2.67 kg CO₂/L × cantidad de vehículos.
+						<span className="font-bold text-[#102f37] dark:text-[#e8f3f6]">
+							CO₂:
+						</span>{" "}
+						distancia (km) ÷ 15 km/L × 2.67 kg CO₂/L × cantidad de vehículos.
 					</li>
 					<li>
-						<span className="font-bold text-[#102f37]">PM2.5:</span> distancia ×
-						vehículos × 0.005 g/km.
+						<span className="font-bold text-[#102f37] dark:text-[#e8f3f6]">
+							PM2.5:
+						</span>{" "}
+						distancia × vehículos × 0.005 g/km.
 					</li>
 					<li>
-						<span className="font-bold text-[#102f37]">AQI:</span> estimación
-						derivada del PM2.5 (se usa el total de gramos emitidos como proxy de
-						µg/m³).
+						<span className="font-bold text-[#102f37] dark:text-[#e8f3f6]">
+							AQI:
+						</span>{" "}
+						estimación derivada del PM2.5 (se usa el total de gramos emitidos
+						como proxy de µg/m³).
 					</li>
 					<li>
-						<span className="font-bold text-[#102f37]">Vehículos:</span> Auto =
-						1 viaje/auto; Bus = 30 viajes/bus. Metro y modos no motorizados no
-						emiten en este cálculo.
+						<span className="font-bold text-[#102f37] dark:text-[#e8f3f6]">
+							Vehículos:
+						</span>{" "}
+						Auto = 1 viaje/auto; Bus = 30 viajes/bus. Metro y modos no
+						motorizados no emiten en este cálculo.
 					</li>
 				</ul>
 			</div>
@@ -701,28 +700,28 @@ function EmissionMetric({
 				: direction === "up";
 	const deltaColor =
 		isImprovement === null
-			? "text-[#5b777c]"
+			? "text-[#5b777c] dark:text-[#9fb4bd]"
 			: isImprovement
 				? "text-[#15803d]"
 				: "text-[#b91c1c]";
 	const arrow = direction === "flat" ? "·" : direction === "down" ? "▼" : "▲";
 
 	return (
-		<div className="rounded-xl bg-[#f1f7f4] p-2">
+		<div className="rounded-xl bg-[#f1f7f4] p-2 dark:bg-white/[0.06]">
 			<div className="flex items-baseline gap-1">
-				<span className="text-[10px] font-black uppercase tracking-wider text-[#5b777c]">
+				<span className="text-[10px] font-black uppercase tracking-wider text-[#5b777c] dark:text-[#9fb4bd]">
 					{label}
 				</span>
 				{sublabel ? (
-					<span className="text-[8px] font-medium text-[#5b777c]">
+					<span className="text-[8px] font-medium text-[#5b777c] dark:text-[#9fb4bd]">
 						({sublabel})
 					</span>
 				) : null}
 			</div>
-			<p className="m-0 mt-0.5 text-sm font-black text-[#102f37]">
+			<p className="m-0 mt-0.5 text-sm font-black text-[#102f37] dark:text-[#e8f3f6]">
 				{formatValue(simulatedValue)}
 				{unit ? (
-					<span className="ml-0.5 text-[10px] font-bold text-[#5b777c]">
+					<span className="ml-0.5 text-[10px] font-bold text-[#5b777c] dark:text-[#9fb4bd]">
 						{unit}
 					</span>
 				) : null}
@@ -736,7 +735,7 @@ function EmissionMetric({
 						? "·"
 						: `${arrow} —`}
 			</p>
-			<p className="m-0 text-[9px] font-medium text-[#5b777c]">
+			<p className="m-0 text-[9px] font-medium text-[#5b777c] dark:text-[#9fb4bd]">
 				base: {formatValue(baselineValue)}
 				{unit ? ` ${unit}` : ""}
 			</p>
@@ -758,8 +757,8 @@ function NoiseSelectionSummary({
 	if (!show) return null;
 
 	return (
-		<div className="mt-3 rounded-2xl border border-red-100 bg-red-50/70 p-2.5">
-			<p className="m-0 text-[9px] font-black uppercase tracking-[0.18em] text-red-700">
+		<div className="mt-3 rounded-2xl border border-red-100 bg-red-50/70 p-2.5 dark:border-red-400/20 dark:bg-red-950/22">
+			<p className="m-0 text-[9px] font-black uppercase tracking-[0.18em] text-red-700 dark:text-[#fca5a5]">
 				Ruido ambiental
 			</p>
 			<div className="mt-2 flex flex-col gap-1.5">
@@ -784,16 +783,16 @@ function NoiseStatRow({
 	stat: NoiseComunaStats | null;
 }) {
 	return (
-		<div className="flex items-start gap-2 rounded-xl bg-white/70 px-2 py-1.5">
+		<div className="flex items-start gap-2 rounded-xl bg-white/70 px-2 py-1.5 dark:bg-white/[0.07]">
 			<span
 				className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full"
 				style={{ backgroundColor: stat?.accent ?? "#9ca3af" }}
 			/>
 			<div className="min-w-0">
-				<p className="m-0 truncate text-xs font-black text-[#102f37]">
+				<p className="m-0 truncate text-xs font-black text-[#102f37] dark:text-[#e8f3f6]">
 					{label}: {name}
 				</p>
-				<p className="m-0 text-[11px] font-semibold text-[#5b777c]">
+				<p className="m-0 text-[11px] font-semibold text-[#5b777c] dark:text-[#9fb4bd]">
 					{stat
 						? `${stat.dbPromedioComunal.toFixed(1)} dB(A) promedio · rango ${stat.dbMinComunal}-${stat.dbMaxComunal}`
 						: "Sin datos de ruido para esta comuna"}

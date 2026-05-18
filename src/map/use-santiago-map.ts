@@ -83,7 +83,11 @@ function applyMapTheme(map: MapLibreMap, theme: ResolvedTheme) {
 	const isDark = theme === "dark";
 	const setVisibility = (layerId: string, visible: boolean) => {
 		if (map.getLayer(layerId)) {
-			map.setLayoutProperty(layerId, "visibility", visible ? "visible" : "none");
+			map.setLayoutProperty(
+				layerId,
+				"visibility",
+				visible ? "visible" : "none",
+			);
 		}
 	};
 
