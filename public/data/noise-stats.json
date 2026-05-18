@@ -1,0 +1,247 @@
+[
+  {
+    "comuna": "CERRILLOS",
+    "dbPromedioComunal": 65.2,
+    "dbMinComunal": 50,
+    "dbMaxComunal": 85,
+    "accent": "#ef4444"
+  },
+  {
+    "comuna": "CERRO NAVIA",
+    "dbPromedioComunal": 64,
+    "dbMinComunal": 50,
+    "dbMaxComunal": 85,
+    "accent": "#fb923c"
+  },
+  {
+    "comuna": "CONCHALÍ",
+    "dbPromedioComunal": 67,
+    "dbMinComunal": 55,
+    "dbMaxComunal": 80,
+    "accent": "#ef4444"
+  },
+  {
+    "comuna": "EL BOSQUE",
+    "dbPromedioComunal": 52.5,
+    "dbMinComunal": 45,
+    "dbMaxComunal": 65,
+    "accent": "#fef08a"
+  },
+  {
+    "comuna": "ESTACIÓN CENTRAL",
+    "dbPromedioComunal": 63.3,
+    "dbMinComunal": 50,
+    "dbMaxComunal": 75,
+    "accent": "#fb923c"
+  },
+  {
+    "comuna": "HUECHURABA",
+    "dbPromedioComunal": 62.6,
+    "dbMinComunal": 40,
+    "dbMaxComunal": 85,
+    "accent": "#fb923c"
+  },
+  {
+    "comuna": "INDEPENDENCIA",
+    "dbPromedioComunal": 66,
+    "dbMinComunal": 50,
+    "dbMaxComunal": 85,
+    "accent": "#ef4444"
+  },
+  {
+    "comuna": "LA CISTERNA",
+    "dbPromedioComunal": 67.4,
+    "dbMinComunal": 55,
+    "dbMaxComunal": 85,
+    "accent": "#ef4444"
+  },
+  {
+    "comuna": "LA FLORIDA",
+    "dbPromedioComunal": 60.1,
+    "dbMinComunal": 30,
+    "dbMaxComunal": 85,
+    "accent": "#fb923c"
+  },
+  {
+    "comuna": "LA GRANJA",
+    "dbPromedioComunal": 66.8,
+    "dbMinComunal": 55,
+    "dbMaxComunal": 85,
+    "accent": "#ef4444"
+  },
+  {
+    "comuna": "LA PINTANA",
+    "dbPromedioComunal": 56.7,
+    "dbMinComunal": 45,
+    "dbMaxComunal": 85,
+    "accent": "#fdba74"
+  },
+  {
+    "comuna": "LA REINA",
+    "dbPromedioComunal": 61,
+    "dbMinComunal": 40,
+    "dbMaxComunal": 80,
+    "accent": "#fb923c"
+  },
+  {
+    "comuna": "LAS CONDES",
+    "dbPromedioComunal": 63.1,
+    "dbMinComunal": 30,
+    "dbMaxComunal": 85,
+    "accent": "#fb923c"
+  },
+  {
+    "comuna": "LO BARNECHEA",
+    "dbPromedioComunal": 60.1,
+    "dbMinComunal": 30,
+    "dbMaxComunal": 85,
+    "accent": "#fb923c"
+  },
+  {
+    "comuna": "LO ESPEJO",
+    "dbPromedioComunal": 67.5,
+    "dbMinComunal": 55,
+    "dbMaxComunal": 80,
+    "accent": "#ef4444"
+  },
+  {
+    "comuna": "LO PRADO",
+    "dbPromedioComunal": 64.5,
+    "dbMinComunal": 50,
+    "dbMaxComunal": 75,
+    "accent": "#fb923c"
+  },
+  {
+    "comuna": "MACUL",
+    "dbPromedioComunal": 65.1,
+    "dbMinComunal": 50,
+    "dbMaxComunal": 80,
+    "accent": "#ef4444"
+  },
+  {
+    "comuna": "MAIPÚ",
+    "dbPromedioComunal": 61.7,
+    "dbMinComunal": 45,
+    "dbMaxComunal": 85,
+    "accent": "#fb923c"
+  },
+  {
+    "comuna": "ÑUÑOA",
+    "dbPromedioComunal": 68.9,
+    "dbMinComunal": 50,
+    "dbMaxComunal": 80,
+    "accent": "#ef4444"
+  },
+  {
+    "comuna": "PADRE HURTADO",
+    "dbPromedioComunal": 58.1,
+    "dbMinComunal": 40,
+    "dbMaxComunal": 70,
+    "accent": "#fdba74"
+  },
+  {
+    "comuna": "PEDRO AGUIRRE CERDA",
+    "dbPromedioComunal": 65.4,
+    "dbMinComunal": 55,
+    "dbMaxComunal": 80,
+    "accent": "#ef4444"
+  },
+  {
+    "comuna": "PEÑALOLÉN",
+    "dbPromedioComunal": 60.9,
+    "dbMinComunal": 40,
+    "dbMaxComunal": 80,
+    "accent": "#fb923c"
+  },
+  {
+    "comuna": "PROVIDENCIA",
+    "dbPromedioComunal": 68.3,
+    "dbMinComunal": 45,
+    "dbMaxComunal": 80,
+    "accent": "#ef4444"
+  },
+  {
+    "comuna": "PUDAHUEL",
+    "dbPromedioComunal": 64.6,
+    "dbMinComunal": 35,
+    "dbMaxComunal": 85,
+    "accent": "#fb923c"
+  },
+  {
+    "comuna": "PUENTE ALTO",
+    "dbPromedioComunal": 57.6,
+    "dbMinComunal": 30,
+    "dbMaxComunal": 80,
+    "accent": "#fdba74"
+  },
+  {
+    "comuna": "QUILICURA",
+    "dbPromedioComunal": 60.2,
+    "dbMinComunal": 30,
+    "dbMaxComunal": 85,
+    "accent": "#fb923c"
+  },
+  {
+    "comuna": "QUINTA NORMAL",
+    "dbPromedioComunal": 66.8,
+    "dbMinComunal": 55,
+    "dbMaxComunal": 85,
+    "accent": "#ef4444"
+  },
+  {
+    "comuna": "RECOLETA",
+    "dbPromedioComunal": 54.6,
+    "dbMinComunal": 40,
+    "dbMaxComunal": 70,
+    "accent": "#fef08a"
+  },
+  {
+    "comuna": "RENCA",
+    "dbPromedioComunal": 63.3,
+    "dbMinComunal": 35,
+    "dbMaxComunal": 80,
+    "accent": "#fb923c"
+  },
+  {
+    "comuna": "SAN BERNARDO",
+    "dbPromedioComunal": 56.1,
+    "dbMinComunal": 30,
+    "dbMaxComunal": 85,
+    "accent": "#fdba74"
+  },
+  {
+    "comuna": "SAN JOAQUÍN",
+    "dbPromedioComunal": 70.6,
+    "dbMinComunal": 50,
+    "dbMaxComunal": 80,
+    "accent": "#b91c1c"
+  },
+  {
+    "comuna": "SAN MIGUEL",
+    "dbPromedioComunal": 67.4,
+    "dbMinComunal": 45,
+    "dbMaxComunal": 80,
+    "accent": "#ef4444"
+  },
+  {
+    "comuna": "SAN RAMÓN",
+    "dbPromedioComunal": 65,
+    "dbMinComunal": 50,
+    "dbMaxComunal": 85,
+    "accent": "#ef4444"
+  },
+  {
+    "comuna": "SANTIAGO",
+    "dbPromedioComunal": 72.5,
+    "dbMinComunal": 55,
+    "dbMaxComunal": 85,
+    "accent": "#b91c1c"
+  },
+  {
+    "comuna": "VITACURA",
+    "dbPromedioComunal": 59.4,
+    "dbMinComunal": 30,
+    "dbMaxComunal": 85,
+    "accent": "#fdba74"
+  }
+]

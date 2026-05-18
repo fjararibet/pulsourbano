@@ -14,11 +14,7 @@ export function MapLegend({
 			{showNoiseOverlay ? (
 				<NoiseGauge db={noiseDb} />
 			) : (
-				<>
-					<LegendRow color={COMUNA_COLOR} label="Comunas RM" />
-					<LegendRow color="#0f8f98" label="Metro" />
-					<LegendRow color="#102f37" label="Estaciones" dot />
-				</>
+				<LegendRow color={COMUNA_COLOR} label="Comunas RM" />
 			)}
 		</aside>
 	);

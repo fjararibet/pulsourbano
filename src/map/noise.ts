@@ -25,6 +25,10 @@ export type NoiseComunaStats = {
 	accent: string;
 };
 
+export type NoiseComunaStatsRecord = Omit<NoiseComunaStats, "accent"> & {
+	accent?: string;
+};
+
 export function createNoiseColorExpression(
 	propertyName = "DB_LO",
 ): ExpressionSpecification {
@@ -50,11 +54,9 @@ export function noiseDbColor(db: number): string {
 }
 
 export function buildNoiseComunaFeatures(
-	noise: GeoJSON.FeatureCollection,
+	statsByComuna: Map<string, NoiseComunaStats>,
 	comunas: GeoJSON.FeatureCollection,
 ): GeoJSON.FeatureCollection {
-	const statsByComuna = buildNoiseComunaStats(noise);
-
 	const features = comunas.features.flatMap((feature) => {
 		const properties = feature.properties;
 		const comuna =
@@ -76,7 +78,7 @@ export function buildNoiseComunaFeatures(
 					dbPromedioComunal: stats.dbPromedioComunal,
 					dbMinComunal: stats.dbMinComunal,
 					dbMaxComunal: stats.dbMaxComunal,
-					accent: noiseDbColor(stats.dbPromedioComunal),
+					accent: stats.accent,
 					...(codComuna !== null ? { cod_comuna: codComuna } : {}),
 				},
 			},
@@ -87,19 +89,15 @@ export function buildNoiseComunaFeatures(
 }
 
 export function buildNoiseComunaStats(
-	noise: GeoJSON.FeatureCollection,
+	stats: readonly NoiseComunaStatsRecord[],
 ): Map<string, NoiseComunaStats> {
 	const statsByComuna = new Map<string, NoiseComunaStats>();
 
-	for (const feature of noise.features) {
-		const properties = feature.properties;
-		const comuna = readStringProperty(properties, "COMUNA");
-		const dbPromedioComunal = readNumberProperty(
-			properties,
-			"dbPromedioComunal",
-		);
-		const dbMinComunal = readNumberProperty(properties, "dbMinComunal");
-		const dbMaxComunal = readNumberProperty(properties, "dbMaxComunal");
+	for (const stat of stats) {
+		const comuna = typeof stat.comuna === "string" ? stat.comuna.trim() : "";
+		const dbPromedioComunal = readNumberValue(stat.dbPromedioComunal);
+		const dbMinComunal = readNumberValue(stat.dbMinComunal);
+		const dbMaxComunal = readNumberValue(stat.dbMaxComunal);
 		const key = normalizeComunaName(comuna);
 
 		if (
@@ -117,7 +115,7 @@ export function buildNoiseComunaStats(
 				dbPromedioComunal,
 				dbMinComunal,
 				dbMaxComunal,
-				accent: noiseDbColor(dbPromedioComunal),
+				accent: stat.accent?.trim() || noiseDbColor(dbPromedioComunal),
 			});
 		}
 	}
@@ -146,7 +144,10 @@ function readNumberProperty(
 	properties: GeoJSON.GeoJsonProperties,
 	key: string,
 ): number | null {
-	const value = properties?.[key];
+	return readNumberValue(properties?.[key]);
+}
+
+function readNumberValue(value: unknown): number | null {
 	if (value === null || value === undefined) return null;
 	const numberValue = typeof value === "number" ? value : Number(value);
 	return Number.isFinite(numberValue) ? numberValue : null;

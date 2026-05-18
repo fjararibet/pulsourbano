@@ -634,11 +634,8 @@ export function addCyclewayLayers(
 /**
  * Capa visual de ruido ambiental (Lden): zonas coloreadas por su rango dB(A).
  */
-export function addNoiseLayers(
-	map: MapLibreMap,
-	data: GeoJSON.FeatureCollection,
-) {
-	map.addSource("noise", { type: "geojson", data });
+export function addNoiseLayers(map: MapLibreMap, dataUrl: string) {
+	map.addSource("noise", { type: "geojson", data: dataUrl });
 
 	const dbColor = createNoiseColorExpression("DB_LO");
 

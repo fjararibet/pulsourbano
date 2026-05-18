@@ -31,7 +31,6 @@ import {
 } from "./hover";
 import {
 	addComunaLayers,
-	addMetroLayers,
 	addNoiseComunaLayers,
 	addNoiseLayers,
 	addODLayers,
@@ -47,11 +46,11 @@ import {
 	buildNoiseComunaStats,
 	getNoiseComunaStats,
 	type NoiseComunaStats,
+	type NoiseComunaStatsRecord,
 } from "./noise";
 import { getComunasGeoJSON } from "./server-comunas";
-import { getMetroGeoJSON } from "./server-metro";
 import type { HoverInfo } from "./types";
-import { getPolygonCentroid, loadGeoJSON } from "./utils";
+import { getPolygonCentroid, loadJSON } from "./utils";
 
 export type SelectedNoiseStats = {
 	origen: NoiseComunaStats | null;
@@ -129,7 +128,7 @@ function arrowStyleFor(profile: ModeProfile): ArrowStyle {
 }
 
 /**
- * Inicializa MapLibre, carga los GeoJSON de comunas/metro, monta las
+ * Inicializa MapLibre, carga el GeoJSON de comunas, monta las
  * capas y conecta los handlers de hover. Devuelve el ref del contenedor y
  * helpers para resetear la vista.
  */
@@ -159,20 +158,23 @@ export function useSantiagoMap(
 		setHoverInfo(null);
 	}, [setHoverInfo]);
 
-	/** Carga noise.geojson la primera vez que se activa la capa Ruido. */
+	/** Carga stats livianos y registra la fuente visual de ruido al activarse. */
 	const loadNoiseLayer = useCallback(async () => {
 		const map = mapRef.current;
 		if (!map || !mapReadyRef.current) return false;
 		if (noiseLoadedRef.current) return true;
-		const noise = await loadGeoJSON("/data/noise.geojson");
+		const stats = await loadJSON<NoiseComunaStatsRecord[]>(
+			"/data/noise-stats.json",
+		);
 		// Guard: otro call concurrente pudo haber terminado antes.
-		if (!noise) return false;
+		if (!stats) return false;
 		if (noiseLoadedRef.current) return true;
 		noiseLoadedRef.current = true;
-		noiseStatsByComunaRef.current = buildNoiseComunaStats(noise);
-		addNoiseLayers(map, noise);
+		const statsByComuna = buildNoiseComunaStats(stats);
+		noiseStatsByComunaRef.current = statsByComuna;
+		addNoiseLayers(map, "/data/noise.geojson");
 		const noiseComunas = comunasRef.current
-			? buildNoiseComunaFeatures(noise, comunasRef.current)
+			? buildNoiseComunaFeatures(statsByComuna, comunasRef.current)
 			: null;
 		if (noiseComunas) addNoiseComunaLayers(map, noiseComunas);
 		if (map.getLayer("comunas-outline")) map.moveLayer("comunas-outline");
@@ -321,14 +323,10 @@ export function useSantiagoMap(
 					});
 				} catch {}
 
-				const [comunas, metro] = await Promise.all([
-					getComunasGeoJSON(),
-					getMetroGeoJSON(),
-				]);
+				const comunas = await getComunasGeoJSON();
 				comunasRef.current = comunas;
 
 				if (comunas) addComunaLayers(map, comunas);
-				if (metro) addMetroLayers(map, metro);
 				if (comunas) bringComunaHoverToFront(map);
 				addODLayers(map);
 				addRouteArrowLayers(map);

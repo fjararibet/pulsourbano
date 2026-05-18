@@ -57,10 +57,7 @@ const UTM_TO_WGS84 = (x: number, y: number): [number, number] => {
 };
 
 const NORMALIZE = (s: string) =>
-	s
-		.normalize("NFD")
-		.replace(/[̀-ͯ]/g, "")
-		.toUpperCase();
+	s.normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase();
 
 export const getComunaOD = createServerFn({ method: "GET" })
 	.inputValidator(z.object({ nombreComuna: z.string() }))

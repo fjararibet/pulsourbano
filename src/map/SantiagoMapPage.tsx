@@ -1,3 +1,4 @@
+import { ChevronDown, ChevronUp } from "lucide-react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { Map as MapLibreMap } from "maplibre-gl";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -27,6 +28,7 @@ export function SantiagoMapPage() {
 		destino: string | null;
 	}>({ origen: null, destino: null });
 	const [showOD, setShowOD] = useState(false);
+	const [isCollapsed, setIsCollapsed] = useState(true);
 	const [showNoiseOverlay, setShowNoiseOverlay] = useState(false);
 	const [selectedNoiseStats, setSelectedNoiseStats] =
 		useState<SelectedNoiseStats>(EMPTY_NOISE_STATS);
@@ -203,110 +205,181 @@ export function SantiagoMapPage() {
 				) : null}
 
 				<div className="pointer-events-auto w-full rounded-2xl border border-white/70 bg-white/90 px-4 py-3 shadow-[0_-12px_40px_rgba(16,47,55,0.16)] backdrop-blur-xl sm:rounded-none sm:border-0 sm:bg-transparent sm:shadow-none sm:backdrop-blur-none">
-					{showNoiseOverlay ? (
-						<div className="mb-3 flex items-center gap-3 sm:hidden">
-							<NoiseGauge db={activeNoiseDb} compact />
-							<div className="min-w-0">
-								<p className="m-0 text-[9px] font-black uppercase tracking-[0.18em] text-[#5b777c]">
-									Ruido dB(A)
-								</p>
-								<p className="m-0 mt-1 text-xs font-bold text-[#315a61]">
-									{activeNoiseDb !== null
-										? "Promedio de comuna seleccionada"
-										: hasSelection
-											? "Sin datos para la selección"
-											: "Selecciona una comuna"}
-								</p>
-							</div>
-						</div>
-					) : null}
-
-					{selections.origen && selections.destino ? (
-						<div className="flex flex-col gap-2">
-							<SelectedComunaLine
-								label="Origen"
-								name={selections.origen}
-								color={ORIGEN_COLOR}
-							/>
-							<SelectedComunaLine
-								label="Destino"
-								name={selections.destino}
-								color={DESTINO_COLOR}
-							/>
-							<NoiseSelectionSummary
-								show={showNoiseOverlay}
-								origen={selections.origen}
-								destino={selections.destino}
-								stats={selectedNoiseStats}
-							/>
-							<div className="mt-3 flex flex-col gap-1.5 border-t border-[#dce8e3] pt-3">
-								<p className="m-0 text-[9px] font-black uppercase tracking-[0.18em] text-[#5b777c]">
-									Rutas
-								</p>
-								{ROUTE_MODES.map((route) => (
-									<div key={route.key} className="flex items-center gap-2">
+					<div className="flex w-full items-center gap-1.5 sm:hidden">
+						<button
+							type="button"
+							onClick={() => setIsCollapsed((v) => !v)}
+							className="flex min-w-0 flex-1 items-center gap-1.5"
+							aria-label={isCollapsed ? "Expandir panel" : "Colapsar panel"}
+						>
+							<div className="flex min-w-0 flex-1 items-center gap-1.5">
+								{selections.origen ? (
+									<>
 										<span
-											className="h-1 w-8 shrink-0 rounded-full"
-											style={{ backgroundColor: route.color }}
+											className="h-2 w-2 shrink-0 rounded-full"
+											style={{ backgroundColor: ORIGEN_COLOR }}
 										/>
-										<span className="text-xs font-semibold text-[#102f37]">
-											{route.label}
+										<span className="truncate text-xs font-bold text-[#102f37]">
+											{selections.origen}
 										</span>
-									</div>
-								))}
+										{selections.destino ? (
+											<>
+												<span className="text-[10px] text-[#5b777c]">→</span>
+												<span
+													className="h-2 w-2 shrink-0 rounded-full"
+													style={{ backgroundColor: DESTINO_COLOR }}
+												/>
+												<span className="truncate text-xs font-bold text-[#102f37]">
+													{selections.destino}
+												</span>
+											</>
+										) : (
+											<span className="truncate text-[10px] text-[#5b777c]">
+												→ elige destino
+											</span>
+										)}
+									</>
+								) : (
+									<span className="text-xs font-medium text-[#5b777c]">
+										Selecciona una comuna
+									</span>
+								)}
 							</div>
-						</div>
-					) : selections.origen ? (
-						<div className="flex flex-col gap-2">
-							<div className="flex items-center gap-2">
-								<span
-									className="h-3 w-3 shrink-0 rounded-full"
-									style={{ backgroundColor: ORIGEN_COLOR }}
+						</button>
+						{selections.origen && !selections.destino && (
+							<button
+								type="button"
+								onClick={handleToggleOD}
+								className={`shrink-0 rounded-full border px-1.5 py-0.5 text-[10px] font-bold leading-tight transition ${
+									showOD
+										? "border-[#e67e22] bg-[#e67e22] text-white"
+										: "border-[#b9d7d1] text-[#24525b] hover:border-[#e67e22]"
+								}`}
+							>
+								Destinos regulares
+							</button>
+						)}
+						<button
+							type="button"
+							onClick={() => setIsCollapsed((v) => !v)}
+							className="shrink-0"
+							aria-label={isCollapsed ? "Expandir panel" : "Colapsar panel"}
+						>
+							{isCollapsed ? (
+								<ChevronUp className="h-4 w-4 text-[#5b777c]" />
+							) : (
+								<ChevronDown className="h-4 w-4 text-[#5b777c]" />
+							)}
+						</button>
+					</div>
+					<div
+						className={`${isCollapsed ? "hidden" : "mt-2"} sm:mt-0 sm:block`}
+					>
+						{showNoiseOverlay ? (
+							<div className="mb-3 flex items-center gap-3 sm:hidden">
+								<NoiseGauge db={activeNoiseDb} compact />
+								<div className="min-w-0">
+									<p className="m-0 text-[9px] font-black uppercase tracking-[0.18em] text-[#5b777c]">
+										Ruido dB(A)
+									</p>
+									<p className="m-0 mt-1 text-xs font-bold text-[#315a61]">
+										{activeNoiseDb !== null
+											? "Promedio de comuna seleccionada"
+											: hasSelection
+												? "Sin datos para la selección"
+												: "Selecciona una comuna"}
+									</p>
+								</div>
+							</div>
+						) : null}
+
+						{selections.origen && selections.destino ? (
+							<div className="flex flex-col gap-2">
+								<SelectedComunaLine
+									label="Origen"
+									name={selections.origen}
+									color={ORIGEN_COLOR}
 								/>
-								<span className="text-sm font-bold text-[#102f37]">
-									{selections.origen}
-								</span>
-								<button
-									type="button"
-									onClick={handleToggleOD}
-									className={`shrink-0 rounded-full border px-2 py-0.5 text-sm font-bold transition ${
-										showOD
-											? "border-[#e67e22] bg-[#e67e22] text-white"
-											: "border-[#b9d7d1] text-[#24525b] hover:border-[#e67e22]"
-									}`}
-								>
-									Destinos regulares
-								</button>
-								<button
-									type="button"
-									onClick={() =>
-										setSelections((p) => ({
-											...p,
-											origen: null,
-											destino: null,
-										}))
-									}
-									className="ml-auto shrink-0 rounded-full p-1 text-[10px] font-bold text-[#5b777c] transition hover:bg-[#eef4f1] hover:text-[#24525b]"
-									aria-label="Quitar origen"
-								>
-									x
-								</button>
+								<SelectedComunaLine
+									label="Destino"
+									name={selections.destino}
+									color={DESTINO_COLOR}
+								/>
+								<NoiseSelectionSummary
+									show={showNoiseOverlay}
+									origen={selections.origen}
+									destino={selections.destino}
+									stats={selectedNoiseStats}
+								/>
+								<div className="mt-3 flex flex-col gap-1.5 border-t border-[#dce8e3] pt-3">
+									<p className="m-0 text-[9px] font-black uppercase tracking-[0.18em] text-[#5b777c]">
+										Rutas
+									</p>
+									{ROUTE_MODES.map((route) => (
+										<div key={route.key} className="flex items-center gap-2">
+											<span
+												className="h-1 w-8 shrink-0 rounded-full"
+												style={{ backgroundColor: route.color }}
+											/>
+											<span className="text-xs font-semibold text-[#102f37]">
+												{route.label}
+											</span>
+										</div>
+									))}
+								</div>
 							</div>
-							<NoiseSelectionSummary
-								show={showNoiseOverlay}
-								origen={selections.origen}
-								destino={null}
-								stats={selectedNoiseStats}
-							/>
+						) : selections.origen ? (
+							<div className="flex flex-col gap-2">
+								<div className="flex items-center gap-2">
+									<span
+										className="h-3 w-3 shrink-0 rounded-full"
+										style={{ backgroundColor: ORIGEN_COLOR }}
+									/>
+									<span className="text-sm font-bold text-[#102f37]">
+										{selections.origen}
+									</span>
+									<button
+										type="button"
+										onClick={handleToggleOD}
+										className={`hidden shrink-0 rounded-full border px-2 py-0.5 text-sm font-bold transition sm:inline-flex ${
+											showOD
+												? "border-[#e67e22] bg-[#e67e22] text-white"
+												: "border-[#b9d7d1] text-[#24525b] hover:border-[#e67e22]"
+										}`}
+									>
+										Destinos regulares
+									</button>
+									<button
+										type="button"
+										onClick={() =>
+											setSelections((p) => ({
+												...p,
+												origen: null,
+												destino: null,
+											}))
+										}
+										className="ml-auto shrink-0 rounded-full p-1 text-[10px] font-bold text-[#5b777c] transition hover:bg-[#eef4f1] hover:text-[#24525b]"
+										aria-label="Quitar origen"
+									>
+										x
+									</button>
+								</div>
+								<NoiseSelectionSummary
+									show={showNoiseOverlay}
+									origen={selections.origen}
+									destino={null}
+									stats={selectedNoiseStats}
+								/>
+								<p className="m-0 text-center text-xs font-medium text-[#5b777c]">
+									Selecciona una comuna de destino
+								</p>
+							</div>
+						) : (
 							<p className="m-0 text-center text-xs font-medium text-[#5b777c]">
-								Selecciona una comuna de destino
+								Selecciona una comuna de origen
 							</p>
-						</div>
-					) : (
-						<p className="m-0 text-center text-xs font-medium text-[#5b777c]">
-							Selecciona una comuna de origen
-						</p>
-					)}
+						)}
+					</div>
 				</div>
 			</section>
 
