@@ -527,9 +527,6 @@ function ModeStatsRow({
 					<span className="text-xs font-semibold text-[#102f37]">{label}</span>
 					<span className="text-[10px] font-bold text-[#24525b]">
 						{rounded.toFixed(1)}%
-						{hasStat && stat
-							? ` · ${stat.n_viajes.toLocaleString("es-CL")} viajes`
-							: null}
 					</span>
 				</div>
 				<input
