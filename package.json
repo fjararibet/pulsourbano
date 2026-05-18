@@ -19,7 +19,8 @@
     "db:apply:remote": "wrangler d1 migrations apply EOD2012 --remote",
     "db:dtpmgeo:generate": "drizzle-kit generate --config=drizzle.dtpmgeo.config.ts",
     "db:dtpmgeo:apply:local": "wrangler d1 migrations apply DTPMGEO --local",
-    "db:dtpmgeo:apply:remote": "wrangler d1 migrations apply DTPMGEO --remote"
+    "db:dtpmgeo:apply:remote": "wrangler d1 migrations apply DTPMGEO --remote",
+"data:build-stats": "npx tsx scripts/generate-comuna-stats.ts --remote"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.26.0",

@@ -1,0 +1,1 @@
+{"statsModo":[{"modo":"Bus","modoNombre":"Bus","n_viajes":1,"porcentaje":50,"velocidad_promedio":30.2,"tiempo_promedio_min":105,"distancia_promedio_km":52.91},{"modo":"Auto","modoNombre":"Auto","n_viajes":1,"porcentaje":50,"velocidad_promedio":45.2,"tiempo_promedio_min":70,"distancia_promedio_km":52.69}],"total":2,"initialStatsMap":{"Bus":50,"Auto":50}}

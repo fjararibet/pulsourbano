@@ -1,0 +1,1 @@
+{"statsModo":[{"modo":"No Motorizado","modoNombre":"No Motorizado","n_viajes":3,"porcentaje":75,"velocidad_promedio":10.3,"tiempo_promedio_min":80,"distancia_promedio_km":12.64},{"modo":"Bus","modoNombre":"Bus","n_viajes":1,"porcentaje":25,"velocidad_promedio":9.6,"tiempo_promedio_min":70,"distancia_promedio_km":11.18}],"total":4,"initialStatsMap":{"No Motorizado":75,"Bus":25}}

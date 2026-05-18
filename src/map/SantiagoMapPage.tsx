@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { ModoRow } from "#/lib/comparador/comparador-types";
 import { redistributePercentages } from "#/lib/comparador/sliders";
 import { computeEmissions, type EmissionTotals } from "#/lib/emissions";
-import { getComparadorStats } from "#/routes/api/comparador/stats.fn";
+import { getStats } from "#/lib/stats-store";
 import { DESTINO_COLOR, ORIGEN_COLOR } from "./config";
 import { MapLegend } from "./Legend";
 import { clearODData, setODData } from "./layers";
@@ -153,13 +153,7 @@ export function SantiagoMapPage() {
 		}
 		let cancelled = false;
 		setTripStatsLoading(true);
-		(
-			getComparadorStats as (opts: {
-				data: { origen: string; destino: string };
-			}) => Promise<{ statsModo: ModoRow[]; total: number }>
-		)({
-			data: { origen: selections.origen, destino: selections.destino },
-		})
+		getStats(selections.origen, selections.destino)
 			.then((result) => {
 				if (cancelled) return;
 				setTripStats(result.statsModo);
@@ -173,7 +167,7 @@ export function SantiagoMapPage() {
 			})
 			.catch((err) => {
 				if (cancelled) return;
-				console.error("[getComparadorStats] client error:", err);
+				console.error("[stats] load error:", err);
 				setTripStats([]);
 				setModePercentages(null);
 			})

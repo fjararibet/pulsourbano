@@ -1,0 +1,1 @@
+{"statsModo":[{"modo":"Auto","modoNombre":"Auto","n_viajes":1,"porcentaje":50,"velocidad_promedio":64.2,"tiempo_promedio_min":40,"distancia_promedio_km":42.82},{"modo":"Metro/Tren","modoNombre":"Metro/Tren","n_viajes":1,"porcentaje":50,"velocidad_promedio":45.4,"tiempo_promedio_min":60,"distancia_promedio_km":45.37}],"total":2,"initialStatsMap":{"Auto":50,"Metro/Tren":50}}
