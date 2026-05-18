@@ -142,7 +142,7 @@ export const EMPTY_COMUNA_NAME_FILTER: FilterSpecification = [
 	"",
 ];
 
-/** Filtro neutro que oculta el resaltado comunal del modo ruido. */
+/** Filtro neutro que oculta el resaltado comunal de ruido. */
 export const EMPTY_NOISE_COMUNA_FILTER: FilterSpecification = [
 	"==",
 	["get", "COMUNA"],
@@ -215,7 +215,7 @@ export const NOISE_COLOR = "#ef4444";
 /** Fuente de comunas completas enriquecidas con promedio de ruido. */
 export const NOISE_COMUNA_SOURCE_ID = "noise-comunas";
 
-/** Capa invisible para hover por comuna completa en modo ruido. */
+/** Capa invisible para hover por comuna completa en la capa ruido. */
 export const NOISE_COMUNA_INTERACTION_LAYER_ID = "noise-comunas-hitbox";
 
 /** Capas de zonas de ruido que se refuerzan al seleccionar una comuna. */
@@ -227,19 +227,24 @@ export const NOISE_COMUNA_HOVER_LAYER_IDS = [
 	"noise-comunas-hover-outline",
 ] as const;
 
-/** Capas visibles de la comuna fijada por click/tap en modo ruido. */
+/** Capas visibles de la comuna seleccionada con ruido activo. */
 export const NOISE_COMUNA_SELECTED_LAYER_IDS = [
 	"noise-comunas-selected-fill",
 	"noise-comunas-selected-outline",
 ] as const;
 
-/** Todas las capas físicas del grupo ruido. */
-export const NOISE_ALL_LAYER_IDS = [
+/** Capas visibles cuando ruido funciona como overlay de comunas seleccionadas. */
+export const NOISE_OVERLAY_LAYER_IDS = [
 	"noise-fill",
 	"noise-outline",
 	...NOISE_SELECTED_ZONE_LAYER_IDS,
-	...NOISE_COMUNA_HOVER_LAYER_IDS,
 	...NOISE_COMUNA_SELECTED_LAYER_IDS,
+] as const;
+
+/** Todas las capas físicas del grupo ruido. */
+export const NOISE_ALL_LAYER_IDS = [
+	...NOISE_OVERLAY_LAYER_IDS,
+	...NOISE_COMUNA_HOVER_LAYER_IDS,
 	NOISE_COMUNA_INTERACTION_LAYER_ID,
 ] as const;
 

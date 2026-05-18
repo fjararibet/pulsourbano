@@ -2,8 +2,6 @@ import type { LayerId } from "./config";
 
 export type LayerVisibility = Record<LayerId, boolean>;
 
-export type InteractionMode = "comunas" | "metro" | "noise";
-
 export type HoverInfo = {
 	kind: string;
 	title: string;
@@ -14,7 +12,7 @@ export type HoverInfo = {
 	details?: string[];
 	note?: string;
 	pinned?: boolean;
-	/** Nivel de ruido promedio por comuna (dB) — solo para modo noise. */
+	/** Nivel de ruido promedio por comuna (dB). */
 	noiseDb?: number;
 } | null;
 

@@ -24,6 +24,7 @@ import {
 	NOISE_COMUNA_INTERACTION_LAYER_ID,
 	NOISE_COMUNA_SELECTED_LAYER_IDS,
 	NOISE_COMUNA_SOURCE_ID,
+	NOISE_OVERLAY_LAYER_IDS,
 	NOISE_SELECTED_ZONE_LAYER_IDS,
 	OD_ARROW_ICON_ID,
 	OD_COLOR,
@@ -82,7 +83,11 @@ export function addComunaLayers(
 		id: "comunas-labels",
 		type: "symbol",
 		source: "comunas-rm",
-		filter: ["any", ["==", ["geometry-type"], "Polygon"], ["==", ["geometry-type"], "MultiPolygon"]],
+		filter: [
+			"any",
+			["==", ["geometry-type"], "Polygon"],
+			["==", ["geometry-type"], "MultiPolygon"],
+		],
 		layout: {
 			"text-field": ["get", "Comuna"],
 			"text-font": ["Open Sans Regular", "Arial Unicode MS Regular"],
@@ -198,6 +203,20 @@ export function updateComunaSelectionLayers(
 	}
 	for (const layerId of COMUNA_DESTINO_LAYER_IDS) {
 		if (map.getLayer(layerId)) map.setFilter(layerId, destinoFilter);
+	}
+}
+
+/** Muestra ruido solo dentro de las comunas seleccionadas. */
+export function updateNoiseSelectionLayers(
+	map: MapLibreMap,
+	comunas: readonly string[],
+) {
+	const selectedComunas = [...new Set(comunas.filter(Boolean))];
+	const filter: FilterSpecification = selectedComunas.length
+		? ["in", ["get", "COMUNA"], ["literal", selectedComunas]]
+		: EMPTY_NOISE_COMUNA_FILTER;
+	for (const layerId of NOISE_OVERLAY_LAYER_IDS) {
+		if (map.getLayer(layerId)) map.setFilter(layerId, filter);
 	}
 }
 

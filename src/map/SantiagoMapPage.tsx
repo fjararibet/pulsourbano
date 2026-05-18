@@ -5,9 +5,10 @@ import { DESTINO_COLOR, ORIGEN_COLOR } from "./config";
 import { MapLegend } from "./Legend";
 import { clearODData, setODData } from "./layers";
 import { NoiseGauge } from "./NoiseGauge";
+import type { NoiseComunaStats } from "./noise";
 import { getComunaOD } from "./server-comunas";
-import type { HoverInfo, InteractionMode } from "./types";
-import { useSantiagoMap } from "./use-santiago-map";
+import type { HoverInfo } from "./types";
+import { type SelectedNoiseStats, useSantiagoMap } from "./use-santiago-map";
 
 const ROUTE_MODES = [
 	{ key: "auto", label: "Auto", color: "#f59e0b" },
@@ -16,17 +17,19 @@ const ROUTE_MODES = [
 	{ key: "bicycle", label: "No motorizado", color: "#10b981" },
 ] as const;
 
+const EMPTY_NOISE_STATS: SelectedNoiseStats = { origen: null, destino: null };
+
 export function SantiagoMapPage() {
-	const [hoverInfo, setHoverInfo] = useState<HoverInfo>(null);
+	const [, setHoverInfo] = useState<HoverInfo>(null);
 	const [mapReady, setMapReady] = useState(false);
-	const [mode, setMode] = useState<InteractionMode>("comunas");
-	const modeRef = useRef<InteractionMode>("comunas");
-	modeRef.current = mode;
 	const [selections, setSelections] = useState<{
 		origen: string | null;
 		destino: string | null;
 	}>({ origen: null, destino: null });
 	const [showOD, setShowOD] = useState(false);
+	const [showNoiseOverlay, setShowNoiseOverlay] = useState(false);
+	const [selectedNoiseStats, setSelectedNoiseStats] =
+		useState<SelectedNoiseStats>(EMPTY_NOISE_STATS);
 	const mapRef = useRef<MapLibreMap | null>(null);
 	const savedViewRef = useRef<{
 		center: [number, number];
@@ -52,28 +55,23 @@ export function SantiagoMapPage() {
 
 	const clearSelections = useCallback(() => {
 		setSelections({ origen: null, destino: null });
+		setSelectedNoiseStats(EMPTY_NOISE_STATS);
 	}, []);
 
-	const { containerRef, clearPinned, resetView, applyModeVisibility } =
-		useSantiagoMap(
-			setHoverInfo,
-			{
-				origen: selections.origen,
-				destino: selections.destino,
-				onSelectComuna: handleSelectComuna,
-				onMapReady: (map) => {
-					mapRef.current = map;
-					setMapReady(true);
-				},
+	const { containerRef, clearPinned, resetView } = useSantiagoMap(
+		setHoverInfo,
+		{
+			origen: selections.origen,
+			destino: selections.destino,
+			onSelectComuna: handleSelectComuna,
+			showNoiseOverlay,
+			onNoiseStatsChange: setSelectedNoiseStats,
+			onMapReady: (map) => {
+				mapRef.current = map;
+				setMapReady(true);
 			},
-			modeRef,
-		);
-
-	const clearPinnedWithReset = useCallback(() => {
-		savedViewRef.current = null;
-		setShowOD(false);
-		clearPinned();
-	}, [clearPinned]);
+		},
+	);
 
 	const handleToggleOD = useCallback(() => {
 		setShowOD((v) => {
@@ -102,12 +100,8 @@ export function SantiagoMapPage() {
 	}, [clearPinned, clearSelections, showOD]);
 
 	useEffect(() => {
-		applyModeVisibility(mode);
-	}, [mode, applyModeVisibility]);
-
-	useEffect(() => {
 		if (!showOD) return;
-		const nombreComuna = selections.origen || hoverInfo?.title;
+		const nombreComuna = selections.origen;
 		if (!nombreComuna) return;
 		const map = mapRef.current;
 		if (!map) return;
@@ -133,10 +127,11 @@ export function SantiagoMapPage() {
 				if (mapRef.current) setODData(mapRef.current, geojson);
 			})
 			.catch(console.error);
-	}, [showOD, selections.origen, hoverInfo?.title]);
+	}, [showOD, selections.origen]);
 
 	useEffect(() => {
 		if (!selections.origen && !selections.destino) {
+			setSelectedNoiseStats(EMPTY_NOISE_STATS);
 			if (mapRef.current) {
 				mapRef.current.flyTo({
 					center: [-70.6483, -33.4569],
@@ -154,18 +149,12 @@ export function SantiagoMapPage() {
 		}
 	}, [selections.origen, selections.destino, showOD]);
 
-	const changeMode = (nextMode: InteractionMode) => {
-		modeRef.current = nextMode;
-		setMode(nextMode);
-		clearPinned();
-		if (nextMode !== "comunas") clearSelections();
-		applyModeVisibility(nextMode);
-		resetView();
-	};
-
-	const hasSelection =
-		mode === "comunas" && (selections.origen || selections.destino);
-	const noiseDb = mode === "noise" ? (hoverInfo?.noiseDb ?? null) : null;
+	const hasSelection = Boolean(selections.origen || selections.destino);
+	const activeNoiseDb = showNoiseOverlay
+		? (selectedNoiseStats.destino?.dbPromedioComunal ??
+			selectedNoiseStats.origen?.dbPromedioComunal ??
+			null)
+		: null;
 
 	return (
 		<main className="relative h-[100svh] w-full overflow-hidden bg-[#edf4e8] text-[#102f37]">
@@ -187,36 +176,15 @@ export function SantiagoMapPage() {
 			<div className="absolute top-2 right-2 z-20 flex overflow-hidden rounded-full border border-white/70 bg-white/90 shadow-lg backdrop-blur-xl sm:top-4 sm:right-4">
 				<button
 					type="button"
-					onClick={() => changeMode("comunas")}
+					aria-pressed={showNoiseOverlay}
+					onClick={() => setShowNoiseOverlay((value) => !value)}
 					className={`px-3 py-1.5 text-xs font-bold transition ${
-						mode === "comunas"
-							? "bg-[#6f5bd5] text-white"
-							: "text-[#5b777c] hover:bg-[#f1f7f4]"
-					}`}
-				>
-					Comunas
-				</button>
-				<button
-					type="button"
-					onClick={() => changeMode("metro")}
-					className={`px-3 py-1.5 text-xs font-bold transition ${
-						mode === "metro"
-							? "bg-[#0f8f98] text-white"
-							: "text-[#5b777c] hover:bg-[#f1f7f4]"
-					}`}
-				>
-					Metro
-				</button>
-				<button
-					type="button"
-					onClick={() => changeMode("noise")}
-					className={`px-3 py-1.5 text-xs font-bold transition ${
-						mode === "noise"
+						showNoiseOverlay
 							? "bg-[#dc2626] text-white"
 							: "text-[#5b777c] hover:bg-[#f1f7f4]"
 					}`}
 				>
-					Ruido
+					Ruido {showNoiseOverlay ? "ON" : "OFF"}
 				</button>
 			</div>
 
@@ -235,108 +203,42 @@ export function SantiagoMapPage() {
 				) : null}
 
 				<div className="pointer-events-auto w-full rounded-2xl border border-white/70 bg-white/90 px-4 py-3 shadow-[0_-12px_40px_rgba(16,47,55,0.16)] backdrop-blur-xl sm:rounded-none sm:border-0 sm:bg-transparent sm:shadow-none sm:backdrop-blur-none">
-					{mode === "noise" ? (
+					{showNoiseOverlay ? (
 						<div className="mb-3 flex items-center gap-3 sm:hidden">
-							<NoiseGauge db={noiseDb} compact />
+							<NoiseGauge db={activeNoiseDb} compact />
 							<div className="min-w-0">
 								<p className="m-0 text-[9px] font-black uppercase tracking-[0.18em] text-[#5b777c]">
-									Medidor dB(A)
+									Ruido dB(A)
 								</p>
 								<p className="m-0 mt-1 text-xs font-bold text-[#315a61]">
-									{noiseDb !== null
-										? "Promedio comunal seleccionado"
-										: "Toca una comuna con datos"}
+									{activeNoiseDb !== null
+										? "Promedio de comuna seleccionada"
+										: hasSelection
+											? "Sin datos para la selección"
+											: "Selecciona una comuna"}
 								</p>
 							</div>
 						</div>
 					) : null}
-					{hoverInfo && !selections.origen ? (
-						<div className="flex gap-3">
-							<span
-								className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full"
-								style={{ backgroundColor: hoverInfo.accent }}
-							/>
-							<div className="min-w-0 flex-1">
-								<div className="flex items-start justify-between gap-2">
-									<div className="min-w-0">
-										<p className="m-0 text-[9px] font-black uppercase tracking-[0.18em] text-[#5b777c]">
-											{hoverInfo.kind}
-										</p>
-										<p className="m-0 mt-0.5 truncate text-base font-black text-[#102f37]">
-											{hoverInfo.title}
-										</p>
-									</div>
-									<div className="flex items-center gap-2">
-										{hoverInfo.kind === "Comuna RM" && !selections.origen && (
-											<button
-												type="button"
-												onClick={handleToggleOD}
-												className={`shrink-0 rounded-full border px-2 py-0.5 text-sm font-bold transition ${
-													showOD
-														? "border-[#e67e22] bg-[#e67e22] text-white"
-														: "border-[#b9d7d1] text-[#24525b] hover:border-[#e67e22]"
-												}`}
-											>
-												Destinos regulares
-											</button>
-										)}
-										<button
-											type="button"
-											onClick={clearPinnedWithReset}
-											className="-mr-1 -mt-1 shrink-0 rounded-full p-1.5 text-[10px] font-bold text-[#5b777c] transition hover:bg-[#eef4f1] hover:text-[#24525b]"
-											aria-label="Cerrar"
-										>
-											✕
-										</button>
-									</div>
-								</div>
-								{hoverInfo.description ? (
-									<p className="m-0 mt-1 text-sm font-bold leading-snug text-[#315a61]">
-										{hoverInfo.description}
-									</p>
-								) : null}
-								{hoverInfo.details?.length ? (
-									<div className="mt-2 flex flex-wrap gap-1">
-										{hoverInfo.details.map((detail) => (
-											<span
-												key={detail}
-												className="rounded-full bg-[#f1f7f4] px-2 py-0.5 text-[11px] font-semibold leading-4 text-[#315a61]"
-											>
-												{detail}
-											</span>
-										))}
-									</div>
-								) : null}
-							</div>
-						</div>
-					) : mode === "metro" ? (
-						<p className="m-0 text-center text-xs font-medium text-[#5b777c]">
-							Selecciona una estación de metro
-						</p>
-					) : mode === "noise" ? (
-						<p className="m-0 text-center text-xs font-medium text-[#5b777c]">
-							Toca una comuna con datos de ruido
-						</p>
-					) : mode === "comunas" && selections.origen && selections.destino ? (
+
+					{selections.origen && selections.destino ? (
 						<div className="flex flex-col gap-2">
-							<div className="flex items-center gap-2">
-								<span
-									className="h-3 w-3 shrink-0 rounded-full"
-									style={{ backgroundColor: ORIGEN_COLOR }}
-								/>
-								<span className="text-sm font-bold text-[#102f37]">
-									Origen: {selections.origen}
-								</span>
-							</div>
-							<div className="flex items-center gap-2">
-								<span
-									className="h-3 w-3 shrink-0 rounded-full"
-									style={{ backgroundColor: DESTINO_COLOR }}
-								/>
-								<span className="text-sm font-bold text-[#102f37]">
-									Destino: {selections.destino}
-								</span>
-							</div>
+							<SelectedComunaLine
+								label="Origen"
+								name={selections.origen}
+								color={ORIGEN_COLOR}
+							/>
+							<SelectedComunaLine
+								label="Destino"
+								name={selections.destino}
+								color={DESTINO_COLOR}
+							/>
+							<NoiseSelectionSummary
+								show={showNoiseOverlay}
+								origen={selections.origen}
+								destino={selections.destino}
+								stats={selectedNoiseStats}
+							/>
 							<div className="mt-3 flex flex-col gap-1.5 border-t border-[#dce8e3] pt-3">
 								<p className="m-0 text-[9px] font-black uppercase tracking-[0.18em] text-[#5b777c]">
 									Rutas
@@ -354,7 +256,7 @@ export function SantiagoMapPage() {
 								))}
 							</div>
 						</div>
-					) : mode === "comunas" && selections.origen && !selections.destino ? (
+					) : selections.origen ? (
 						<div className="flex flex-col gap-2">
 							<div className="flex items-center gap-2">
 								<span
@@ -387,9 +289,15 @@ export function SantiagoMapPage() {
 									className="ml-auto shrink-0 rounded-full p-1 text-[10px] font-bold text-[#5b777c] transition hover:bg-[#eef4f1] hover:text-[#24525b]"
 									aria-label="Quitar origen"
 								>
-									✕
+									x
 								</button>
 							</div>
+							<NoiseSelectionSummary
+								show={showNoiseOverlay}
+								origen={selections.origen}
+								destino={null}
+								stats={selectedNoiseStats}
+							/>
 							<p className="m-0 text-center text-xs font-medium text-[#5b777c]">
 								Selecciona una comuna de destino
 							</p>
@@ -402,7 +310,88 @@ export function SantiagoMapPage() {
 				</div>
 			</section>
 
-			<MapLegend mode={mode} hoverInfo={hoverInfo} />
+			<MapLegend showNoiseOverlay={showNoiseOverlay} noiseDb={activeNoiseDb} />
 		</main>
+	);
+}
+
+function SelectedComunaLine({
+	label,
+	name,
+	color,
+}: {
+	label: string;
+	name: string;
+	color: string;
+}) {
+	return (
+		<div className="flex items-center gap-2">
+			<span
+				className="h-3 w-3 shrink-0 rounded-full"
+				style={{ backgroundColor: color }}
+			/>
+			<span className="text-sm font-bold text-[#102f37]">
+				{label}: {name}
+			</span>
+		</div>
+	);
+}
+
+function NoiseSelectionSummary({
+	show,
+	origen,
+	destino,
+	stats,
+}: {
+	show: boolean;
+	origen: string | null;
+	destino: string | null;
+	stats: SelectedNoiseStats;
+}) {
+	if (!show) return null;
+
+	return (
+		<div className="mt-3 rounded-2xl border border-red-100 bg-red-50/70 p-2.5">
+			<p className="m-0 text-[9px] font-black uppercase tracking-[0.18em] text-red-700">
+				Ruido ambiental
+			</p>
+			<div className="mt-2 flex flex-col gap-1.5">
+				{origen ? (
+					<NoiseStatRow label="Origen" name={origen} stat={stats.origen} />
+				) : null}
+				{destino ? (
+					<NoiseStatRow label="Destino" name={destino} stat={stats.destino} />
+				) : null}
+			</div>
+		</div>
+	);
+}
+
+function NoiseStatRow({
+	label,
+	name,
+	stat,
+}: {
+	label: string;
+	name: string;
+	stat: NoiseComunaStats | null;
+}) {
+	return (
+		<div className="flex items-start gap-2 rounded-xl bg-white/70 px-2 py-1.5">
+			<span
+				className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full"
+				style={{ backgroundColor: stat?.accent ?? "#9ca3af" }}
+			/>
+			<div className="min-w-0">
+				<p className="m-0 truncate text-xs font-black text-[#102f37]">
+					{label}: {name}
+				</p>
+				<p className="m-0 text-[11px] font-semibold text-[#5b777c]">
+					{stat
+						? `${stat.dbPromedioComunal.toFixed(1)} dB(A) promedio · rango ${stat.dbMinComunal}-${stat.dbMaxComunal}`
+						: "Sin datos de ruido para esta comuna"}
+				</p>
+			</div>
+		</div>
 	);
 }

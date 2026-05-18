@@ -1,6 +1,5 @@
 import type { Map as MapLibreMap } from "maplibre-gl";
 import maplibregl from "maplibre-gl";
-import type { RefObject } from "react";
 import { useCallback, useEffect, useRef } from "react";
 import {
 	type CostingMode,
@@ -21,16 +20,14 @@ import {
 	INITIAL_ZOOM,
 	MAP_DETAIL_BEARING,
 	MAP_DETAIL_PITCH,
-	METRO_ALL_LAYER_IDS,
 	NOISE_ALL_LAYER_IDS,
+	NOISE_OVERLAY_LAYER_IDS,
 	SANTIAGO_CENTER,
 } from "./config";
 import {
 	type HoverPinController,
 	setupComunaDualSelect,
 	setupComunaHover,
-	setupMetroStationClick,
-	setupNoiseInteraction,
 } from "./hover";
 import {
 	addComunaLayers,
@@ -43,17 +40,30 @@ import {
 	bringRouteArrowToFront,
 	clearRouteArrow,
 	updateComunaSelectionLayers,
+	updateNoiseSelectionLayers,
 } from "./layers";
-import { buildNoiseComunaFeatures } from "./noise";
+import {
+	buildNoiseComunaFeatures,
+	buildNoiseComunaStats,
+	getNoiseComunaStats,
+	type NoiseComunaStats,
+} from "./noise";
 import { getComunasGeoJSON } from "./server-comunas";
 import { getMetroGeoJSON } from "./server-metro";
-import type { HoverInfo, InteractionMode } from "./types";
+import type { HoverInfo } from "./types";
 import { getPolygonCentroid, loadGeoJSON } from "./utils";
+
+export type SelectedNoiseStats = {
+	origen: NoiseComunaStats | null;
+	destino: NoiseComunaStats | null;
+};
 
 type DualSelect = {
 	origen: string | null;
 	destino: string | null;
 	onSelectComuna: (name: string) => void;
+	showNoiseOverlay?: boolean;
+	onNoiseStatsChange?: (stats: SelectedNoiseStats) => void;
 	onMapReady?: (map: MapLibreMap) => void;
 };
 
@@ -119,31 +129,27 @@ function arrowStyleFor(profile: ModeProfile): ArrowStyle {
 }
 
 /**
- * Inicializa MapLibre, carga los GeoJSON de Metro/Buses/Ciclovías, monta las
+ * Inicializa MapLibre, carga los GeoJSON de comunas/metro, monta las
  * capas y conecta los handlers de hover. Devuelve el ref del contenedor y
- * helpers para resetear la vista y alternar modos.
+ * helpers para resetear la vista.
  */
 export function useSantiagoMap(
 	setHoverInfo: (info: HoverInfo) => void,
 	dualSelect?: DualSelect,
-	modeRef?: RefObject<InteractionMode>,
 ) {
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const mapRef = useRef<MapLibreMap | null>(null);
 	const pinnedInfoRef = useRef<HoverInfo>(null);
 	const clearPinnedEffectsRef = useRef<(() => void) | null>(null);
 	const dualSelectRef = useRef(dualSelect);
-	const fallbackModeRef = useRef<InteractionMode>("comunas");
-	const activeModeRef = modeRef ?? fallbackModeRef;
 	const comunasRef = useRef<GeoJSON.FeatureCollection | null>(null);
+	const noiseStatsByComunaRef = useRef(new Map<string, NoiseComunaStats>());
 	const routeArrowAnimCleanupRef = useRef<(() => void) | null>(null);
 	const arrowManagerRef = useRef<ArrowMapLibreManager | null>(null);
 	const routeArrowHandlesRef = useRef<ArrowHandle[]>([]);
 	const mapReadyRef = useRef(false);
-	// Ruido: lazy loading — se carga la primera vez que se activa el modo.
+	// Ruido: lazy loading — se carga la primera vez que se activa la capa.
 	const noiseLoadedRef = useRef(false);
-	const pinControllerRef = useRef<HoverPinController | null>(null);
-	const hoverCleanupListRef = useRef<Array<() => void>>([]);
 	dualSelectRef.current = dualSelect;
 
 	const clearPinned = useCallback(() => {
@@ -153,49 +159,89 @@ export function useSantiagoMap(
 		setHoverInfo(null);
 	}, [setHoverInfo]);
 
-	/** Carga noise.geojson la primera vez que se activa el modo Ruido. */
+	/** Carga noise.geojson la primera vez que se activa la capa Ruido. */
 	const loadNoiseLayer = useCallback(async () => {
 		const map = mapRef.current;
-		if (!map || noiseLoadedRef.current) return;
+		if (!map || !mapReadyRef.current) return false;
+		if (noiseLoadedRef.current) return true;
 		const noise = await loadGeoJSON("/data/noise.geojson");
 		// Guard: otro call concurrente pudo haber terminado antes.
-		if (!noise || noiseLoadedRef.current) return;
+		if (!noise) return false;
+		if (noiseLoadedRef.current) return true;
 		noiseLoadedRef.current = true;
+		noiseStatsByComunaRef.current = buildNoiseComunaStats(noise);
 		addNoiseLayers(map, noise);
 		const noiseComunas = comunasRef.current
 			? buildNoiseComunaFeatures(noise, comunasRef.current)
 			: null;
 		if (noiseComunas) addNoiseComunaLayers(map, noiseComunas);
 		if (map.getLayer("comunas-outline")) map.moveLayer("comunas-outline");
-		const pin = pinControllerRef.current;
-		if (pin) {
-			hoverCleanupListRef.current.push(
-				setupNoiseInteraction(map, setHoverInfo, pin),
-			);
-		}
-		setLayerGroupVisibility(map, NOISE_ALL_LAYER_IDS, true);
-	}, [setHoverInfo]);
+		setLayerGroupVisibility(map, NOISE_ALL_LAYER_IDS, false);
+		return true;
+	}, []);
 
-	const applyModeVisibility = useCallback(
-		(mode: InteractionMode) => {
+	const syncNoiseOverlay = useCallback(
+		async (
+			selectedOrigen: string | null,
+			selectedDestino: string | null,
+			showNoiseOverlay: boolean,
+		) => {
+			const current = dualSelectRef.current;
 			const map = mapRef.current;
-			if (!map) return;
+			const emptyStats: SelectedNoiseStats = { origen: null, destino: null };
+			const selected = [selectedOrigen, selectedDestino].filter(
+				(name): name is string => Boolean(name),
+			);
 
-			setLayerGroupVisibility(map, COMUNA_ALL_LAYER_IDS, mode === "comunas");
-			if (mode === "noise") {
-				setLayerGroupVisibility(map, COMUNA_BASE_LAYER_IDS, true);
+			if (!showNoiseOverlay || selected.length === 0) {
+				if (map?.getSource("noise")) {
+					updateNoiseSelectionLayers(map, []);
+					setLayerGroupVisibility(map, NOISE_ALL_LAYER_IDS, false);
+				}
+				current?.onNoiseStatsChange?.(emptyStats);
+				return;
 			}
-			setLayerGroupVisibility(map, METRO_ALL_LAYER_IDS, mode === "metro");
-			// Ruido: ocultar/mostrar solo si ya fue cargada; si no, la carga la hace visible.
-			if (map.getSource("noise")) {
-				setLayerGroupVisibility(map, NOISE_ALL_LAYER_IDS, mode === "noise");
+
+			const loaded = await loadNoiseLayer();
+			if (!loaded || !mapRef.current) {
+				current?.onNoiseStatsChange?.(emptyStats);
+				return;
 			}
-			if (mode === "noise" && !noiseLoadedRef.current) {
-				void loadNoiseLayer();
-			}
+
+			const nextMap = mapRef.current;
+			const statsByComuna = noiseStatsByComunaRef.current;
+			const selectedStats: SelectedNoiseStats = {
+				origen: getNoiseComunaStats(statsByComuna, selectedOrigen),
+				destino: getNoiseComunaStats(statsByComuna, selectedDestino),
+			};
+			const noiseComunas = [
+				selectedStats.origen?.comuna,
+				selectedStats.destino?.comuna,
+			].filter((comuna): comuna is string => Boolean(comuna));
+
+			updateNoiseSelectionLayers(nextMap, noiseComunas);
+			setLayerGroupVisibility(nextMap, NOISE_ALL_LAYER_IDS, false);
+			setLayerGroupVisibility(
+				nextMap,
+				NOISE_OVERLAY_LAYER_IDS,
+				noiseComunas.length > 0,
+			);
+			if (nextMap.getLayer("comunas-outline"))
+				nextMap.moveLayer("comunas-outline");
+			bringComunaHoverToFront(nextMap);
+			bringRouteArrowToFront(nextMap);
+			current?.onNoiseStatsChange?.(selectedStats);
 		},
 		[loadNoiseLayer],
 	);
+
+	const origen = dualSelect?.origen ?? null;
+	const destino = dualSelect?.destino ?? null;
+	const showNoiseOverlay = dualSelect?.showNoiseOverlay ?? false;
+
+	useEffect(() => {
+		void syncNoiseOverlay(origen, destino, showNoiseOverlay);
+	}, [origen, destino, showNoiseOverlay, syncNoiseOverlay]);
 
 	useEffect(() => {
 		let cancelled = false;
@@ -266,9 +312,6 @@ export function useSantiagoMap(
 
 			map.on("load", async () => {
 				resize();
-				// Exponer al hook para que loadNoiseLayer pueda accederlos.
-				pinControllerRef.current = pinController;
-				hoverCleanupListRef.current = hoverCleanup;
 
 				try {
 					map.setLight({
@@ -292,19 +335,8 @@ export function useSantiagoMap(
 				bringRouteArrowToFront(map);
 				arrowManagerRef.current = createArrowMapLibreManager(map);
 
-				setLayerGroupVisibility(
-					map,
-					COMUNA_ALL_LAYER_IDS,
-					activeModeRef.current === "comunas",
-				);
-				if (activeModeRef.current === "noise") {
-					setLayerGroupVisibility(map, COMUNA_BASE_LAYER_IDS, true);
-				}
-				setLayerGroupVisibility(
-					map,
-					METRO_ALL_LAYER_IDS,
-					activeModeRef.current === "metro",
-				);
+				setLayerGroupVisibility(map, COMUNA_ALL_LAYER_IDS, true);
+				setLayerGroupVisibility(map, COMUNA_BASE_LAYER_IDS, true);
 
 				map.setCenter(SANTIAGO_CENTER);
 				map.setZoom(INITIAL_ZOOM);
@@ -318,18 +350,18 @@ export function useSantiagoMap(
 						);
 					} else {
 						hoverCleanup.push(
-							setupComunaHover(map, pinController, COMUNA_ZOOM, activeModeRef),
+							setupComunaHover(map, pinController, COMUNA_ZOOM),
 						);
 					}
-				}
-				if (metro) {
-					hoverCleanup.push(
-						setupMetroStationClick(map, pinController, activeModeRef),
-					);
 				}
 
 				mapReadyRef.current = true;
 				dualSelectRef.current?.onMapReady?.(map);
+				void syncNoiseOverlay(
+					dualSelectRef.current?.origen ?? null,
+					dualSelectRef.current?.destino ?? null,
+					dualSelectRef.current?.showNoiseOverlay ?? false,
+				);
 			});
 		})();
 
@@ -338,7 +370,7 @@ export function useSantiagoMap(
 			cleanup?.();
 			mapRef.current = null;
 		};
-	}, [setHoverInfo, activeModeRef]);
+	}, [setHoverInfo, syncNoiseOverlay]);
 
 	const resetView = useCallback(() => {
 		mapRef.current?.easeTo({
@@ -350,8 +382,6 @@ export function useSantiagoMap(
 		});
 	}, []);
 
-	const origen = dualSelect?.origen ?? null;
-	const destino = dualSelect?.destino ?? null;
 	const prevOrigenRef = useRef<string | null>(null);
 	const prevDestinoRef = useRef<string | null>(null);
 
@@ -456,7 +486,6 @@ export function useSantiagoMap(
 		clearPinned,
 		resetView,
 		mapReadyRef,
-		applyModeVisibility,
 	};
 }
 
