@@ -92,7 +92,7 @@ const CYCLE_SLOW = 3.4;
 const MODE_PROFILES: ModeProfile[] = [
 	{
 		costing: "auto",
-		color: "#b45309",
+		color: "#4f46a5",
 		lateralOffset: 0.55,
 		routeUsage: 0.85,
 		transportSpeed: 1.0,
@@ -100,7 +100,7 @@ const MODE_PROFILES: ModeProfile[] = [
 	},
 	{
 		costing: "bus",
-		color: "#1d4ed8",
+		color: "#2563eb",
 		lateralOffset: -0.35,
 		routeUsage: 0.55,
 		transportSpeed: 0.45,
@@ -108,7 +108,7 @@ const MODE_PROFILES: ModeProfile[] = [
 	},
 	{
 		costing: "metro",
-		color: "#be123c",
+		color: "#7c3aed",
 		lateralOffset: 0.0,
 		routeUsage: 0.65,
 		transportSpeed: 0.7,
@@ -116,7 +116,7 @@ const MODE_PROFILES: ModeProfile[] = [
 	},
 	{
 		costing: "bicycle",
-		color: "#047857",
+		color: "#0f766e",
 		lateralOffset: 0.15,
 		routeUsage: 0.25,
 		transportSpeed: 0.35,

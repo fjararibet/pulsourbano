@@ -16,13 +16,13 @@ import type { HoverInfo } from "./types";
 import { type SelectedNoiseStats, useSantiagoMap } from "./use-santiago-map";
 
 const ROUTE_MODES = [
-	{ key: "auto", label: "Auto", color: "#b45309", statsKey: "Auto" },
-	{ key: "bus", label: "Bus", color: "#1d4ed8", statsKey: "Bus" },
-	{ key: "metro", label: "Metro", color: "#be123c", statsKey: "Metro/Tren" },
+	{ key: "auto", label: "Auto", color: "#4f46a5", statsKey: "Auto" },
+	{ key: "bus", label: "Bus", color: "#2563eb", statsKey: "Bus" },
+	{ key: "metro", label: "Metro", color: "#7c3aed", statsKey: "Metro/Tren" },
 	{
 		key: "bicycle",
 		label: "No motorizado",
-		color: "#047857",
+		color: "#0f766e",
 		statsKey: "No Motorizado",
 	},
 ] as const;

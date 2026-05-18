@@ -40,7 +40,7 @@ export const OD_ARROW_ICON_ID = "od-flow-arrow";
 export const OD_SOURCE_ID = "od-flows";
 
 /** Color base de la capa de comunas RM. */
-export const COMUNA_COLOR = "#6f5bd5";
+export const COMUNA_COLOR = "#64748b";
 
 /** Color de la flecha de ruta origen-destino. */
 export const ROUTE_ARROW_COLOR = "#f59e0b";

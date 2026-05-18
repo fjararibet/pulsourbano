@@ -66,8 +66,8 @@ export function addComunaLayers(
 		source: "comunas-rm",
 		paint: {
 			"line-color": COMUNA_COLOR,
-			"line-width": ["interpolate", ["linear"], ["zoom"], 9, 2.5, 13, 5],
-			"line-opacity": 0.6,
+			"line-width": ["interpolate", ["linear"], ["zoom"], 9, 1.1, 13, 2.4],
+			"line-opacity": 0.42,
 		},
 	});
 	map.addLayer({
@@ -121,8 +121,8 @@ export function addComunaLayers(
 		filter: EMPTY_COMUNA_HOVER_FILTER,
 		paint: {
 			"line-color": COMUNA_SELECTED_COLOR,
-			"line-width": ["interpolate", ["linear"], ["zoom"], 9, 3, 13, 5],
-			"line-opacity": 1,
+			"line-width": ["interpolate", ["linear"], ["zoom"], 9, 1.8, 13, 3.2],
+			"line-opacity": 0.76,
 		},
 	});
 	map.addLayer({
@@ -142,8 +142,8 @@ export function addComunaLayers(
 		filter: EMPTY_COMUNA_NAME_FILTER,
 		paint: {
 			"line-color": ORIGEN_COLOR,
-			"line-width": ["interpolate", ["linear"], ["zoom"], 9, 2, 13, 3],
-			"line-opacity": 1,
+			"line-width": ["interpolate", ["linear"], ["zoom"], 9, 1.4, 13, 2.3],
+			"line-opacity": 0.8,
 		},
 	});
 	map.addLayer({
@@ -163,8 +163,8 @@ export function addComunaLayers(
 		filter: EMPTY_COMUNA_NAME_FILTER,
 		paint: {
 			"line-color": DESTINO_COLOR,
-			"line-width": ["interpolate", ["linear"], ["zoom"], 9, 2, 13, 3],
-			"line-opacity": 1,
+			"line-width": ["interpolate", ["linear"], ["zoom"], 9, 1.4, 13, 2.3],
+			"line-opacity": 0.8,
 		},
 	});
 }

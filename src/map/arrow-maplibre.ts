@@ -35,10 +35,10 @@ export interface ArrowMapLibreManager {
 }
 
 const COSTING_COLORS: Record<CostingMode, string> = {
-	auto: "#b45309",
-	bus: "#1d4ed8",
-	bicycle: "#047857",
-	metro: "#be123c",
+	auto: "#4f46a5",
+	bus: "#2563eb",
+	bicycle: "#0f766e",
+	metro: "#7c3aed",
 };
 
 function hexToRgba(hex: string, alpha: number): string {
