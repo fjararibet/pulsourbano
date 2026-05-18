@@ -4,6 +4,7 @@ import type { Map as MapLibreMap } from "maplibre-gl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ModoRow } from "#/lib/comparador/comparador-types";
 import { redistributePercentages } from "#/lib/comparador/sliders";
+import { computeEmissions, type EmissionTotals } from "#/lib/emissions";
 import { getComparadorStats } from "#/routes/api/comparador/stats.fn";
 import { DESTINO_COLOR, ORIGEN_COLOR } from "./config";
 import { MapLegend } from "./Legend";
@@ -206,6 +207,23 @@ export function SantiagoMapPage() {
 	}, [selections.origen, selections.destino, showOD]);
 
 	const hasSelection = Boolean(selections.origen || selections.destino);
+	const totalTrips = tripStats.reduce((sum, r) => sum + r.n_viajes, 0);
+	const baselinePercentByMode = ROUTE_MODES.map(
+		(route) =>
+			tripStats.find((s) => s.modo === route.statsKey)?.porcentaje ?? 0,
+	);
+	const baselineEmissions = computeEmissions(
+		tripStats,
+		baselinePercentByMode,
+		ROUTE_MODES,
+		totalTrips,
+	);
+	const simulatedEmissions = computeEmissions(
+		tripStats,
+		modePercentages ?? baselinePercentByMode,
+		ROUTE_MODES,
+		totalTrips,
+	);
 	const activeNoiseDb = showNoiseOverlay
 		? (selectedNoiseStats.destino?.dbPromedioComunal ??
 			selectedNoiseStats.origen?.dbPromedioComunal ??
@@ -382,9 +400,7 @@ export function SantiagoMapPage() {
 												stat={stat}
 												loading={tripStatsLoading}
 												value={value}
-												disabled={
-													tripStatsLoading || modePercentages === null
-												}
+												disabled={tripStatsLoading || modePercentages === null}
 												onChange={(v) =>
 													setModePercentages((prev) =>
 														redistributePercentages(
@@ -398,6 +414,12 @@ export function SantiagoMapPage() {
 										);
 									})}
 								</div>
+								<EmissionsPanel
+									baseline={baselineEmissions}
+									simulated={simulatedEmissions}
+									loading={tripStatsLoading || modePercentages === null}
+									hasData={totalTrips > 0}
+								/>
 							</div>
 						) : selections.origen ? (
 							<div className="flex flex-col gap-2">
@@ -536,6 +558,164 @@ function ModeStatsRow({
 							: "Sin datos para esta combinación"}
 				</p>
 			</div>
+		</div>
+	);
+}
+
+function EmissionsPanel({
+	baseline,
+	simulated,
+	loading,
+	hasData,
+}: {
+	baseline: EmissionTotals;
+	simulated: EmissionTotals;
+	loading: boolean;
+	hasData: boolean;
+}) {
+	return (
+		<div className="mt-3 flex flex-col gap-2 border-t border-[#dce8e3] pt-3">
+			<p className="m-0 text-[9px] font-black uppercase tracking-[0.18em] text-[#5b777c]">
+				Impacto ambiental
+			</p>
+			{loading ? (
+				<p className="m-0 text-[10px] font-medium text-[#5b777c]">Cargando…</p>
+			) : !hasData ? (
+				<p className="m-0 text-[10px] font-medium text-[#5b777c]">
+					Sin datos para esta combinación
+				</p>
+			) : (
+				<div className="grid grid-cols-3 gap-2">
+					<EmissionMetric
+						label="CO₂"
+						unit="kg"
+						baselineValue={baseline.co2Kg}
+						simulatedValue={simulated.co2Kg}
+						lowerIsBetter
+					/>
+					<EmissionMetric
+						label="PM2.5"
+						unit="g"
+						baselineValue={baseline.pm25Grams}
+						simulatedValue={simulated.pm25Grams}
+						lowerIsBetter
+					/>
+					<EmissionMetric
+						label="AQI"
+						sublabel="estimado"
+						baselineValue={baseline.aqi}
+						simulatedValue={simulated.aqi}
+						lowerIsBetter
+						integer
+					/>
+				</div>
+			)}
+			<div className="mt-1 rounded-xl bg-[#f1f7f4] p-2.5">
+				<p className="m-0 text-[9px] font-black uppercase tracking-[0.18em] text-[#5b777c]">
+					Cómo se calcula
+				</p>
+				<ul className="m-0 mt-1.5 list-disc space-y-1 pl-3.5 text-[10px] leading-snug text-[#5b777c]">
+					<li>
+						<span className="font-bold text-[#102f37]">CO₂:</span> distancia
+						(km) ÷ 15 km/L × 2.67 kg CO₂/L × cantidad de vehículos.
+					</li>
+					<li>
+						<span className="font-bold text-[#102f37]">PM2.5:</span> distancia ×
+						vehículos × 0.005 g/km.
+					</li>
+					<li>
+						<span className="font-bold text-[#102f37]">AQI:</span> estimación
+						derivada del PM2.5 (se usa el total de gramos emitidos como proxy de
+						µg/m³).
+					</li>
+					<li>
+						<span className="font-bold text-[#102f37]">Vehículos:</span> Auto =
+						1 viaje/auto; Bus = 30 viajes/bus. Metro y modos no motorizados no
+						emiten en este cálculo.
+					</li>
+				</ul>
+			</div>
+		</div>
+	);
+}
+
+function EmissionMetric({
+	label,
+	unit,
+	sublabel,
+	baselineValue,
+	simulatedValue,
+	lowerIsBetter,
+	integer,
+}: {
+	label: string;
+	unit?: string;
+	sublabel?: string;
+	baselineValue: number;
+	simulatedValue: number;
+	lowerIsBetter: boolean;
+	integer?: boolean;
+}) {
+	const formatValue = (value: number) => {
+		if (integer) return Math.round(value).toLocaleString("es-CL");
+		if (value >= 100)
+			return value.toLocaleString("es-CL", { maximumFractionDigits: 0 });
+		if (value >= 10)
+			return value.toLocaleString("es-CL", { maximumFractionDigits: 1 });
+		return value.toLocaleString("es-CL", { maximumFractionDigits: 2 });
+	};
+
+	const diff = simulatedValue - baselineValue;
+	const hasBaseline = baselineValue > 0;
+	const deltaPct = hasBaseline ? (diff / baselineValue) * 100 : 0;
+	const direction = Math.abs(diff) < 1e-9 ? "flat" : diff < 0 ? "down" : "up";
+	const isImprovement =
+		direction === "flat"
+			? null
+			: lowerIsBetter
+				? direction === "down"
+				: direction === "up";
+	const deltaColor =
+		isImprovement === null
+			? "text-[#5b777c]"
+			: isImprovement
+				? "text-[#15803d]"
+				: "text-[#b91c1c]";
+	const arrow = direction === "flat" ? "·" : direction === "down" ? "▼" : "▲";
+
+	return (
+		<div className="rounded-xl bg-[#f1f7f4] p-2">
+			<div className="flex items-baseline gap-1">
+				<span className="text-[10px] font-black uppercase tracking-wider text-[#5b777c]">
+					{label}
+				</span>
+				{sublabel ? (
+					<span className="text-[8px] font-medium text-[#5b777c]">
+						({sublabel})
+					</span>
+				) : null}
+			</div>
+			<p className="m-0 mt-0.5 text-sm font-black text-[#102f37]">
+				{formatValue(simulatedValue)}
+				{unit ? (
+					<span className="ml-0.5 text-[10px] font-bold text-[#5b777c]">
+						{unit}
+					</span>
+				) : null}
+			</p>
+			<p
+				className={`m-0 mt-0.5 text-[9px] font-bold leading-tight ${deltaColor}`}
+			>
+				{hasBaseline
+					? `${arrow} ${Math.abs(deltaPct).toFixed(0)}%`
+					: direction === "flat"
+						? "·"
+						: `${arrow} —`}
+			</p>
+			<p className="m-0 text-[9px] font-medium text-[#5b777c]">
+				base: {formatValue(baselineValue)}
+				{unit ? ` ${unit}` : ""}
+			</p>
 		</div>
 	);
 }
