@@ -10,11 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as EodRouteImport } from './routes/eod'
+import { Route as ComparadorRouteImport } from './routes/comparador'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiComparadorStatsRouteRouteImport } from './routes/api/comparador/stats.route'
 
 const EodRoute = EodRouteImport.update({
   id: '/eod',
   path: '/eod',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ComparadorRoute = ComparadorRouteImport.update({
+  id: '/comparador',
+  path: '/comparador',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -22,31 +29,44 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiComparadorStatsRouteRoute = ApiComparadorStatsRouteRouteImport.update({
+  id: '/api/comparador/stats',
+  path: '/api/comparador/stats',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/comparador': typeof ComparadorRoute
   '/eod': typeof EodRoute
+  '/api/comparador/stats': typeof ApiComparadorStatsRouteRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/comparador': typeof ComparadorRoute
   '/eod': typeof EodRoute
+  '/api/comparador/stats': typeof ApiComparadorStatsRouteRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/comparador': typeof ComparadorRoute
   '/eod': typeof EodRoute
+  '/api/comparador/stats': typeof ApiComparadorStatsRouteRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/eod'
+  fullPaths: '/' | '/comparador' | '/eod' | '/api/comparador/stats'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/eod'
-  id: '__root__' | '/' | '/eod'
+  to: '/' | '/comparador' | '/eod' | '/api/comparador/stats'
+  id: '__root__' | '/' | '/comparador' | '/eod' | '/api/comparador/stats'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ComparadorRoute: typeof ComparadorRoute
   EodRoute: typeof EodRoute
+  ApiComparadorStatsRouteRoute: typeof ApiComparadorStatsRouteRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -58,6 +78,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EodRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/comparador': {
+      id: '/comparador'
+      path: '/comparador'
+      fullPath: '/comparador'
+      preLoaderRoute: typeof ComparadorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -65,12 +92,21 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/comparador/stats': {
+      id: '/api/comparador/stats'
+      path: '/api/comparador/stats'
+      fullPath: '/api/comparador/stats'
+      preLoaderRoute: typeof ApiComparadorStatsRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ComparadorRoute: ComparadorRoute,
   EodRoute: EodRoute,
+  ApiComparadorStatsRouteRoute: ApiComparadorStatsRouteRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
