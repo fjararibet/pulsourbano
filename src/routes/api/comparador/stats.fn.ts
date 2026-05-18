@@ -13,6 +13,16 @@ export const getComparadorStats = createServerFn({ method: "GET" })
 	.handler(async ({ data }) => {
 		const { origen, destino } = data;
 
+		const normalizeName = (s: string) =>
+			s.normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase();
+
+		const normalizedComunaSql = `REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(
+			UPPER(co.comuna),'Ñ','N'),'Á','A'),'É','E'),'Í','I'),'Ó','O'),'Ú','U')`;
+		const normalizedComunaSqlDest = normalizedComunaSql.replace(
+			/co\.comuna/g,
+			"cd.comuna",
+		);
+
 		const statsQuery = `
 		 WITH cats AS (
 		   SELECT v.viaje,
@@ -30,7 +40,7 @@ export const getComparadorStats = createServerFn({ method: "GET" })
 		   LEFT JOIN distancia_viaje d ON d.viaje = v.viaje
 		   LEFT JOIN comuna co ON co.id = v.comunaOrigen
 		   LEFT JOIN comuna cd ON cd.id = v.comunaDestino
-		   WHERE co.comuna = ?1 AND cd.comuna = ?2
+		   WHERE ${normalizedComunaSql} = ?1 AND ${normalizedComunaSqlDest} = ?2
 		     AND v.tiempoViaje > 0 AND d.distEuclidiana > 0
 		 )
 		 SELECT
@@ -50,7 +60,10 @@ export const getComparadorStats = createServerFn({ method: "GET" })
 		 FROM viaje v
 		 LEFT JOIN comuna co ON co.id = v.comunaOrigen
 		 LEFT JOIN comuna cd ON cd.id = v.comunaDestino
-		 WHERE co.comuna = ?1 AND cd.comuna = ?2`;
+		 WHERE ${normalizedComunaSql} = ?1 AND ${normalizedComunaSqlDest} = ?2`;
+
+		const normalizedOrigen = normalizeName(origen);
+		const normalizedDestino = normalizeName(destino);
 
 		try {
 			const [statsStmt, totalStmt] = [
@@ -77,8 +90,8 @@ export const getComparadorStats = createServerFn({ method: "GET" })
 			];
 
 			const [statsResults, totalResults] = await Promise.all([
-				statsStmt.bind(origen, destino).all(),
-				totalStmt.bind(origen, destino).all(),
+				statsStmt.bind(normalizedOrigen, normalizedDestino).all(),
+				totalStmt.bind(normalizedOrigen, normalizedDestino).all(),
 			]);
 
 			const statsModo = statsResults.results;

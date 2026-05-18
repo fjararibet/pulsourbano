@@ -2,6 +2,8 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { Map as MapLibreMap } from "maplibre-gl";
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { ModoRow } from "#/lib/comparador/comparador-types";
+import { getComparadorStats } from "#/routes/api/comparador/stats.fn";
 import { DESTINO_COLOR, ORIGEN_COLOR } from "./config";
 import { MapLegend } from "./Legend";
 import { clearODData, setODData } from "./layers";
@@ -12,10 +14,15 @@ import type { HoverInfo } from "./types";
 import { type SelectedNoiseStats, useSantiagoMap } from "./use-santiago-map";
 
 const ROUTE_MODES = [
-	{ key: "auto", label: "Auto", color: "#f59e0b" },
-	{ key: "bus", label: "Bus", color: "#3b82f6" },
-	{ key: "metro", label: "Metro", color: "#ef4444" },
-	{ key: "bicycle", label: "No motorizado", color: "#10b981" },
+	{ key: "auto", label: "Auto", color: "#f59e0b", statsKey: "Auto" },
+	{ key: "bus", label: "Bus", color: "#3b82f6", statsKey: "Bus" },
+	{ key: "metro", label: "Metro", color: "#ef4444", statsKey: "Metro/Tren" },
+	{
+		key: "bicycle",
+		label: "No motorizado",
+		color: "#10b981",
+		statsKey: "No Motorizado",
+	},
 ] as const;
 
 const EMPTY_NOISE_STATS: SelectedNoiseStats = { origen: null, destino: null };
@@ -32,6 +39,8 @@ export function SantiagoMapPage() {
 	const [showNoiseOverlay, setShowNoiseOverlay] = useState(false);
 	const [selectedNoiseStats, setSelectedNoiseStats] =
 		useState<SelectedNoiseStats>(EMPTY_NOISE_STATS);
+	const [tripStats, setTripStats] = useState<ModoRow[]>([]);
+	const [tripStatsLoading, setTripStatsLoading] = useState(false);
 	const mapRef = useRef<MapLibreMap | null>(null);
 	const savedViewRef = useRef<{
 		center: [number, number];
@@ -130,6 +139,39 @@ export function SantiagoMapPage() {
 			})
 			.catch(console.error);
 	}, [showOD, selections.origen]);
+
+	useEffect(() => {
+		if (!selections.origen || !selections.destino) {
+			setTripStats([]);
+			setTripStatsLoading(false);
+			return;
+		}
+		let cancelled = false;
+		setTripStatsLoading(true);
+		(
+			getComparadorStats as (opts: {
+				data: { origen: string; destino: string };
+			}) => Promise<{ statsModo: ModoRow[]; total: number }>
+		)({
+			data: { origen: selections.origen, destino: selections.destino },
+		})
+			.then((result) => {
+				if (cancelled) return;
+				setTripStats(result.statsModo);
+			})
+			.catch((err) => {
+				if (cancelled) return;
+				console.error("[getComparadorStats] client error:", err);
+				setTripStats([]);
+			})
+			.finally(() => {
+				if (cancelled) return;
+				setTripStatsLoading(false);
+			});
+		return () => {
+			cancelled = true;
+		};
+	}, [selections.origen, selections.destino]);
 
 	useEffect(() => {
 		if (!selections.origen && !selections.destino) {
@@ -315,17 +357,20 @@ export function SantiagoMapPage() {
 									<p className="m-0 text-[9px] font-black uppercase tracking-[0.18em] text-[#5b777c]">
 										Rutas
 									</p>
-									{ROUTE_MODES.map((route) => (
-										<div key={route.key} className="flex items-center gap-2">
-											<span
-												className="h-1 w-8 shrink-0 rounded-full"
-												style={{ backgroundColor: route.color }}
+									{ROUTE_MODES.map((route) => {
+										const stat = tripStats.find(
+											(s) => s.modo === route.statsKey,
+										);
+										return (
+											<ModeStatsRow
+												key={route.key}
+												color={route.color}
+												label={route.label}
+												stat={stat}
+												loading={tripStatsLoading}
 											/>
-											<span className="text-xs font-semibold text-[#102f37]">
-												{route.label}
-											</span>
-										</div>
-									))}
+										);
+									})}
 								</div>
 							</div>
 						) : selections.origen ? (
@@ -406,6 +451,46 @@ function SelectedComunaLine({
 			<span className="text-sm font-bold text-[#102f37]">
 				{label}: {name}
 			</span>
+		</div>
+	);
+}
+
+function ModeStatsRow({
+	color,
+	label,
+	stat,
+	loading,
+}: {
+	color: string;
+	label: string;
+	stat: ModoRow | undefined;
+	loading: boolean;
+}) {
+	const hasStat = Boolean(stat && stat.n_viajes > 0);
+	return (
+		<div className="flex items-start gap-2">
+			<span
+				className="mt-1.5 h-1 w-8 shrink-0 rounded-full"
+				style={{ backgroundColor: color }}
+			/>
+			<div className="min-w-0 flex-1">
+				<div className="flex items-baseline justify-between gap-2">
+					<span className="text-xs font-semibold text-[#102f37]">{label}</span>
+					{hasStat && stat ? (
+						<span className="text-[10px] font-bold text-[#24525b]">
+							{stat.porcentaje}% · {stat.n_viajes.toLocaleString("es-CL")}{" "}
+							viajes
+						</span>
+					) : null}
+				</div>
+				<p className="m-0 text-[10px] font-medium text-[#5b777c]">
+					{loading
+						? "Cargando…"
+						: hasStat && stat
+							? `${stat.tiempo_promedio_min.toFixed(1)} min · ${stat.distancia_promedio_km.toFixed(2)} km · ${stat.velocidad_promedio.toFixed(1)} km/h`
+							: "Sin datos para esta combinación"}
+				</p>
+			</div>
 		</div>
 	);
 }
