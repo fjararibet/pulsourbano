@@ -79,6 +79,27 @@ export function addComunaLayers(
 		},
 	});
 	map.addLayer({
+		id: "comunas-labels",
+		type: "symbol",
+		source: "comunas-rm",
+		filter: ["any", ["==", ["geometry-type"], "Polygon"], ["==", ["geometry-type"], "MultiPolygon"]],
+		layout: {
+			"text-field": ["get", "Comuna"],
+			"text-font": ["Open Sans Regular", "Arial Unicode MS Regular"],
+			"text-size": ["interpolate", ["linear"], ["zoom"], 10, 9, 13, 11],
+			"text-anchor": "center",
+			"text-max-width": 8,
+			"text-allow-overlap": true,
+			"text-ignore-placement": true,
+		},
+		paint: {
+			"text-color": "#4a3f7a",
+			"text-halo-color": "rgba(237, 244, 232, 0.85)",
+			"text-halo-width": 1.5,
+			"text-opacity": ["interpolate", ["linear"], ["zoom"], 10, 0, 11, 0.9],
+		},
+	});
+	map.addLayer({
 		id: "comunas-selected-fill",
 		type: "fill",
 		source: "comunas-rm",
