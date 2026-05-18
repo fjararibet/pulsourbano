@@ -2,6 +2,7 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { Map as MapLibreMap } from "maplibre-gl";
 import { useCallback, useEffect, useRef, useState } from "react";
+import ThemeToggle from "#/components/ThemeToggle";
 import type { ModoRow } from "#/lib/comparador/comparador-types";
 import { redistributePercentages } from "#/lib/comparador/sliders";
 import { computeEmissions, type EmissionTotals } from "#/lib/emissions";
@@ -225,7 +226,7 @@ export function SantiagoMapPage() {
 		: null;
 
 	return (
-		<main className="relative h-[100svh] w-full overflow-hidden bg-[#edf4e8] text-[#102f37]">
+		<main className="relative h-[100svh] w-full overflow-hidden bg-[#edf4e8] text-[#102f37] dark:bg-[#071118] dark:text-[#e8f3f6]">
 			<div className="absolute inset-0 z-0">
 				<div ref={containerRef} className="h-full w-full" />
 			</div>
@@ -240,6 +241,10 @@ export function SantiagoMapPage() {
 					</div>
 				</div>
 			)}
+
+			<div className="absolute right-3 top-3 z-20 sm:right-4 sm:top-4">
+				<ThemeToggle />
+			</div>
 
 			<section className="pointer-events-none absolute bottom-0 left-0 right-0 z-10 flex flex-col items-end gap-2 p-2 sm:pointer-events-auto sm:inset-y-0 sm:left-0 sm:right-auto sm:w-80 sm:items-start sm:overflow-y-auto sm:border-r sm:border-white/70 sm:bg-white/90 sm:p-4 sm:shadow-[4px_0_24px_rgba(16,47,55,0.1)] sm:backdrop-blur-xl">
 				{hasSelection && isCollapsed ? (

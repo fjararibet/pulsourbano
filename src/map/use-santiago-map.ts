@@ -68,6 +68,51 @@ type DualSelect = {
 	tripStats?: ModoRow[];
 };
 
+type ResolvedTheme = "light" | "dark";
+
+function getResolvedTheme(): ResolvedTheme {
+	if (typeof window === "undefined") return "light";
+	if (document.documentElement.classList.contains("dark")) return "dark";
+	if (document.documentElement.classList.contains("light")) return "light";
+	return window.matchMedia("(prefers-color-scheme: dark)").matches
+		? "dark"
+		: "light";
+}
+
+function applyMapTheme(map: MapLibreMap, theme: ResolvedTheme) {
+	const isDark = theme === "dark";
+	const setVisibility = (layerId: string, visible: boolean) => {
+		if (map.getLayer(layerId)) {
+			map.setLayoutProperty(layerId, "visibility", visible ? "visible" : "none");
+		}
+	};
+
+	setVisibility("carto-light-tiles", !isDark);
+	setVisibility("carto-dark-tiles", isDark);
+	setVisibility("carto-dark-labels", isDark);
+
+	if (map.getLayer("map-background")) {
+		map.setPaintProperty(
+			"map-background",
+			"background-color",
+			isDark ? "#0b1720" : "#edf4e8",
+		);
+	}
+
+	if (map.getLayer("terrain-hillshade")) {
+		map.setPaintProperty(
+			"terrain-hillshade",
+			"hillshade-shadow-color",
+			isDark ? "rgba(0,0,0,0.34)" : "rgba(0,0,0,0.2)",
+		);
+		map.setPaintProperty(
+			"terrain-hillshade",
+			"hillshade-highlight-color",
+			isDark ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.25)",
+		);
+	}
+}
+
 interface ModeProfile {
 	costing: CostingMode;
 	color: string;
@@ -313,6 +358,7 @@ export function useSantiagoMap(
 	useEffect(() => {
 		let cancelled = false;
 		let cleanup: (() => void) | undefined;
+		let themeCleanup: (() => void) | undefined;
 		const pinController: HoverPinController = {
 			isPinned: () => pinnedInfoRef.current !== null,
 			pin: (info, clearEffects) => {
@@ -345,6 +391,19 @@ export function useSantiagoMap(
 			});
 			mapRef.current = map;
 
+			const syncTheme = () => applyMapTheme(map, getResolvedTheme());
+			const themeObserver = new MutationObserver(syncTheme);
+			themeObserver.observe(document.documentElement, {
+				attributes: true,
+				attributeFilter: ["class"],
+			});
+			const themeMedia = window.matchMedia("(prefers-color-scheme: dark)");
+			themeMedia.addEventListener("change", syncTheme);
+			themeCleanup = () => {
+				themeObserver.disconnect();
+				themeMedia.removeEventListener("change", syncTheme);
+			};
+
 			map.on("error", (event) => {
 				console.error("MapLibre error", event.error ?? event);
 			});
@@ -364,6 +423,8 @@ export function useSantiagoMap(
 			const hoverCleanup: Array<() => void> = [];
 
 			cleanup = () => {
+				themeCleanup?.();
+				themeCleanup = undefined;
 				pinnedInfoRef.current = null;
 				clearPinnedEffectsRef.current = null;
 				routeArrowAnimCleanupRef.current?.();
@@ -379,6 +440,7 @@ export function useSantiagoMap(
 
 			map.on("load", async () => {
 				resize();
+				syncTheme();
 
 				try {
 					map.setLight({

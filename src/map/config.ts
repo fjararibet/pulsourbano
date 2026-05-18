@@ -268,13 +268,37 @@ export const LOGICAL_LAYERS = {
 export const BASE_STYLE = {
 	version: 8 as const,
 	sources: {
-		"carto-tiles": {
+		"carto-light-tiles": {
 			type: "raster" as const,
 			tiles: [
 				"https://a.basemaps.cartocdn.com/rastertiles/light_nolabels/{z}/{x}/{y}{ratio}.png",
 				"https://b.basemaps.cartocdn.com/rastertiles/light_nolabels/{z}/{x}/{y}{ratio}.png",
 				"https://c.basemaps.cartocdn.com/rastertiles/light_nolabels/{z}/{x}/{y}{ratio}.png",
 				"https://d.basemaps.cartocdn.com/rastertiles/light_nolabels/{z}/{x}/{y}{ratio}.png",
+			],
+			tileSize: 256,
+			attribution:
+				'© <a href="https://www.openstreetmap.org/copyright">OSM</a> © <a href="https://carto.com/attributions">CARTO</a>',
+		},
+		"carto-dark-tiles": {
+			type: "raster" as const,
+			tiles: [
+				"https://a.basemaps.cartocdn.com/rastertiles/dark_nolabels/{z}/{x}/{y}{ratio}.png",
+				"https://b.basemaps.cartocdn.com/rastertiles/dark_nolabels/{z}/{x}/{y}{ratio}.png",
+				"https://c.basemaps.cartocdn.com/rastertiles/dark_nolabels/{z}/{x}/{y}{ratio}.png",
+				"https://d.basemaps.cartocdn.com/rastertiles/dark_nolabels/{z}/{x}/{y}{ratio}.png",
+			],
+			tileSize: 256,
+			attribution:
+				'© <a href="https://www.openstreetmap.org/copyright">OSM</a> © <a href="https://carto.com/attributions">CARTO</a>',
+		},
+		"carto-dark-labels": {
+			type: "raster" as const,
+			tiles: [
+				"https://a.basemaps.cartocdn.com/rastertiles/dark_only_labels/{z}/{x}/{y}{ratio}.png",
+				"https://b.basemaps.cartocdn.com/rastertiles/dark_only_labels/{z}/{x}/{y}{ratio}.png",
+				"https://c.basemaps.cartocdn.com/rastertiles/dark_only_labels/{z}/{x}/{y}{ratio}.png",
+				"https://d.basemaps.cartocdn.com/rastertiles/dark_only_labels/{z}/{x}/{y}{ratio}.png",
 			],
 			tileSize: 256,
 			attribution:
@@ -310,12 +334,22 @@ export const BASE_STYLE = {
 			paint: { "background-color": "#edf4e8" },
 		},
 		{
-			id: "carto-tiles",
+			id: "carto-light-tiles",
 			type: "raster" as const,
-			source: "carto-tiles",
+			source: "carto-light-tiles",
 			paint: {
 				"raster-opacity": 0.9,
 				"raster-saturation": -0.12,
+			},
+		},
+		{
+			id: "carto-dark-tiles",
+			type: "raster" as const,
+			source: "carto-dark-tiles",
+			layout: { visibility: "none" as const },
+			paint: {
+				"raster-opacity": 0.92,
+				"raster-saturation": -0.08,
 			},
 		},
 		{
@@ -328,6 +362,15 @@ export const BASE_STYLE = {
 				"hillshade-highlight-color": "rgba(255,255,255,0.25)",
 				"hillshade-accent-color": "rgba(0,0,0,0.06)",
 				"hillshade-illumination-direction": 315,
+			},
+		},
+		{
+			id: "carto-dark-labels",
+			type: "raster" as const,
+			source: "carto-dark-labels",
+			layout: { visibility: "none" as const },
+			paint: {
+				"raster-opacity": 0.95,
 			},
 		},
 	],
