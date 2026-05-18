@@ -241,37 +241,9 @@ export function SantiagoMapPage() {
 				</div>
 			)}
 
-			<div className="absolute top-2 right-2 z-20 flex overflow-hidden rounded-full border border-white/70 bg-white/90 shadow-lg backdrop-blur-xl sm:top-4 sm:right-4">
-				<button
-					type="button"
-					aria-pressed={showNoiseOverlay}
-					onClick={() => setShowNoiseOverlay((value) => !value)}
-					className={`px-3 py-1.5 text-xs font-bold transition ${
-						showNoiseOverlay
-							? "bg-[#dc2626] text-white"
-							: "text-[#5b777c] hover:bg-[#f1f7f4]"
-					}`}
-				>
-					Ruido {showNoiseOverlay ? "ON" : "OFF"}
-				</button>
-			</div>
-
 			<section className="pointer-events-none absolute bottom-0 left-0 right-0 z-10 flex flex-col items-end gap-2 p-2 sm:pointer-events-auto sm:inset-y-0 sm:left-0 sm:right-auto sm:w-80 sm:items-start sm:overflow-y-auto sm:border-r sm:border-white/70 sm:bg-white/90 sm:p-4 sm:shadow-[4px_0_24px_rgba(16,47,55,0.1)] sm:backdrop-blur-xl">
-				{hasSelection ? (
-					<button
-						type="button"
-						onClick={() => {
-							clearSelections();
-							resetView();
-						}}
-						className="pointer-events-auto rounded-full border border-[#b9d7d1] bg-white/90 px-3 py-1.5 text-xs font-bold text-[#24525b] shadow-[0_8px_24px_rgba(16,47,55,0.18)] backdrop-blur transition hover:border-[#5bb6a6] hover:bg-white"
-					>
-						Reiniciar
-					</button>
-				) : null}
-
-				<div className="pointer-events-auto w-full rounded-2xl border border-white/70 bg-white/90 px-4 py-3 shadow-[0_-12px_40px_rgba(16,47,55,0.16)] backdrop-blur-xl sm:rounded-none sm:border-0 sm:bg-transparent sm:shadow-none sm:backdrop-blur-none">
-					<div className="flex w-full items-center gap-1.5 sm:hidden">
+				<div className="pointer-events-auto flex max-h-[calc(100svh-1rem)] w-full flex-col rounded-2xl border border-white/70 bg-white/90 px-4 py-3 shadow-[0_-12px_40px_rgba(16,47,55,0.16)] backdrop-blur-xl sm:block sm:max-h-none sm:rounded-none sm:border-0 sm:bg-transparent sm:shadow-none sm:backdrop-blur-none">
+					<div className="sticky top-0 z-10 flex w-full items-center gap-1.5 bg-white/90 pb-1 backdrop-blur-xl sm:hidden">
 						<button
 							type="button"
 							onClick={() => setIsCollapsed((v) => !v)}
@@ -339,11 +311,54 @@ export function SantiagoMapPage() {
 						</button>
 					</div>
 					<div
-						className={`${isCollapsed ? "hidden" : "mt-2"} sm:mt-0 sm:block`}
+						className={`${isCollapsed ? "hidden" : "mt-2 overflow-y-auto pr-1"} sm:mt-0 sm:block sm:overflow-visible sm:pr-0`}
 					>
+						{hasSelection ? (
+							<div className="mb-3 flex justify-end sm:mb-4">
+								<button
+									type="button"
+									onClick={() => {
+										clearSelections();
+										resetView();
+									}}
+									className="rounded-full border border-[#b9d7d1] bg-white/90 px-3 py-1.5 text-xs font-bold text-[#24525b] shadow-[0_8px_24px_rgba(16,47,55,0.12)] transition hover:border-[#5bb6a6] hover:bg-white"
+								>
+									Reiniciar
+								</button>
+							</div>
+						) : null}
+
+						<div className="mb-3 flex items-center justify-between gap-3 rounded-2xl bg-[#f1f7f4] p-2.5 sm:mb-4">
+							<div className="min-w-0">
+								<p className="m-0 text-[9px] font-black uppercase tracking-[0.18em] text-[#5b777c]">
+									Capa de ruido
+								</p>
+								<p className="m-0 mt-1 text-xs font-bold text-[#315a61]">
+									Muestra dB(A) por comuna
+								</p>
+							</div>
+							<button
+								type="button"
+								aria-pressed={showNoiseOverlay}
+								onClick={() => setShowNoiseOverlay((value) => !value)}
+								className={`shrink-0 rounded-full border px-3 py-1.5 text-xs font-bold transition ${
+									showNoiseOverlay
+										? "border-[#dc2626] bg-[#dc2626] text-white"
+										: "border-[#b9d7d1] bg-white/80 text-[#24525b] hover:border-[#dc2626]"
+								}`}
+							>
+								{showNoiseOverlay ? "ON" : "OFF"}
+							</button>
+						</div>
+
 						{showNoiseOverlay ? (
-							<div className="mb-3 flex items-center gap-3 sm:hidden">
-								<NoiseGauge db={activeNoiseDb} compact />
+							<div className="mb-3 flex items-center gap-3 rounded-2xl border border-red-100 bg-red-50/70 p-2.5 sm:mb-4 sm:flex-col sm:items-center">
+								<div className="sm:hidden">
+									<NoiseGauge db={activeNoiseDb} compact />
+								</div>
+								<div className="hidden sm:block">
+									<NoiseGauge db={activeNoiseDb} />
+								</div>
 								<div className="min-w-0">
 									<p className="m-0 text-[9px] font-black uppercase tracking-[0.18em] text-[#5b777c]">
 										Ruido dB(A)
@@ -470,7 +485,7 @@ export function SantiagoMapPage() {
 				</div>
 			</section>
 
-			<MapLegend showNoiseOverlay={showNoiseOverlay} noiseDb={activeNoiseDb} />
+			<MapLegend showNoiseOverlay={showNoiseOverlay} />
 		</main>
 	);
 }

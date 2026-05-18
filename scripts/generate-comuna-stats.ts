@@ -180,6 +180,7 @@ async function main() {
 
 	for (const [key, trips] of pairMap) {
 		const [origen, destino] = key.split("|");
+		if (!origen || !destino) continue;
 		if (origen === destino) continue;
 
 		const { statsModo, total } = computeStats(trips);

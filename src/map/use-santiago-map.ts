@@ -45,7 +45,6 @@ import {
 import {
 	buildNoiseComunaFeatures,
 	buildNoiseComunaStats,
-	filterComunasWithNoiseData,
 	getNoiseComunaStats,
 	type NoiseComunaStats,
 	type NoiseComunaStatsRecord,
